@@ -703,19 +703,17 @@ function analyse(text) {
       }
     }
 
-    // Check 2: emoji mid-sentence (emoji that has text after it on same line)
+    // Check 2: emoji mid-sentence (emoji has real non-emoji text after it, and doesn't follow sentence punctuation)
     if (line.trim().length > 0) {
-      const emojiRxLocal = new RegExp('(‍|\\p{Emoji_Presentation}|\\p{Extended_Pictographic})', 'gu');
-      let m;
       let hasMid = false;
-      // check if any emoji in this line is NOT at end (ignoring trailing whitespace+emoji)
-      const stripped = stripTrailingEmoji(line).trimEnd();
-      // if the original line (before stripping trailing emojis) has an emoji and the stripped version
-      // is different, then emojis exist at end — but we want to check if there are emojis NOT at end
       const lineEmojis = [...line.matchAll(EMOJI_RX_G)];
       for (const em of lineEmojis) {
-        const afterEmoji = line.slice(em.index + em[0].length);
-        if (afterEmoji.trimEnd().length > 0 && afterEmoji.trimEnd().match(/\S/)) {
+        // Strip emojis from the text before this emoji to check for preceding sentence punctuation
+        const beforeClean = line.slice(0, em.index).replace(EMOJI_RX_G, '').trimEnd();
+        if (/[.!?]$/.test(beforeClean)) continue; // emoji appears after end-of-sentence punct — OK
+        // Only flag if there is actual non-emoji, non-whitespace text after this emoji
+        const afterClean = line.slice(em.index + em[0].length).replace(EMOJI_RX_G, '').trimEnd();
+        if (afterClean.length > 0) {
           hasMid = true;
           break;
         }
@@ -772,7 +770,7 @@ function analyse(text) {
   // Check 3: multiple emojis in a row
   const multiEmojiSegs = [];
   {
-    const rx = /(\p{Emoji_Presentation}|\p{Extended_Pictographic}){2,}/gu;
+    const rx = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})([^\S\n]*(\p{Emoji_Presentation}|\p{Extended_Pictographic}))+/gu;
     let m;
     while ((m = rx.exec(text)) !== null) {
       multiEmojiSegs.push({
