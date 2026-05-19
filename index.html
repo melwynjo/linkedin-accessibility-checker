@@ -325,8 +325,8 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
   </a>
   <nav class="header-nav" aria-label="Main navigation">
     <div class="nav-item active" id="nav-analyse" role="button" tabindex="0" onclick="switchPanel('analyse')">Analyse</div>
-    <div class="nav-item locked" id="nav-issues" role="button" tabindex="0" onclick="switchPanel('issues')">Issues <span class="issue-badge" id="issueBadge" aria-live="polite">0</span></div>
-    <div class="nav-item locked" id="nav-ready" role="button" tabindex="0" onclick="switchPanel('ready')">Ready to post</div>
+    <div class="nav-item locked" id="nav-issues" role="button" tabindex="0" onclick="switchPanel('issues')">What to fix <span class="issue-badge" id="issueBadge" aria-live="polite">0</span></div>
+    <div class="nav-item locked" id="nav-ready" role="button" tabindex="0" onclick="switchPanel('ready')">Fixed post</div>
     <div style="flex:1"></div>
     <div class="nav-item" id="nav-coming" role="button" tabindex="0" onclick="switchPanel('coming')">Coming soon</div>
     <div class="nav-item" id="nav-contributors" role="button" tabindex="0" onclick="switchPanel('contributors')">Contributors</div>
@@ -393,9 +393,9 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
       <div class="panel-sub">12 checks. Takes a few seconds.</div>
     </div>
     <div class="panel-body">
-      <button class="run-btn" id="runBtn" onclick="runCheck()" aria-label="Check accessibility and fix issues">
+      <button class="run-btn" id="runBtn" onclick="runCheck()" aria-label="Check accessibility">
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" class="run-icon" aria-hidden="true"><circle cx="6.5" cy="6.5" r="4.5" stroke="white" stroke-width="1.5"/><path d="M11 11l2.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
-        <span class="run-label">Check accessibility and fix issues</span>
+        <span class="run-label">Check accessibility</span>
         <span class="run-spinner" aria-hidden="true"></span>
       </button>
 
@@ -1022,9 +1022,8 @@ async function runCheck() {
   buildFixed(text, checkResults);
   buildResults(checkResults);
 
-  // Unlock nav
+  // Unlock issues nav only; ready unlocks after Apply fixes
   document.getElementById('nav-issues').classList.remove('locked');
-  document.getElementById('nav-ready').classList.remove('locked');
 
   // Update issues nav sub-label and badge
   const errorWarnCount = checkResults.filter(i=>i.severity==='error'||i.severity==='warn').length;
@@ -1238,6 +1237,9 @@ const diffAppliedContent = document.getElementById('diffAppliedContent');
 
 function applyFixes() {
   if (!fixedHTML || !fixedText) return;
+
+  // Unlock ready tab now that fixes are applied
+  document.getElementById('nav-ready').classList.remove('locked');
 
   // Show diff in editor card
   diffAppliedContent.innerHTML = fixedHTML;
