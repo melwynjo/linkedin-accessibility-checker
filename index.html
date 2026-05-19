@@ -1256,8 +1256,7 @@ function calcScores(issues) {
   const PENALTY = { error: 25, warn: 15, info: 8 };
   const groups = {
     visual:    ['deco-struct','emoji-mid','emoji-multi','no-punct','deco-sym','unicode-bold','hashtag-case','link-context'],
-    cognitive: ['long-sent','jargon','inclusive','hashtag-case'],
-    general:   ['jargon','inclusive','long-sent','link-context']
+    cognitive: ['long-sent','jargon','inclusive','hashtag-case']
   };
   return Object.fromEntries(Object.entries(groups).map(([key, ids]) => {
     const deduction = issues.filter(i => ids.includes(i.id))
@@ -1269,12 +1268,10 @@ function calcScores(issues) {
 function renderScoresHTML(issues, title) {
   const scores = calcScores(issues);
   const rows = [
-    { key:'visual',    label:'Screen reader users',
+    { key:'visual',    label:'Blind & low-vision readers',
       icon:'<svg viewBox="0 0 12 12" fill="none"><ellipse cx="6" cy="6" rx="5" ry="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="6" cy="6" r="1.5" fill="currentColor"/></svg>' },
-    { key:'cognitive', label:'Cognitive accessibility',
-      icon:'<svg viewBox="0 0 12 12" fill="none"><path d="M4 9.5C3 9 1.5 7.5 1.5 5.5a4.5 4.5 0 0 1 9 0c0 2-1.5 3.5-2.5 4M4 9.5V11m4-1.5V11M4 11h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>' },
-    { key:'general',   label:'General readers',
-      icon:'<svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="3.5" r="1.8" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 10.5c0-1.933 1.567-3.5 3.5-3.5s3.5 1.567 3.5 3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>' }
+    { key:'cognitive', label:'Readers with cognitive disabilities',
+      icon:'<svg viewBox="0 0 12 12" fill="none"><path d="M4 9.5C3 9 1.5 7.5 1.5 5.5a4.5 4.5 0 0 1 9 0c0 2-1.5 3.5-2.5 4M4 9.5V11m4-1.5V11M4 11h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>' }
   ];
   const titleHTML = title ? `<div class="score-title">${title}</div>` : '';
   return `<div class="score-section">${titleHTML}${rows.map(({ key, label, icon }) => {
