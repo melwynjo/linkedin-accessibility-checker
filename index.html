@@ -204,11 +204,14 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
 .check-item-icon.teal{background:#e0f5f4;color:#0d7377}
 .check-item-icon.pink{background:#fde8f4;color:#be185d}
 .check-item-icon.purple{background:#f0ebff;color:#7c3aed}
-.live-stats{display:flex;align-items:center;justify-content:center;gap:0;margin-top:14px;padding:12px 16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px}
+.live-stats{flex-shrink:0;padding:16px 20px;border-top:1px solid var(--border);background:#f9fafb}
+.live-stats-heading{font-size:13px;font-weight:600;color:var(--text1);margin-bottom:3px}
+.live-stats-sub{font-size:11.5px;color:var(--text3);margin-bottom:12px}
+.live-stats-numbers{display:flex;align-items:center;gap:0}
 .live-stats-item{flex:1;text-align:center}
-.live-stats-divider{width:1px;height:28px;background:#bbf7d0;flex-shrink:0}
-.live-stats-num{display:block;font-size:18px;font-weight:700;color:#15803d;line-height:1.1;letter-spacing:-.02em}
-.live-stats-label{display:block;font-size:10px;font-weight:500;color:#4ade80;text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.live-stats-divider{width:1px;height:28px;background:var(--border);flex-shrink:0}
+.live-stats-num{display:block;font-size:20px;font-weight:700;color:#15803d;line-height:1.1;letter-spacing:-.02em}
+.live-stats-label{display:block;font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
 .check-item-text strong{display:block;font-size:11.5px;font-weight:600;color:var(--text1)}
 .check-item-text span{font-size:11px;color:var(--text3);line-height:1.4}
 
@@ -451,17 +454,6 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
         </div>
       </details>
 
-      <div class="live-stats" id="liveStats" aria-live="polite">
-        <div class="live-stats-item">
-          <span class="live-stats-num" id="statPosts">—</span>
-          <span class="live-stats-label">posts checked</span>
-        </div>
-        <div class="live-stats-divider" aria-hidden="true"></div>
-        <div class="live-stats-item">
-          <span class="live-stats-num" id="statIssues">—</span>
-          <span class="live-stats-label">issues detected</span>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -537,6 +529,22 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
         <h3>Want to help shape this?</h3>
         <p>Try the tool, break it, use it on your own posts. If you find something that is wrong, missing, or could be better, or if you want to request a feature, the form below takes two minutes.</p>
         <a href="https://tally.so/r/WOKdbv" target="_blank" rel="noopener noreferrer" class="feedback-btn-blue">Share feedback or request a feature</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="live-stats" id="liveStats" aria-live="polite">
+    <div class="live-stats-heading">We're making a difference</div>
+    <div class="live-stats-sub">Posts checked and issues fixed since launch</div>
+    <div class="live-stats-numbers">
+      <div class="live-stats-item">
+        <span class="live-stats-num" id="statPosts">—</span>
+        <span class="live-stats-label">posts checked</span>
+      </div>
+      <div class="live-stats-divider" aria-hidden="true"></div>
+      <div class="live-stats-item">
+        <span class="live-stats-num" id="statIssues">—</span>
+        <span class="live-stats-label">issues fixed</span>
       </div>
     </div>
   </div>
@@ -1122,8 +1130,6 @@ async function runCheck() {
   // Hide "what we check" accordion
   document.getElementById('whatWeCheck').style.display = 'none';
 
-  // Stats
-  incrementStats(checkResults.length);
 
   runBtn.classList.remove('loading');
   runBtn.disabled = false;
@@ -1476,6 +1482,11 @@ function applyFixes() {
   const updatedScores = renderScoresHTML(voiceIssues, 'Accessibility after fixes');
   fixedPostBox.innerHTML = updatedScores + '<hr class="score-divider">' + html;
   animateBars();
+
+  // Count actual changes made as issues fixed
+  const totalFixed = autoIssues.reduce((n, i) => n + i.segs.length, 0) + reviewIssues.length;
+  incrementStats(totalFixed);
+
   switchPanel('ready');
 }
 
@@ -1554,7 +1565,7 @@ async function incrementStats(issueCount) {
   try {
     await Promise.all([
       upstash('incr/posts_checked'),
-      issueCount > 0 ? upstash(`incrby/issues_detected/${issueCount}`) : Promise.resolve()
+      issueCount > 0 ? upstash(`incrby/issues_fixed/${issueCount}`) : Promise.resolve()
     ]);
     fetchStats();
   } catch(e) {}
@@ -1564,7 +1575,7 @@ async function fetchStats() {
   try {
     const [posts, issues] = await Promise.all([
       upstash('get/posts_checked'),
-      upstash('get/issues_detected')
+      upstash('get/issues_fixed')
     ]);
     const p = parseInt(posts.result) || 0;
     const i = parseInt(issues.result) || 0;
