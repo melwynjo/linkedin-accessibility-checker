@@ -39,40 +39,31 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:1
 .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* App shell */
-.app-shell{display:flex;height:100%;overflow:hidden}
+.app-shell{display:flex;flex-direction:column;height:100%;overflow:hidden}
 
-/* ── Sidenav ── */
-.sidenav{width:220px;flex-shrink:0;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
-.brand{padding:16px 14px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border-sub)}
-.brand-logo{width:34px;height:34px;border-radius:7px;background:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.brand-name{font-size:14px;font-weight:600;color:var(--text1);line-height:1.25}
-.brand-tagline{font-size:11px;color:var(--text4);margin-top:2px}
+/* ── Header ── */
+.app-header{display:flex;align-items:center;height:54px;flex-shrink:0;background:#fff;border-bottom:1px solid var(--border);z-index:10}
+.brand{display:flex;align-items:center;gap:9px;padding:0 20px;height:100%;border-right:1px solid var(--border-sub);flex-shrink:0;text-decoration:none}
+.brand-logo{width:28px;height:28px;border-radius:6px;background:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-name{font-size:12.5px;font-weight:600;color:var(--text1);line-height:1.3;white-space:nowrap}
 
-.nav-section-label{padding:12px 14px 4px;font-size:10.5px;font-weight:600;color:#aaa;letter-spacing:.08em;text-transform:uppercase}
-.nav-connector{height:1px;background:var(--border-sub);margin:0 14px}
-
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;border-left:3px solid transparent;transition:background .12s,border-color .12s;border-radius:0 6px 6px 0;margin:1px 6px 1px 0;position:relative}
-.nav-item:hover{background:#f9f9f9}
-.nav-item.active{background:var(--blue-bg);border-left-color:var(--blue)}
-.nav-item.active .nav-icon-wrap{background:#dbeafe}
-.nav-item.active .nav-icon-wrap svg{color:var(--blue)}
-.nav-item.active .nav-item-label{color:var(--blue)}
-.nav-item.locked{opacity:.45;pointer-events:none}
-
-.nav-icon-wrap{width:30px;height:30px;border-radius:6px;background:#f2f2f2;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s}
-.nav-icon-wrap svg{width:15px;height:15px;color:var(--text3)}
-.nav-item-label{font-size:13.5px;font-weight:500;color:#222;display:flex;align-items:center;gap:5px}
-.nav-item-sub{font-size:11.5px;color:var(--text4);margin-top:1px}
+.header-nav{display:flex;align-items:stretch;height:100%;flex:1;padding:0 4px;overflow-x:auto}
+.nav-item{display:flex;align-items:center;gap:6px;padding:0 14px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:color .12s,border-color .12s,background .12s;white-space:nowrap;user-select:none}
+.nav-item:hover{color:var(--text1);background:#fafafa}
+.nav-item.active{color:var(--blue);border-bottom-color:var(--blue)}
+.nav-item.locked{opacity:.4;pointer-events:none}
 
 .issue-badge{background:var(--error);color:#fff;font-size:10px;font-weight:600;border-radius:10px;padding:1px 5px;min-width:18px;text-align:center;display:none}
 .issue-badge.visible{display:inline-block}
 
-.sidenav-spacer{flex:1}
-.sidenav-footer{padding:14px 14px;border-top:1px solid var(--border-sub);display:flex;flex-direction:column;gap:8px}
-.accessible-link{font-size:12px;color:var(--blue);text-decoration:none}
-.accessible-link:hover{text-decoration:underline}
-.feedback-pill{display:block;text-align:center;padding:8px 12px;border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--text2);text-decoration:none;transition:border-color .12s,background .12s}
+.header-actions{padding:0 16px;height:100%;display:flex;align-items:center;gap:10px;border-left:1px solid var(--border-sub);flex-shrink:0}
+.accessible-link{font-size:11.5px;color:var(--text4);text-decoration:none;white-space:nowrap}
+.accessible-link:hover{color:var(--blue);text-decoration:underline}
+.feedback-pill{padding:6px 12px;border:1px solid var(--border);border-radius:20px;font-size:11.5px;color:var(--text2);text-decoration:none;transition:border-color .12s,background .12s;white-space:nowrap}
 .feedback-pill:hover{border-color:#bbb;background:#fafafa}
+
+/* ── Main content ── */
+.main-content{display:flex;flex:1;overflow:hidden}
 
 /* ── Editor column ── */
 .editor-col{flex:1;overflow-y:auto;padding:22px;background:var(--bg-page)}
@@ -119,7 +110,7 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
 
 
 /* ── Right panel ── */
-.right-panel{width:336px;flex-shrink:0;background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.right-panel{width:380px;flex-shrink:0;background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
 .panel-state{display:none;flex-direction:column;height:100%}
 .panel-state.active{display:flex}
 .panel-header{padding:14px 16px 12px;border-bottom:1px solid var(--border-sub);flex-shrink:0}
@@ -278,8 +269,11 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
 
 /* Responsive */
 @media(max-width:900px){
-  .sidenav{display:none}
-  .app-shell{flex-direction:column}
+  .app-header{height:auto;flex-wrap:wrap;padding:10px 16px 0;gap:0}
+  .brand{border-right:none;padding:10px 0;height:auto}
+  .header-nav{width:100%;height:44px;padding:0;border-top:1px solid var(--border-sub);order:1}
+  .header-actions{display:none}
+  .main-content{flex-direction:column}
   .editor-col{overflow-y:visible}
   .right-panel{width:100%;border-left:none;border-top:1px solid var(--border);height:60vh}
 }
@@ -291,76 +285,30 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
 
 <div class="app-shell">
 
-<!-- ── SIDENAV ── -->
-<nav class="sidenav" aria-label="Main navigation">
-  <div class="brand">
+<!-- ── HEADER ── -->
+<header class="app-header" role="banner">
+  <a class="brand" href="#" aria-label="LinkedIn Accessibility Checker home">
     <div class="brand-logo" aria-hidden="true">
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="7" stroke="white" stroke-width="1.8"/><path d="M6 9l2 2 4-4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="7" stroke="white" stroke-width="1.8"/><path d="M6 9l2 2 4-4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>
-    <div>
-      <div class="brand-name">LinkedIn<br>Accessibility Checker</div>
-      <div class="brand-tagline">Is my LinkedIn post accessible?</div>
-    </div>
-  </div>
-
-  <div class="nav-section-label">STEPS</div>
-
-  <div class="nav-item active" id="nav-analyse" role="button" tabindex="0" aria-label="Analyse — Run the 11 checks" onclick="switchPanel('analyse')">
-    <div class="nav-icon-wrap" aria-hidden="true">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M10 10l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-    </div>
-    <div>
-      <div class="nav-item-label">Analyse</div>
-      <div class="nav-item-sub">Run the 10 checks</div>
-    </div>
-  </div>
-  <div class="nav-connector" aria-hidden="true"></div>
-  <div class="nav-item locked" id="nav-issues" role="button" tabindex="0" aria-label="Issues found" onclick="switchPanel('issues')">
-    <div class="nav-icon-wrap" aria-hidden="true">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2L13 12H1L7 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 6v2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="10" r=".7" fill="currentColor"/></svg>
-    </div>
-    <div>
-      <div class="nav-item-label">Issues found <span class="issue-badge" id="issueBadge" aria-live="polite">0</span></div>
-      <div class="nav-item-sub" id="navIssuesSub">Run check first</div>
-    </div>
-  </div>
-  <div class="nav-connector" aria-hidden="true"></div>
-  <div class="nav-item locked" id="nav-ready" role="button" tabindex="0" aria-label="Ready to post" onclick="switchPanel('ready')">
-    <div class="nav-icon-wrap" aria-hidden="true">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 10l2-2 6.5-6.5a1.4 1.4 0 0 1 2 2L6 10l-2.5.5L2 10Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-    </div>
-    <div>
-      <div class="nav-item-label">Ready to post</div>
-      <div class="nav-item-sub">Your post with fixes applied</div>
-    </div>
-  </div>
-
-  <div class="nav-section-label" style="margin-top:6px">ALSO</div>
-  <div class="nav-item" id="nav-coming" role="button" tabindex="0" aria-label="Coming soon" onclick="switchPanel('coming')">
-    <div class="nav-icon-wrap" aria-hidden="true">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.5 3 3.5.5-2.5 2.5.5 3.5L7 9l-3 1.5.5-3.5L2 4.5l3.5-.5L7 1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
-    </div>
-    <div>
-      <div class="nav-item-label">Coming soon</div>
-      <div class="nav-item-sub">Features in the pipeline</div>
-    </div>
-  </div>
-  <div class="nav-item" id="nav-contributors" role="button" tabindex="0" aria-label="Contributors" onclick="switchPanel('contributors')">
-    <div class="nav-icon-wrap" aria-hidden="true">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12s-5-3.5-5-6.5a3 3 0 0 1 5-2.2A3 3 0 0 1 12 5.5C12 8.5 7 12 7 12Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
-    </div>
-    <div>
-      <div class="nav-item-label">Contributors</div>
-      <div class="nav-item-sub">People who shaped this</div>
-    </div>
-  </div>
-
-  <div class="sidenav-spacer"></div>
-  <div class="sidenav-footer">
+    <div class="brand-name">LinkedIn<br>Accessibility Checker</div>
+  </a>
+  <nav class="header-nav" aria-label="Main navigation">
+    <div class="nav-item active" id="nav-analyse" role="button" tabindex="0" onclick="switchPanel('analyse')">Analyse</div>
+    <div class="nav-item locked" id="nav-issues" role="button" tabindex="0" onclick="switchPanel('issues')">Issues <span class="issue-badge" id="issueBadge" aria-live="polite">0</span></div>
+    <div class="nav-item locked" id="nav-ready" role="button" tabindex="0" onclick="switchPanel('ready')">Ready to post</div>
+    <div class="nav-item" id="nav-coming" role="button" tabindex="0" onclick="switchPanel('coming')">Coming soon</div>
+    <div class="nav-item" id="nav-contributors" role="button" tabindex="0" onclick="switchPanel('contributors')">Contributors</div>
+    <span id="navIssuesSub" class="visually-hidden" aria-live="polite">Run check first</span>
+  </nav>
+  <div class="header-actions">
     <a href="https://accessible.social" target="_blank" rel="noopener noreferrer" class="accessible-link">Accessible Social by Alexa Heinrich ↗</a>
-    <a href="https://tally.so/r/WOKdbv" target="_blank" rel="noopener noreferrer" class="feedback-pill">Share feedback or request a feature</a>
+    <a href="https://tally.so/r/WOKdbv" target="_blank" rel="noopener noreferrer" class="feedback-pill">Share feedback</a>
   </div>
-</nav>
+</header>
+
+<!-- ── MAIN CONTENT ── -->
+<div class="main-content">
 
 <!-- ── EDITOR COLUMN ── -->
 <main class="editor-col" aria-label="Post editor">
@@ -442,7 +390,6 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
     </div>
     <div class="panel-footer" id="issuesFooter" style="display:none">
       <button class="apply-btn" onclick="switchPanel('ready')" aria-label="Apply all fixes and view ready to post">Apply all fixes</button>
-      <div class="panel-footer-link"><a href="https://accessible.social" target="_blank" rel="noopener noreferrer">Accessible Social by Alexa Heinrich ↗</a></div>
     </div>
   </div>
 
@@ -513,6 +460,7 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
   </div>
 
 </aside>
+</div><!-- end main-content -->
 </div><!-- end app-shell -->
 
 <script>
@@ -1043,12 +991,7 @@ async function runCheck() {
 // ─── BUILD RESULTS UI ───────────────────────────────────────────────────────
 function buildResults(issues) {
   // Clear old
-  const existingScores = issuesBody.querySelector('.score-section');
-  const existingTracker = issuesBody.querySelector('.progress-tracker');
-  const existingGroups = issuesBody.querySelectorAll('.issue-group-wrapper');
-  existingScores && existingScores.remove();
-  existingTracker && existingTracker.remove();
-  existingGroups.forEach(g=>g.remove());
+  issuesBody.querySelectorAll('.issue-group-wrapper').forEach(g=>g.remove());
 
   issuesEmpty.style.display = 'none';
 
@@ -1059,38 +1002,8 @@ function buildResults(issues) {
     return;
   }
 
-  // Scores
-  const visIssues = issues.filter(i=>i.cat==='vis');
-  const cogIssues = issues.filter(i=>i.cat==='cog');
-  const visScore  = Math.max(10, 100 - visIssues.length * 15);
-  const cogScore  = Math.max(10, 100 - cogIssues.length * 14);
-  const genScore  = Math.round((visScore + cogScore) / 2);
-
-  function scoreClass(n) { return n>=80?'green':n>=55?'amber':'red'; }
-
-  const scoreHTML = `
-  <div class="score-section" aria-label="Audience reach scores">
-    ${[
-      {label:'General audience', score:genScore, icon:'<svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="4" r="2.2" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 11c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'},
-      {label:'Visual impairments', score:visScore, icon:'<svg viewBox="0 0 12 12" fill="none"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4Z" stroke="currentColor" stroke-width="1.2"/><circle cx="6" cy="6" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>'},
-      {label:'Cognitive disabilities', score:cogScore, icon:'<svg viewBox="0 0 12 12" fill="none"><path d="M6 1C3.8 1 2 2.8 2 5c0 1.2.5 2.2 1.3 3L4 11h4l.7-3c.8-.8 1.3-1.8 1.3-3 0-2.2-1.8-4-4-4Z" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 11.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'}
-    ].map(({label,score,icon}) => `
-      <div class="score-row">
-        <div class="score-icon" aria-hidden="true">${icon}</div>
-        <div style="flex:1">
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <span class="score-label">${label}</span>
-            <span class="score-pct ${scoreClass(score)}">${score}%</span>
-          </div>
-          <div class="score-bar-wrap"><div class="score-bar ${scoreClass(score)}" data-target="${score}" style="width:0"></div></div>
-        </div>
-      </div>
-    `).join('')}
-  </div>`;
-
-
-  const visGroup  = issues.filter(i=>i.cat==='vis');
-  const cogGroup  = issues.filter(i=>i.cat==='cog');
+  const visGroup = issues.filter(i=>i.cat==='vis');
+  const cogGroup = issues.filter(i=>i.cat==='cog');
 
   function renderGroup(items, label) {
     if (!items.length) return '';
@@ -1103,26 +1016,10 @@ function buildResults(issues) {
     </div>`;
   }
 
-  issuesBody.insertAdjacentHTML('afterbegin',
-    scoreHTML +
-    '<div class="issue-group-wrapper">' +
-    '<div class="issue-group-hint" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2"/><line x1="5" y1="4" x2="5" y2="7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Click any issue to highlight it in your post</div>' +
-    '</div>'
-  );
-
   issuesBody.insertAdjacentHTML('beforeend',
     renderGroup(visGroup, 'Visual') +
     renderGroup(cogGroup, 'Cognitive')
   );
-
-  // Animate score bars
-  setTimeout(() => {
-    document.querySelectorAll('.score-bar').forEach((bar, i) => {
-      setTimeout(() => {
-        bar.style.width = bar.dataset.target + '%';
-      }, i * 120);
-    });
-  }, 80);
 
   // Animate cards
   document.querySelectorAll('.issue-card').forEach((card, i) => {
