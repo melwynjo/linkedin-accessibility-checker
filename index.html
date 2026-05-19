@@ -665,7 +665,7 @@ const postInput    = document.getElementById('postInput');
 const postMirror   = document.getElementById('postMirror');
 const postRendered = document.getElementById('postRendered');
 const postWrapper  = document.getElementById('postWrapper');
-const charCounter  = document.getElementById('charCounter');
+const charCounter  = document.getElementById('charCounter') || { textContent:'', className:'' };
 const hlLegend     = document.getElementById('hlLegend');
 const runBtn       = document.getElementById('runBtn');
 const issuesBody   = document.getElementById('issuesBody');
@@ -1225,6 +1225,9 @@ function switchPanel(key) {
 
   if (key !== 'issues') clearHighlight();
   animateBars();
+
+  // Listen button only visible on What to fix tab, after a check has run
+  if (hasRunCheck) listenBtn.classList.toggle('hidden', key !== 'issues');
 }
 
 function stayOnFixed() {
