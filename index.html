@@ -106,11 +106,13 @@ mark.hl-jarg{background:#e0f0ff;outline:1.5px solid #5b9bd5;border-radius:2px;co
 mark.hl-long{background:#e8f5e9;outline:1.5px solid #5ea85e;border-radius:2px;color:inherit}
 mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;color:inherit}
 
-.char-counter{font-size:12.5px;color:var(--text4);text-align:right;margin-top:5px}
+.editor-footer{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;margin-top:8px;gap:8px;min-height:26px}
+.editor-footer-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.char-counter{font-size:12.5px;color:var(--text4);white-space:nowrap}
 .char-counter.warn{color:var(--warn)}
 .char-counter.error{color:var(--error)}
 
-.hl-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s;pointer-events:none}
+.hl-legend{display:flex;gap:10px;flex-wrap:wrap;opacity:0;transform:translateY(3px);transition:opacity .2s,transform .2s;pointer-events:none}
 .hl-legend.visible{opacity:1;transform:translateY(0);pointer-events:auto}
 .hl-chip{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3)}
 .hl-swatch{width:13px;height:13px;border-radius:2px;display:inline-block}
@@ -119,13 +121,18 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
 .hl-swatch.hl-long{background:#e8f5e9;outline:1.5px solid #5ea85e}
 .hl-swatch.hl-incl{background:#fde8e8;outline:1.5px solid #c87070}
 
-.listen-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#eef5ff;border-top:1px solid #b8d4f5;padding:12px 22px;flex-shrink:0}
-.listen-strip.hidden{display:none}
-.listen-text strong{display:block;font-size:13.5px;color:#1a4f8a;font-weight:600}
-.listen-text span{font-size:12px;color:#3d6fa0}
-.listen-btn{padding:7px 16px;background:var(--blue);color:#fff;border:none;border-radius:16px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .12s}
-.listen-btn:hover{background:var(--blue-dark)}
-.listen-btn.stop{background:var(--error)}
+/* Listen inline button */
+.listen-inline-btn{display:flex;align-items:center;gap:6px;padding:5px 11px;background:var(--blue);color:#fff;border:none;border-radius:14px;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .12s}
+.listen-inline-btn:hover{background:var(--blue-dark)}
+.listen-inline-btn.playing{background:#0d5ca6}
+.listen-label{}
+.listen-inline-btn.playing .listen-label{display:none}
+.listen-bars{display:none;align-items:flex-end;gap:2px;height:12px}
+.listen-inline-btn.playing .listen-bars{display:flex}
+.listen-bars b{display:block;width:2.5px;border-radius:2px;background:currentColor;animation:audioBar .7s ease-in-out infinite}
+.listen-bars b:nth-child(2){animation-delay:.15s}
+.listen-bars b:nth-child(3){animation-delay:.3s}
+@keyframes audioBar{0%,100%{height:3px}50%{height:11px}}
 
 
 /* ── Right panel ── */
@@ -354,12 +361,20 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
         <div class="post-rendered" id="postRendered" aria-hidden="true"></div>
         <textarea id="postInput" class="post-textarea" placeholder="Paste or type your LinkedIn post here…" aria-label="LinkedIn post content" spellcheck="true" autocomplete="off"></textarea>
       </div>
-      <div class="char-counter" id="charCounter" aria-live="polite">0 / 3000</div>
-      <div class="hl-legend" id="hlLegend" aria-hidden="true" role="presentation">
-        <div class="hl-chip"><span class="hl-swatch hl-vis" aria-hidden="true"></span>Visual issue</div>
-        <div class="hl-chip"><span class="hl-swatch hl-jarg" aria-hidden="true"></span>Jargon</div>
-        <div class="hl-chip"><span class="hl-swatch hl-long" aria-hidden="true"></span>Long sentence</div>
-        <div class="hl-chip"><span class="hl-swatch hl-incl" aria-hidden="true"></span>Inclusive language</div>
+      <div class="editor-footer">
+        <div class="hl-legend" id="hlLegend" aria-hidden="true" role="presentation">
+          <div class="hl-chip"><span class="hl-swatch hl-vis" aria-hidden="true"></span>Screen reader</div>
+          <div class="hl-chip"><span class="hl-swatch hl-jarg" aria-hidden="true"></span>Jargon</div>
+          <div class="hl-chip"><span class="hl-swatch hl-long" aria-hidden="true"></span>Long sentence</div>
+          <div class="hl-chip"><span class="hl-swatch hl-incl" aria-hidden="true"></span>Inclusive language</div>
+        </div>
+        <div class="editor-footer-right">
+          <span class="char-counter" id="charCounter" aria-live="polite">0 / 3000</span>
+          <button class="listen-inline-btn hidden" id="listenBtn" onclick="toggleListen()" aria-label="Listen to post with screen reader simulation">
+            <span class="listen-label">Listen screen reader</span>
+            <span class="listen-bars" aria-hidden="true"><b></b><b></b><b></b></span>
+          </button>
+        </div>
       </div>
       <div class="diff-applied-view" id="diffAppliedView">
         <div class="diff-applied-legend" aria-hidden="true">
@@ -371,13 +386,6 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
         <button class="edit-original-btn" onclick="resetEditor()" aria-label="Go back to editing the original post">← Edit original</button>
       </div>
     </div>
-  </div>
-  <div class="listen-strip hidden" id="listenStrip" role="region" aria-label="NVDA screen reader preview">
-    <div class="listen-text">
-      <strong>Listen screen reader</strong>
-      <span>Hear how screen readers read your post aloud</span>
-    </div>
-    <button class="listen-btn" id="listenBtn" onclick="toggleListen()" aria-label="Listen to post with screen reader simulation">Listen</button>
   </div>
 </main>
 
@@ -626,7 +634,6 @@ const postRendered = document.getElementById('postRendered');
 const postWrapper  = document.getElementById('postWrapper');
 const charCounter  = document.getElementById('charCounter');
 const hlLegend     = document.getElementById('hlLegend');
-const listenStrip  = document.getElementById('listenStrip');
 const listenBtn    = document.getElementById('listenBtn');
 const runBtn       = document.getElementById('runBtn');
 const issuesBody   = document.getElementById('issuesBody');
@@ -1035,7 +1042,7 @@ async function runCheck() {
   document.getElementById('whatWeCheck').style.display = 'none';
 
   // Show listen strip
-  listenStrip.classList.remove('hidden');
+  listenBtn.classList.remove('hidden');
 
   // Stats
   const autoFixCount = checkResults.reduce((n,i)=>n+(i.fixType==='auto'?i.segs.length:0),0);
@@ -1206,6 +1213,12 @@ function renderPost() {
 function updateProgress() {}
 
 // ─── LISTEN (Web Speech) ────────────────────────────────────────────────────
+function setListenState(playing) {
+  isSpeaking = playing;
+  listenBtn.classList.toggle('playing', playing);
+  listenBtn.setAttribute('aria-label', playing ? 'Stop listening' : 'Listen to post with screen reader simulation');
+}
+
 function toggleListen() {
   if (!window.speechSynthesis) {
     alert('Sorry, your browser does not support text-to-speech.');
@@ -1213,27 +1226,16 @@ function toggleListen() {
   }
   if (isSpeaking) {
     window.speechSynthesis.cancel();
-    isSpeaking = false;
-    listenBtn.textContent = 'Listen';
-    listenBtn.classList.remove('stop');
-    listenBtn.setAttribute('aria-label','Listen to post');
+    setListenState(false);
     return;
   }
   const text = postInput.value;
   if (!text.trim()) return;
   const utt = new SpeechSynthesisUtterance(text);
   utt.rate = 0.9;
-  utt.onend = () => {
-    isSpeaking = false;
-    listenBtn.textContent = 'Listen';
-    listenBtn.classList.remove('stop');
-    listenBtn.setAttribute('aria-label','Listen to post');
-  };
+  utt.onend = () => setListenState(false);
   window.speechSynthesis.speak(utt);
-  isSpeaking = true;
-  listenBtn.textContent = 'Stop';
-  listenBtn.classList.add('stop');
-  listenBtn.setAttribute('aria-label','Stop listening');
+  setListenState(true);
 }
 
 // ─── APPLY FIXES / RESET ────────────────────────────────────────────────────
@@ -1316,7 +1318,9 @@ function clearPost() {
   fixedHTML = '';
   fixedText = '';
   issueBadge.classList.remove('visible');
-  listenStrip.classList.add('hidden');
+  if (isSpeaking) window.speechSynthesis.cancel();
+  listenBtn.classList.add('hidden');
+  setListenState(false);
   document.getElementById('nav-issues').classList.add('locked');
   document.getElementById('nav-ready').classList.add('locked');
   document.getElementById('whatWeCheck').style.display = '';
