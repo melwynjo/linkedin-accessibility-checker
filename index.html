@@ -1178,6 +1178,11 @@ function switchPanel(key) {
 
   if (key !== 'issues') clearHighlight();
   animateBars();
+
+  // Hide listen button on analyse tab; show it on issues tab after a check has run
+  if (!editorCard.classList.contains('applied')) {
+    listenBtn.classList.toggle('hidden', key === 'analyse');
+  }
 }
 
 // ─── HIGHLIGHT SYSTEM ───────────────────────────────────────────────────────
