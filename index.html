@@ -204,6 +204,11 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
 .check-item-icon.teal{background:#e0f5f4;color:#0d7377}
 .check-item-icon.pink{background:#fde8f4;color:#be185d}
 .check-item-icon.purple{background:#f0ebff;color:#7c3aed}
+.live-stats{display:flex;align-items:center;justify-content:center;gap:0;margin-top:14px;padding:12px 16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px}
+.live-stats-item{flex:1;text-align:center}
+.live-stats-divider{width:1px;height:28px;background:#bbf7d0;flex-shrink:0}
+.live-stats-num{display:block;font-size:18px;font-weight:700;color:#15803d;line-height:1.1;letter-spacing:-.02em}
+.live-stats-label{display:block;font-size:10px;font-weight:500;color:#4ade80;text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
 .check-item-text strong{display:block;font-size:11.5px;font-weight:600;color:var(--text1)}
 .check-item-text span{font-size:11px;color:var(--text3);line-height:1.4}
 
@@ -445,6 +450,18 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
           <div class="check-item"><div class="check-item-icon pink" aria-hidden="true">🤝</div><div class="check-item-text"><strong>Inclusive language</strong><span>May unintentionally exclude</span></div></div>
         </div>
       </details>
+
+      <div class="live-stats" id="liveStats" aria-live="polite">
+        <div class="live-stats-item">
+          <span class="live-stats-num" id="statPosts">—</span>
+          <span class="live-stats-label">posts checked</span>
+        </div>
+        <div class="live-stats-divider" aria-hidden="true"></div>
+        <div class="live-stats-item">
+          <span class="live-stats-num" id="statIssues">—</span>
+          <span class="live-stats-label">issues detected</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1106,8 +1123,7 @@ async function runCheck() {
   document.getElementById('whatWeCheck').style.display = 'none';
 
   // Stats
-  const autoFixCount = checkResults.reduce((n,i)=>n+(i.fixType==='auto'?i.segs.length:0),0);
-  incrementStats(autoFixCount);
+  incrementStats(checkResults.length);
 
   runBtn.classList.remove('loading');
   runBtn.disabled = false;
@@ -1523,13 +1539,38 @@ function copyFixed() {
 }
 
 // ─── STATS ──────────────────────────────────────────────────────────────────
-function initStats() {}
+function initStats() { fetchStats(); }
 
-function incrementStats(autoFixCount) {
-  const checks = parseInt(localStorage.getItem('lac_total_checks') || '0', 10) + 1;
-  const fixes  = parseInt(localStorage.getItem('lac_total_fixes')  || '0', 10) + autoFixCount;
-  localStorage.setItem('lac_total_checks', checks);
-  localStorage.setItem('lac_total_fixes',  fixes);
+const UPSTASH_URL   = 'https://famous-flounder-130690.upstash.io';
+const UPSTASH_TOKEN = 'gQAAAAAAAf6CAAIgcDFlZGFjMmFhNDk3NzE0MGFiOTIyOGUxNmI4ZGYyNWM0Ng';
+
+function upstash(cmd) {
+  return fetch(`${UPSTASH_URL}/${cmd}`, {
+    headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` }
+  }).then(r => r.json());
+}
+
+async function incrementStats(issueCount) {
+  try {
+    await Promise.all([
+      upstash('incr/posts_checked'),
+      issueCount > 0 ? upstash(`incrby/issues_detected/${issueCount}`) : Promise.resolve()
+    ]);
+    fetchStats();
+  } catch(e) {}
+}
+
+async function fetchStats() {
+  try {
+    const [posts, issues] = await Promise.all([
+      upstash('get/posts_checked'),
+      upstash('get/issues_detected')
+    ]);
+    const p = parseInt(posts.result) || 0;
+    const i = parseInt(issues.result) || 0;
+    document.getElementById('statPosts').textContent  = p.toLocaleString();
+    document.getElementById('statIssues').textContent = i.toLocaleString();
+  } catch(e) {}
 }
 
 // ─── CONTRIBUTORS ────────────────────────────────────────────────────────────
