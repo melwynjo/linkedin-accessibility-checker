@@ -1251,6 +1251,10 @@ function switchPanel(key) {
 
   // Listen button visible only on What to fix tab
   listenBtn.classList.toggle('hidden', key !== 'issues');
+
+  // Stats visible only on analyse, coming soon, contributors tabs
+  document.getElementById('liveStats').style.display =
+    (key === 'issues' || key === 'ready') ? 'none' : '';
 }
 
 function stayOnFixed() {
