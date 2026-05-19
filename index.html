@@ -71,8 +71,25 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:1
 .editor-scroll{flex:1;overflow-y:auto;padding:22px}
 
 .editor-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px}
-.field-label{font-size:14px;font-weight:600;color:var(--text1);display:block;margin-bottom:5px}
+.editor-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.field-label{font-size:14px;font-weight:600;color:var(--text1)}
 .field-hint{font-size:13px;color:var(--text3);margin-bottom:12px}
+.clear-btn{font-size:12px;color:var(--text4);background:none;border:1px solid var(--border);border-radius:5px;padding:3px 9px;cursor:pointer;transition:color .12s,border-color .12s}
+.clear-btn:hover{color:var(--error);border-color:var(--error)}
+.clear-btn.hidden{display:none}
+
+/* Applied diff view */
+.editor-card.applied .post-input-wrapper,
+.editor-card.applied .field-hint,
+.editor-card.applied #charCounter,
+.editor-card.applied #hlLegend{display:none}
+.diff-applied-view{display:none}
+.editor-card.applied .diff-applied-view{display:block}
+.diff-applied-legend{display:flex;gap:14px;align-items:center;padding:7px 10px;background:#f8f8f8;border-radius:6px;font-size:12px;color:var(--text3);margin-bottom:12px}
+.diff-review-sample{background:#fff8e1;color:#5d4a00;outline:1.5px solid #f0c040;border-radius:3px;padding:1px 5px;font-size:11px}
+.diff-applied-content{font-family:'Inter',-apple-system,sans-serif;font-size:15px;line-height:1.8;white-space:pre-wrap;word-break:break-word;color:var(--text1)}
+.edit-original-btn{margin-top:12px;display:inline-block;font-size:12.5px;color:var(--text4);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px}
+.edit-original-btn:hover{color:var(--text1)}
 
 /* Textarea overlay system */
 .post-input-wrapper{position:relative;border:1.5px solid var(--border);border-radius:7px;background:#fff;transition:border-color .15s,box-shadow .15s;cursor:text}
@@ -112,7 +129,7 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
 
 
 /* ── Right panel ── */
-.right-panel{width:380px;flex-shrink:0;background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.right-panel{width:420px;flex-shrink:0;background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
 .panel-state{display:none;flex-direction:column;height:100%}
 .panel-state.active{display:flex}
 .panel-header{padding:14px 16px 12px;border-bottom:1px solid var(--border-sub);flex-shrink:0}
@@ -316,9 +333,12 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
 <!-- ── EDITOR COLUMN ── -->
 <main class="editor-col" aria-label="Post editor">
   <div class="editor-scroll">
-    <div class="editor-card">
-      <label class="field-label" for="postInput">LinkedIn post content</label>
-      <p class="field-hint">Include emojis, hashtags, links, and line breaks.</p>
+    <div class="editor-card" id="editorCard">
+      <div class="editor-card-header">
+        <label class="field-label" id="fieldLabel" for="postInput">LinkedIn post content</label>
+        <button class="clear-btn hidden" id="clearBtn" onclick="clearPost()" aria-label="Clear post">Clear</button>
+      </div>
+      <p class="field-hint" id="fieldHint">Include emojis, hashtags, links, and line breaks.</p>
       <div class="post-input-wrapper" id="postWrapper" onclick="document.getElementById('postInput').focus()">
         <div class="post-mirror" id="postMirror" aria-hidden="true"></div>
         <div class="post-rendered" id="postRendered" aria-hidden="true"></div>
@@ -330,6 +350,15 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
         <div class="hl-chip"><span class="hl-swatch hl-jarg" aria-hidden="true"></span>Jargon</div>
         <div class="hl-chip"><span class="hl-swatch hl-long" aria-hidden="true"></span>Long sentence</div>
         <div class="hl-chip"><span class="hl-swatch hl-incl" aria-hidden="true"></span>Inclusive language</div>
+      </div>
+      <div class="diff-applied-view" id="diffAppliedView">
+        <div class="diff-applied-legend" aria-hidden="true">
+          <span class="diff-del-sample">removed</span>
+          <span class="diff-add-sample">added</span>
+          <span class="diff-review-sample">review</span>
+        </div>
+        <div class="diff-applied-content" id="diffAppliedContent"></div>
+        <button class="edit-original-btn" onclick="resetEditor()" aria-label="Go back to editing the original post">← Edit original</button>
       </div>
     </div>
   </div>
@@ -394,26 +423,19 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
       </div>
     </div>
     <div class="panel-footer" id="issuesFooter" style="display:none">
-      <button class="apply-btn" onclick="switchPanel('ready')" aria-label="Apply all fixes and view ready to post">Apply all fixes</button>
+      <button class="apply-btn" onclick="applyFixes()" aria-label="Apply all fixes">Apply all fixes</button>
     </div>
   </div>
 
   <!-- PANEL: Ready to post -->
   <div class="panel-state" id="panel-ready" role="region" aria-label="Ready to post">
     <div class="panel-header">
-      <div class="panel-title">Ready to post</div>
-      <div class="panel-sub">Your post with all fixes applied</div>
+      <div class="panel-title">Fixed post</div>
+      <div class="panel-sub">Copy and post when you're happy with it</div>
     </div>
     <div class="panel-body">
-      <div class="diff-info-strip">
-        <div class="diff-legend-row">
-          <span class="diff-del-sample">removed</span> Removed &nbsp;
-          <span class="diff-add-sample">added</span> Added
-        </div>
-        Copy and post when you are happy with it.
-      </div>
       <div class="fixed-post-box" id="fixedPostBox" aria-label="Fixed post content" role="region">
-        <div class="fixed-post-empty">Run the analyse step to see your fixed post.</div>
+        <div class="fixed-post-empty">Apply fixes to see your fixed post here.</div>
       </div>
     </div>
     <div class="panel-footer">
@@ -983,6 +1005,9 @@ async function runCheck() {
   hasRunCheck   = true;
   activeHighlight = null;
 
+  // Reset diff view if re-running
+  resetEditor();
+
   buildFixed(text, checkResults);
   buildResults(checkResults);
 
@@ -1001,9 +1026,6 @@ async function runCheck() {
 
   // Show listen strip
   listenStrip.classList.remove('hidden');
-
-  // Update fixed post panel
-  fixedPostBox.innerHTML = fixedHTML || '<div class="fixed-post-empty">No changes needed.</div>';
 
   // Stats
   const autoFixCount = checkResults.reduce((n,i)=>n+(i.fixType==='auto'?i.segs.length:0),0);
@@ -1204,6 +1226,58 @@ function toggleListen() {
   listenBtn.setAttribute('aria-label','Stop listening');
 }
 
+// ─── APPLY FIXES / RESET ────────────────────────────────────────────────────
+const editorCard        = document.getElementById('editorCard');
+const fieldLabel        = document.getElementById('fieldLabel');
+const clearBtn          = document.getElementById('clearBtn');
+const diffAppliedView   = document.getElementById('diffAppliedView');
+const diffAppliedContent = document.getElementById('diffAppliedContent');
+
+function applyFixes() {
+  if (!fixedHTML || !fixedText) return;
+
+  // Show diff in editor card
+  diffAppliedContent.innerHTML = fixedHTML;
+  editorCard.classList.add('applied');
+  fieldLabel.textContent = 'What changed';
+  clearHighlight();
+
+  // Show plain fixed text in right panel
+  fixedPostBox.textContent = fixedText;
+
+  switchPanel('ready');
+}
+
+function resetEditor() {
+  editorCard.classList.remove('applied');
+  fieldLabel.textContent = 'LinkedIn post content';
+  diffAppliedContent.innerHTML = '';
+}
+
+function clearPost() {
+  postInput.value = '';
+  postMirror.textContent = '​';
+  postRendered.textContent = '';
+  charCounter.textContent = '0 / 3000';
+  charCounter.className = 'char-counter';
+  clearBtn.classList.add('hidden');
+  resetEditor();
+  // Reset check state
+  checkResults = null;
+  hasRunCheck = false;
+  activeHighlight = null;
+  expandedCards = new Set();
+  fixedHTML = '';
+  fixedText = '';
+  issueBadge.classList.remove('visible');
+  listenStrip.classList.add('hidden');
+  document.getElementById('nav-issues').classList.add('locked');
+  document.getElementById('nav-ready').classList.add('locked');
+  document.getElementById('whatWeCheck').style.display = '';
+  issuesFooter.style.display = 'none';
+  switchPanel('analyse');
+}
+
 // ─── COPY FIXED TEXT ────────────────────────────────────────────────────────
 function copyFixed() {
   if (!fixedText) return;
@@ -1268,6 +1342,7 @@ postInput.addEventListener('input', () => {
   const len = postInput.value.length;
   charCounter.textContent = `${len.toLocaleString()} / 3000`;
   charCounter.className = 'char-counter' + (len >= 3000 ? ' error' : len >= 2700 ? ' warn' : '');
+  clearBtn.classList.toggle('hidden', len === 0);
 
   postMirror.textContent = postInput.value + '​';
   if (activeHighlight) renderPost();
