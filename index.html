@@ -394,7 +394,10 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
       <div class="editor-footer">
         <div class="hl-legend" id="hlLegend" aria-hidden="true" role="presentation"></div>
         <div class="editor-footer-right">
-          <span class="char-counter" id="charCounter" aria-live="polite">0 / 3000</span>
+          <button class="listen-inline-btn hidden" id="listenBtn" onclick="toggleListen()" aria-label="Listen with screen reader">
+            <span class="listen-label">Listen with screen reader</span>
+            <span class="listen-bars" aria-hidden="true"><b></b><b></b><b></b></span>
+          </button>
         </div>
       </div>
       <div class="diff-applied-view" id="diffAppliedView">
@@ -457,13 +460,7 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
       </div>
     </div>
     <div class="panel-footer" id="issuesFooter" style="display:none">
-      <div style="display:flex;gap:8px;align-items:center">
-        <button class="listen-inline-btn" id="listenBtn" onclick="toggleListen()" aria-label="Listen with screen reader">
-          <span class="listen-label">Listen</span>
-          <span class="listen-bars" aria-hidden="true"><b></b><b></b><b></b></span>
-        </button>
-        <button class="apply-btn" style="flex:1" onclick="applyFixes()" aria-label="Apply all fixes">Apply all fixes</button>
-      </div>
+      <button class="apply-btn" onclick="applyFixes()" aria-label="Apply all fixes">Apply all fixes</button>
     </div>
   </div>
 
@@ -654,6 +651,7 @@ const COPY = {
 // ─── STATE ──────────────────────────────────────────────────────────────────
 let checkResults  = null;
 let fixedHTML     = '';
+let fixedResult   = '';
 let fixedText     = '';
 let hasRunCheck   = false;
 let activeHighlight = null;
@@ -886,14 +884,8 @@ function analyse(text) {
       const sentence = m[0].trim();
       const words = sentence.split(/\s+/).filter(w=>w.length>0);
       if (words.length > 25) {
-        const mid = words[Math.floor(words.length/2)] || '';
-        longSentSegs.push({
-          start: m.index,
-          end:   m.index + m[0].length,
-          orig:  m[0],
-          repl:  null,
-          hint:  `This sentence has ${words.length} words. Try splitting it after "${mid}". The meaning stays exactly the same.`
-        });
+        const repl = autoSplitSentence(m[0]);
+        longSentSegs.push({ start: m.index, end: m.index + m[0].length, orig: m[0], repl });
       }
     }
     if (longSentSegs.length > 0) issues.push({ id:'long-sent', cat:'cog', severity:'warn', fixType:'review', segs:longSentSegs, excerpts:[longSentSegs[0].orig.slice(0,50)+'…'] });
@@ -977,6 +969,29 @@ function analyse(text) {
 }
 
 // ─── FIXED POST GENERATION ──────────────────────────────────────────────────
+function autoSplitSentence(orig) {
+  const words = orig.trim().split(/\s+/);
+  const fromIdx = Math.floor(words.length * 0.4);
+  const conjRx = /^(and|but|or|so|yet|however|although|because|since|while|when)\b/i;
+  // Try splitting before a conjunction
+  for (let i = fromIdx; i < words.length - 3; i++) {
+    if (conjRx.test(words[i])) {
+      const prev = words.slice(0, i).join(' ').replace(/,\s*$/, '') + '.';
+      const next = words.slice(i).join(' ');
+      return prev + ' ' + next.charAt(0).toUpperCase() + next.slice(1);
+    }
+  }
+  // Try splitting after a comma
+  for (let i = fromIdx; i < words.length - 3; i++) {
+    if (words[i].endsWith(',')) {
+      const prev = words.slice(0, i + 1).join(' ').replace(/,\s*$/, '') + '.';
+      const next = words.slice(i + 1).join(' ');
+      return prev + ' ' + next.charAt(0).toUpperCase() + next.slice(1);
+    }
+  }
+  return null;
+}
+
 function buildFixed(text, issues) {
   // Flatten all segments from all issues, tagging with issue info
   const allSegs = [];
@@ -998,53 +1013,57 @@ function buildFixed(text, issues) {
     }
   }
 
-  let html = '', plain = '', pos = 0;
+  let html = '', result = '', plain = '', pos = 0;
   for (const seg of filtered) {
-    const before = text.slice(pos, seg.start);
-    html  += escHtml(before);
-    plain += before;
+    const before = escHtml(text.slice(pos, seg.start));
+    html   += before;
+    result += before;
+    plain  += text.slice(pos, seg.start);
 
     const origText = seg.orig || text.slice(seg.start, seg.end);
 
     if (seg.fixType === 'auto') {
       if (origText === '') {
-        html  += `<span class="diff-add">${escHtml(seg.repl)}</span>`;
-        plain += seg.repl;
+        html   += `<span class="diff-add">${escHtml(seg.repl)}</span>`;
+        result += `<span class="diff-add">${escHtml(seg.repl)}</span>`;
+        plain  += seg.repl;
       } else if (seg.repl === '') {
-        html  += `<span class="diff-del">${escHtml(origText)}</span>`;
+        html   += `<span class="diff-del">${escHtml(origText)}</span>`;
+        // result: omit deleted text
       } else if (seg.repl === null) {
-        html  += escHtml(origText);
-        plain += origText;
+        html   += escHtml(origText);
+        result += escHtml(origText);
+        plain  += origText;
       } else if (seg.repl.startsWith(origText) && seg.repl.length > origText.length) {
-        // Pure insertion after existing char (e.g. no-punct: 'e' → 'e.')
-        html  += escHtml(origText) + `<span class="diff-add">${escHtml(seg.repl.slice(origText.length))}</span>`;
-        plain += seg.repl;
+        const ins = escHtml(seg.repl.slice(origText.length));
+        html   += escHtml(origText) + `<span class="diff-add">${ins}</span>`;
+        result += escHtml(origText) + `<span class="diff-add">${ins}</span>`;
+        plain  += seg.repl;
       } else {
-        html  += `<span class="diff-del">${escHtml(origText)}</span><span class="diff-add">${escHtml(seg.repl)}</span>`;
-        plain += seg.repl;
+        html   += `<span class="diff-del">${escHtml(origText)}</span><span class="diff-add">${escHtml(seg.repl)}</span>`;
+        result += `<span class="diff-add">${escHtml(seg.repl)}</span>`;
+        plain  += seg.repl;
       }
     } else if (seg.fixType === 'review') {
-      // Auto-applied but flagged yellow for human review
-      if (seg.repl != null) {
-        html  += `<span class="diff-review">${escHtml(seg.repl)}</span>`;
-        plain += seg.repl;
-      } else {
-        html  += `<span class="diff-review">${escHtml(origText)}</span>`;
-        plain += origText;
-      }
+      const display = seg.repl != null ? seg.repl : origText;
+      html   += `<span class="diff-review">${escHtml(display)}</span>`;
+      result += `<span class="diff-review">${escHtml(display)}</span>`;
+      plain  += display;
     } else {
-      // Needs manual fix — highlight only
-      html  += `<span class="diff-review">${escHtml(origText)}</span>`;
-      plain += origText;
+      html   += `<span class="diff-review">${escHtml(origText)}</span>`;
+      result += `<span class="diff-review">${escHtml(origText)}</span>`;
+      plain  += origText;
     }
     pos = seg.end;
   }
-  const tail = text.slice(pos);
-  html  += escHtml(tail);
-  plain += tail;
+  const tail = escHtml(text.slice(pos));
+  html   += tail;
+  result += tail;
+  plain  += text.slice(pos);
 
-  fixedHTML = html;
-  fixedText = plain;
+  fixedHTML   = html;
+  fixedResult = result;
+  fixedText   = plain;
 }
 
 // ─── RUN CHECK ──────────────────────────────────────────────────────────────
@@ -1091,6 +1110,7 @@ async function runCheck() {
 
   runBtn.classList.remove('loading');
   runBtn.disabled = false;
+  listenBtn.classList.remove('hidden');
 
   switchPanel('issues');
 }
@@ -1372,7 +1392,7 @@ function applyFixes() {
 
   // Populate editable fixed post on left panel
   const fixedPostEdit = document.getElementById('fixedPostEdit');
-  fixedPostEdit.innerText = fixedText;
+  fixedPostEdit.innerHTML = fixedResult;
 
   // Inject 3 CTAs into left panel footer
   const footer = document.getElementById('diffViewFooter');
@@ -1459,10 +1479,13 @@ function clearPost() {
   hasRunCheck = false;
   activeHighlight = null;
   expandedCards = new Set();
-  fixedHTML = '';
-  fixedText = '';
+  fixedHTML   = '';
+  fixedResult = '';
+  fixedText   = '';
   issueBadge.classList.remove('visible');
   if (isSpeaking) window.speechSynthesis.cancel();
+  listenBtn.classList.add('hidden');
+  setListenState(false);
   document.getElementById('nav-issues').classList.add('locked');
   document.getElementById('nav-ready').classList.add('locked');
   document.getElementById('whatWeCheck').style.display = '';
