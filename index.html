@@ -81,10 +81,10 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:1
 /* Applied diff view */
 .editor-card.applied .post-input-wrapper,
 .editor-card.applied .field-hint,
-.editor-card.applied #charCounter,
-.editor-card.applied #hlLegend{display:none}
+.editor-card.applied .editor-footer{display:none}
 .diff-applied-view{display:none;flex:1;flex-direction:column;min-height:0}
 .editor-card.applied .diff-applied-view{display:flex}
+.diff-view-footer{display:flex;justify-content:flex-end;flex-shrink:0;margin-top:10px}
 .diff-applied-legend{display:flex;gap:14px;align-items:center;padding:7px 10px;background:#f8f8f8;border-radius:6px;font-size:12px;color:var(--text3);margin-bottom:12px;flex-shrink:0}
 .diff-review-sample{background:#fff8e1;color:#5d4a00;outline:1.5px solid #f0c040;border-radius:3px;padding:1px 5px;font-size:11px}
 .diff-applied-content{font-family:'Inter',-apple-system,sans-serif;font-size:15px;line-height:1.8;white-space:pre-wrap;word-break:break-word;color:var(--text1);flex:1;overflow-y:auto;min-height:0}
@@ -239,11 +239,13 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
 .fix-summary-block{margin-bottom:18px}
 .fix-summary-heading{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .fix-summary-heading.auto{color:#15803d}
+.fix-summary-heading.review{color:#b45309}
 .fix-summary-heading.voice{color:#d97706}
 .fix-summary-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-sub)}
 .fix-summary-row:last-child{border-bottom:none}
 .fix-summary-name{font-size:12.5px;color:var(--text2)}
 .fix-summary-count{font-size:11px;font-weight:600;color:#15803d;background:#e6f4ea;border-radius:10px;padding:1px 7px}
+.fix-summary-count.review{color:#b45309;background:#fef3c7}
 .fix-voice-card{border:1px solid #fde68a;background:#fffbeb;border-radius:7px;padding:10px 12px;margin-bottom:8px}
 .fix-voice-name{font-size:12.5px;font-weight:600;color:var(--text1);margin-bottom:4px}
 .fix-voice-desc{font-size:12px;color:var(--text3);line-height:1.55}
@@ -375,6 +377,7 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
           <span class="diff-review-sample">review</span>
         </div>
         <div class="diff-applied-content" id="diffAppliedContent"></div>
+        <div class="diff-view-footer" id="diffViewFooter"></div>
         <button class="edit-original-btn" onclick="resetEditor()" aria-label="Go back to editing the original post">← Edit original</button>
       </div>
     </div>
@@ -738,12 +741,12 @@ function analyse(text) {
       const firstChar = line.trimStart()[0];
       if (firstChar !== '#' && firstChar !== '@' && !/^https?:\/\//i.test(line.trim())) {
         if (stripped2.length > 3 && !/[.!?:"""»]$/.test(lastChar) && !/^\s*$/.test(stripped2)) {
-          const lastCharPos = lineStart + stripped2.length - 1;
+          const insertPos = lineStart + stripped2.length;
           noPunctSegs.push({
-            start: lastCharPos,
-            end:   lastCharPos + 1,
-            orig:  lastChar,
-            repl:  lastChar + '.'
+            start: insertPos,
+            end:   insertPos,
+            orig:  '',
+            repl:  '.'
           });
         }
       }
@@ -855,7 +858,7 @@ function analyse(text) {
         });
       }
     }
-    if (longSentSegs.length > 0) issues.push({ id:'long-sent', cat:'cog', severity:'warn', fixType:'voice', segs:longSentSegs, excerpts:[longSentSegs[0].orig.slice(0,50)+'…'] });
+    if (longSentSegs.length > 0) issues.push({ id:'long-sent', cat:'cog', severity:'warn', fixType:'review', segs:longSentSegs, excerpts:[longSentSegs[0].orig.slice(0,50)+'…'] });
   }
 
   // Check 10: lowercase hashtags
@@ -890,8 +893,8 @@ function analyse(text) {
           segs.push({
             start, end,
             orig: m[0],
-            repl: null,
-            hint: suggestion ? `Consider '${suggestion}' instead of '${m[0]}' — same meaning, clearer to everyone.` : `Consider a plain alternative to '${m[0]}'.`
+            repl: suggestion || null,
+            hint: suggestion ? `Replaced with '${suggestion}' — review if it fits.` : `Consider a plain alternative to '${m[0]}'.`
           });
           usedRanges.push([start, end]);
         }
@@ -900,7 +903,7 @@ function analyse(text) {
     if (segs.length > 0) {
       const excerpts = segs.slice(0,4).map(s=>s.orig);
       if (segs.length > 4) excerpts.push('…');
-      issues.push({ id:'jargon', cat:'cog', severity:'info', fixType:'voice', segs, excerpts });
+      issues.push({ id:'jargon', cat:'cog', severity:'info', fixType:'review', segs, excerpts });
     }
   }
 
@@ -978,10 +981,18 @@ function buildFixed(text, issues) {
         html  += `<span class="diff-del">${escHtml(origText)}</span><span class="diff-add">${escHtml(seg.repl)}</span>`;
         plain += seg.repl;
       }
+    } else if (seg.fixType === 'review') {
+      // Auto-applied but flagged yellow for human review
+      if (seg.repl != null) {
+        html  += `<span class="diff-review">${escHtml(seg.repl)}</span>`;
+        plain += seg.repl;
+      } else {
+        html  += `<span class="diff-review">${escHtml(origText)}</span>`;
+        plain += origText;
+      }
     } else {
-      // NEEDS YOUR VOICE
+      // Needs manual fix — highlight only
       html  += `<span class="diff-review">${escHtml(origText)}</span>`;
-      if (seg.hint) html += `<span class="diff-hint">💡 Suggestion: ${escHtml(seg.hint)}</span>`;
       plain += origText;
     }
     pos = seg.end;
@@ -1245,9 +1256,13 @@ function applyFixes() {
   fieldLabel.textContent = 'What changed';
   clearHighlight();
 
+  // Move listen button to bottom-right of diff view
+  document.getElementById('diffViewFooter').appendChild(listenBtn);
+
   // Build fix summary for right panel
-  const autoIssues  = checkResults.filter(i => i.fixType === 'auto');
-  const voiceIssues = checkResults.filter(i => i.fixType === 'voice');
+  const autoIssues   = checkResults.filter(i => i.fixType === 'auto');
+  const reviewIssues = checkResults.filter(i => i.fixType === 'review');
+  const voiceIssues  = checkResults.filter(i => i.fixType === 'voice');
   let html = '';
 
   if (autoIssues.length > 0) {
@@ -1261,6 +1276,21 @@ function applyFixes() {
         <div class="fix-summary-row">
           <span class="fix-summary-name">${escHtml(COPY.titles[i.id])}</span>
           <span class="fix-summary-count">${i.segs.length} fixed</span>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  if (reviewIssues.length > 0) {
+    const totalReview = reviewIssues.reduce((n, i) => n + i.segs.length, 0);
+    html += `<div class="fix-summary-block">
+      <div class="fix-summary-heading review">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true"><circle cx="6.5" cy="6.5" r="5.5" stroke="#b45309" stroke-width="1.3"/><path d="M6.5 4v3" stroke="#b45309" stroke-width="1.3" stroke-linecap="round"/><circle cx="6.5" cy="9" r=".7" fill="#b45309"/></svg>
+        ${totalReview} change${totalReview !== 1 ? 's' : ''} made — highlighted for your review
+      </div>
+      ${reviewIssues.map(i => `
+        <div class="fix-summary-row">
+          <span class="fix-summary-name">${escHtml(COPY.titles[i.id])}</span>
+          <span class="fix-summary-count review">${i.segs.length} changed</span>
         </div>`).join('')}
     </div>`;
   }
@@ -1291,6 +1321,8 @@ function resetEditor() {
   editorCard.classList.remove('applied');
   fieldLabel.textContent = 'LinkedIn post content';
   diffAppliedContent.innerHTML = '';
+  // Move listen button back to editor footer
+  document.querySelector('.editor-footer-right').appendChild(listenBtn);
 }
 
 function clearPost() {
