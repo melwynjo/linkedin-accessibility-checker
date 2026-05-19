@@ -81,7 +81,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:1
 /* Applied diff view */
 .editor-card.applied .post-input-wrapper,
 .editor-card.applied .field-hint,
-.editor-card.applied .editor-footer{display:none}
+.editor-card.applied .editor-footer,
+.editor-card.applied .clear-btn{display:none}
 .diff-applied-view{display:none;flex:1;flex-direction:column;min-height:0}
 .editor-card.applied .diff-applied-view{display:flex}
 .diff-view-footer{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-top:12px}
@@ -389,7 +390,6 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
         </div>
       </div>
       <div class="diff-applied-view" id="diffAppliedView">
-        <div class="diff-section-label">What changed</div>
         <div class="diff-applied-legend" aria-hidden="true">
           <span class="diff-del-sample">removed</span>
           <span class="diff-add-sample">added</span>
@@ -399,7 +399,6 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
         <div class="fixed-edit-label">Your fixed post <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text5);font-size:11px">— click to edit</span></div>
         <div class="fixed-post-edit" id="fixedPostEdit" contenteditable="true" role="textbox" aria-label="Fixed post, editable" aria-multiline="true" spellcheck="true"></div>
         <div class="diff-view-footer" id="diffViewFooter"></div>
-        <button class="edit-original-btn" onclick="resetEditor()" aria-label="Go back to editing the original post">← Edit original</button>
       </div>
     </div>
   </div>
@@ -1349,10 +1348,9 @@ function applyFixes() {
   const fixedPostEdit = document.getElementById('fixedPostEdit');
   fixedPostEdit.innerText = fixedText;
 
-  // Inject action row into left panel footer
+  // Inject 3 CTAs into left panel footer
   const footer = document.getElementById('diffViewFooter');
-  footer.innerHTML = `<button class="copy-btn" id="copyBtn" onclick="copyFixed()" aria-label="Copy fixed post to clipboard">Copy</button><a href="https://www.linkedin.com/feed/" target="_blank" rel="noopener noreferrer" class="post-linkedin-btn" aria-label="Open LinkedIn to post">Post to LinkedIn</a>`;
-  footer.insertBefore(listenBtn, footer.firstChild);
+  footer.innerHTML = `<button class="copy-btn" onclick="resetEditor()">Edit post</button><button class="copy-btn" id="copyBtn" onclick="copyFixed()">Copy post</button><a href="https://www.linkedin.com/feed/" target="_blank" rel="noopener noreferrer" class="post-linkedin-btn">Post to LinkedIn</a>`;
   issueBadge.classList.remove('visible');
 
   // Build fix summary for right panel
@@ -1420,7 +1418,6 @@ function resetEditor() {
   fieldLabel.textContent = 'LinkedIn post content';
   diffAppliedContent.innerHTML = '';
   document.getElementById('fixedPostEdit').innerText = '';
-  document.querySelector('.editor-footer-right').appendChild(listenBtn);
   document.getElementById('diffViewFooter').innerHTML = '';
 }
 
