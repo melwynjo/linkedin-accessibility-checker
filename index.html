@@ -398,13 +398,6 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
         </div>
       </div>
       <div class="diff-applied-view" id="diffAppliedView">
-        <div class="diff-applied-legend" aria-hidden="true">
-          <span class="diff-del-sample">removed</span>
-          <span class="diff-add-sample">added</span>
-          <span class="diff-review-sample">review</span>
-        </div>
-        <div class="diff-applied-content" id="diffAppliedContent"></div>
-        <div class="fixed-edit-label">Your fixed post <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text5);font-size:11px">— click to edit</span></div>
         <div class="fixed-post-edit" id="fixedPostEdit" contenteditable="true" role="textbox" aria-label="Fixed post, editable" aria-multiline="true" spellcheck="true"></div>
       </div>
       <div class="diff-view-footer" id="diffViewFooter"></div>
@@ -1373,9 +1366,8 @@ function applyFixes() {
   document.getElementById('nav-ready').classList.remove('locked');
 
   // Show diff in editor card
-  diffAppliedContent.innerHTML = fixedHTML;
   editorCard.classList.add('applied');
-  fieldLabel.textContent = 'What changed';
+  fieldLabel.textContent = 'Fixed post';
   clearHighlight();
 
   // Populate editable fixed post on left panel
@@ -1450,7 +1442,6 @@ function applyFixes() {
 function resetEditor() {
   editorCard.classList.remove('applied');
   fieldLabel.textContent = 'LinkedIn post content';
-  diffAppliedContent.innerHTML = '';
   document.getElementById('fixedPostEdit').innerText = '';
   document.getElementById('diffViewFooter').innerHTML = '';
 }
