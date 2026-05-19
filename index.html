@@ -74,8 +74,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:1
 .editor-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
 .field-label{font-size:14px;font-weight:600;color:var(--text1)}
 .field-hint{font-size:13px;color:var(--text3);margin-bottom:12px}
-.clear-btn{font-size:12px;color:var(--text4);background:none;border:1px solid var(--border);border-radius:5px;padding:3px 9px;cursor:pointer;transition:color .12s,border-color .12s}
-.clear-btn:hover{color:var(--error);border-color:var(--error)}
+.clear-btn{padding:5px 14px;background:#fff;border:1.5px solid var(--border);border-radius:22px;font-size:12.5px;color:var(--text2);cursor:pointer;font-weight:500;transition:border-color .12s,background .12s,color .12s}
+.clear-btn:hover{border-color:var(--error);background:#fff5f5;color:var(--error)}
 .clear-btn.hidden{display:none}
 
 /* Applied diff view */
@@ -84,7 +84,12 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:1
 .editor-card.applied .editor-footer{display:none}
 .diff-applied-view{display:none;flex:1;flex-direction:column;min-height:0}
 .editor-card.applied .diff-applied-view{display:flex}
-.diff-view-footer{display:flex;justify-content:flex-end;flex-shrink:0;margin-top:10px}
+.diff-view-footer{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-top:12px}
+.diff-view-footer .copy-btn,.diff-view-footer .post-linkedin-btn{flex:1;text-align:center}
+.diff-section-label,.fixed-edit-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);margin-bottom:8px;flex-shrink:0}
+.fixed-edit-label{margin-top:18px}
+.fixed-post-edit{font-family:'Inter',-apple-system,sans-serif;font-size:15px;line-height:1.8;white-space:pre-wrap;word-break:break-word;color:var(--text1);border:1.5px solid var(--border);border-radius:7px;padding:12px 14px;min-height:80px;outline:none;flex-shrink:0}
+.fixed-post-edit:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(10,102,194,.1)}
 .diff-applied-legend{display:flex;gap:14px;align-items:center;padding:7px 10px;background:#f8f8f8;border-radius:6px;font-size:12px;color:var(--text3);margin-bottom:12px;flex-shrink:0}
 .diff-review-sample{background:#fff8e1;color:#5d4a00;outline:1.5px solid #f0c040;border-radius:3px;padding:1px 5px;font-size:11px}
 .diff-applied-content{font-family:'Inter',-apple-system,sans-serif;font-size:15px;line-height:1.8;white-space:pre-wrap;word-break:break-word;color:var(--text1);flex:1;overflow-y:auto;min-height:0}
@@ -135,9 +140,9 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
 .hl-swatch.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
 
 /* Listen inline button */
-.listen-inline-btn{display:flex;align-items:center;gap:7px;padding:8px 16px;background:#fff;color:var(--blue);border:1.5px solid var(--blue-border);border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .12s,border-color .12s;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.listen-inline-btn:hover{background:var(--blue-bg);border-color:#9fc0e8}
-.listen-inline-btn.playing{background:var(--blue-bg);border-color:var(--blue)}
+.listen-inline-btn{display:flex;align-items:center;gap:7px;padding:9px 16px;background:#fff;color:var(--text2);border:1.5px solid var(--border);border-radius:22px;font-size:12.5px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .12s,border-color .12s,color .12s}
+.listen-inline-btn:hover{border-color:#aaa;background:#fafafa}
+.listen-inline-btn.playing{background:#eef4fb;border-color:var(--blue);color:var(--blue)}
 .listen-label{}
 .listen-inline-btn.playing .listen-label{display:none}
 .listen-bars{display:none;align-items:flex-end;gap:2px;height:12px}
@@ -207,6 +212,9 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
 .score-bar.green{background:#15803d}
 .score-bar.amber{background:#d97706}
 .score-bar.red{background:var(--error)}
+
+.score-title{font-size:11px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.score-divider{border:none;border-top:1px solid var(--border-sub);margin:14px 0 10px}
 
 /* Issue groups */
 .issue-group-label{font-size:11px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin:12px 0 6px;display:flex;align-items:center;gap:5px}
@@ -381,12 +389,15 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
         </div>
       </div>
       <div class="diff-applied-view" id="diffAppliedView">
+        <div class="diff-section-label">What changed</div>
         <div class="diff-applied-legend" aria-hidden="true">
           <span class="diff-del-sample">removed</span>
           <span class="diff-add-sample">added</span>
           <span class="diff-review-sample">review</span>
         </div>
         <div class="diff-applied-content" id="diffAppliedContent"></div>
+        <div class="fixed-edit-label">Your fixed post <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text5);font-size:11px">— click to edit</span></div>
+        <div class="fixed-post-edit" id="fixedPostEdit" contenteditable="true" role="textbox" aria-label="Fixed post, editable" aria-multiline="true" spellcheck="true"></div>
         <div class="diff-view-footer" id="diffViewFooter"></div>
         <button class="edit-original-btn" onclick="resetEditor()" aria-label="Go back to editing the original post">← Edit original</button>
       </div>
@@ -459,12 +470,6 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
     <div class="panel-body">
       <div class="fixed-post-box" id="fixedPostBox" aria-label="Fixed post content" role="region">
         <div class="fixed-post-empty">Apply fixes to see your fixed post here.</div>
-      </div>
-    </div>
-    <div class="panel-footer">
-      <div class="action-row">
-        <button class="copy-btn" id="copyBtn" onclick="copyFixed()" aria-label="Copy fixed post to clipboard">Copy</button>
-        <a href="https://www.linkedin.com/feed/" target="_blank" rel="noopener noreferrer" class="post-linkedin-btn" aria-label="Open LinkedIn to post">Post to LinkedIn</a>
       </div>
     </div>
   </div>
@@ -586,7 +591,7 @@ const COPY = {
   },
   descs:{
     'deco-struct':'Screen readers announce the symbol name instead of reading it as a bullet.',
-    'emoji-mid':'The emoji name is read aloud before the sentence, breaking the flow.',
+    'emoji-mid':'When an emoji appears before or within a sentence, screen readers announce its name mid-flow, breaking the reading experience.',
     'emoji-multi':'Multiple emoji names read in sequence create noise, not emphasis.',
     'no-punct':'Without punctuation, screen readers merge sentences with no pause.',
     'link-context':'The surrounding text does not tell the reader where this link goes before they click.',
@@ -599,7 +604,7 @@ const COPY = {
   },
   fixes:{
     'deco-struct':'Swap emoji or symbol bullets for a plain dash. Your post will look just as structured and read cleanly out loud.',
-    'emoji-mid':'Move emojis to after the full stop at the end of the sentence. They still add personality without interrupting the read.',
+    'emoji-mid':'Move emojis to the end of the sentence. They still add personality without interrupting the flow.',
     'emoji-multi':'Keep to one emoji per sentence. A single one lands with more impact anyway.',
     'no-punct':'Add a full stop, question mark, or exclamation mark to close each sentence. One character makes a real difference for listeners.',
     'link-context':"Add a short phrase before the link that describes what it leads to: 'Read our accessibility guide here' tells the reader what to expect before they click.",
@@ -712,7 +717,7 @@ function analyse(text) {
         const beforeClean = line.slice(0, em.index).replace(EMOJI_RX_G, '').trimEnd();
         if (/[.!?]$/.test(beforeClean)) continue; // emoji appears after end-of-sentence punct — OK
         // Only flag if there is actual non-emoji, non-whitespace text after this emoji
-        const afterClean = line.slice(em.index + em[0].length).replace(EMOJI_RX_G, '').trimEnd();
+        const afterClean = line.slice(em.index + em[0].length).replace(EMOJI_RX_G, '').trimEnd().replace(/^[\s)\].,!?;:…]+$/, '');
         if (afterClean.length > 0) {
           hasMid = true;
           break;
@@ -746,7 +751,7 @@ function analyse(text) {
     if (line.length > 10) {
       const stripped2 = stripTrailingEmoji(line.trimEnd());
       // Strip trailing closing brackets/parens to find the real last punctuation
-      const stripped3 = stripped2.replace(/[)\]]+$/, '').trimEnd();
+      const stripped3 = stripped2.replace(/[)\]"""''»›]+$/, '').trimEnd();
       const lastChar  = stripped3.slice(-1);
       const firstChar = line.trimStart()[0];
       if (firstChar !== '#' && firstChar !== '@' && !/^https?:\/\//i.test(line.trim())) {
@@ -775,15 +780,15 @@ function analyse(text) {
     const rx = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})([^\S\n]*(\p{Emoji_Presentation}|\p{Extended_Pictographic}))+/gu;
     let m;
     while ((m = rx.exec(text)) !== null) {
+      const firstEmoji = [...m[0]][0];
       multiEmojiSegs.push({
         start: m.index,
         end:   m.index + m[0].length,
         orig:  m[0],
-        repl:  null,
-        hint:  `${[...m[0]].length} emojis in a row. Consider keeping just the first one. The message stays the same.`
+        repl:  firstEmoji
       });
     }
-    if (multiEmojiSegs.length > 0) issues.push({ id:'emoji-multi', cat:'vis', severity:'warn', fixType:'voice', segs:multiEmojiSegs, excerpts:[...multiEmojiSegs[0].orig].slice(0,4).join('') });
+    if (multiEmojiSegs.length > 0) issues.push({ id:'emoji-multi', cat:'vis', severity:'warn', fixType:'auto', segs:multiEmojiSegs, excerpts:[...multiEmojiSegs[0].orig].slice(0,4).join('') });
   }
 
   // Check 5: link with no context
@@ -1071,9 +1076,13 @@ async function runCheck() {
 // ─── BUILD RESULTS UI ───────────────────────────────────────────────────────
 function buildResults(issues) {
   // Clear old
-  issuesBody.querySelectorAll('.issue-group-wrapper').forEach(g=>g.remove());
+  issuesBody.querySelectorAll('.issue-group-wrapper, .score-section, .score-divider').forEach(el=>el.remove());
 
   issuesEmpty.style.display = 'none';
+
+  // Always show scores at top
+  issuesBody.insertAdjacentHTML('afterbegin', renderScoresHTML(issues, 'Accessibility at a glance'));
+  animateBars();
 
   if (issues.length === 0) {
     issuesEmpty.innerHTML = '<svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="16" stroke="#15803d" stroke-width="2"/><path d="M13 20l5 5 9-9" stroke="#15803d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p style="color:#15803d;font-size:13px;font-weight:500;margin-top:8px">No issues found. Great work!</p>';
@@ -1097,6 +1106,7 @@ function buildResults(issues) {
   }
 
   issuesBody.insertAdjacentHTML('beforeend',
+    '<hr class="score-divider">' +
     renderGroup(visGroup, 'Visual') +
     renderGroup(cogGroup, 'Cognitive')
   );
@@ -1167,6 +1177,7 @@ function switchPanel(key) {
   if (navEl) navEl.classList.add('active');
 
   if (key !== 'issues') clearHighlight();
+  animateBars();
 }
 
 // ─── HIGHLIGHT SYSTEM ───────────────────────────────────────────────────────
@@ -1235,6 +1246,54 @@ function renderPost() {
   postRendered.innerHTML = html;
 }
 
+// ─── ACCESSIBILITY SCORES ───────────────────────────────────────────────────
+function calcScores(issues) {
+  const PENALTY = { error: 25, warn: 15, info: 8 };
+  const groups = {
+    visual:    ['deco-struct','emoji-mid','emoji-multi','no-punct','deco-sym','unicode-bold','hashtag-case','link-context'],
+    cognitive: ['long-sent','jargon','inclusive','hashtag-case'],
+    general:   ['jargon','inclusive','long-sent','link-context']
+  };
+  return Object.fromEntries(Object.entries(groups).map(([key, ids]) => {
+    const deduction = issues.filter(i => ids.includes(i.id))
+      .reduce((sum, i) => sum + (PENALTY[i.severity] || 8), 0);
+    return [key, Math.max(0, 100 - deduction)];
+  }));
+}
+
+function renderScoresHTML(issues, title) {
+  const scores = calcScores(issues);
+  const rows = [
+    { key:'visual',    label:'Screen reader users',
+      icon:'<svg viewBox="0 0 12 12" fill="none"><ellipse cx="6" cy="6" rx="5" ry="3.5" stroke="currentColor" stroke-width="1.2"/><circle cx="6" cy="6" r="1.5" fill="currentColor"/></svg>' },
+    { key:'cognitive', label:'Cognitive accessibility',
+      icon:'<svg viewBox="0 0 12 12" fill="none"><path d="M4 9.5C3 9 1.5 7.5 1.5 5.5a4.5 4.5 0 0 1 9 0c0 2-1.5 3.5-2.5 4M4 9.5V11m4-1.5V11M4 11h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>' },
+    { key:'general',   label:'General readers',
+      icon:'<svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="3.5" r="1.8" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 10.5c0-1.933 1.567-3.5 3.5-3.5s3.5 1.567 3.5 3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>' }
+  ];
+  const titleHTML = title ? `<div class="score-title">${title}</div>` : '';
+  return `<div class="score-section">${titleHTML}${rows.map(({ key, label, icon }) => {
+    const pct = scores[key];
+    const cls = pct >= 80 ? 'green' : pct >= 50 ? 'amber' : 'red';
+    return `<div class="score-row">
+      <div class="score-icon" aria-hidden="true">${icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span class="score-label">${label}</span>
+          <span class="score-pct ${cls}">${pct}%</span>
+        </div>
+        <div class="score-bar-wrap"><div class="score-bar ${cls}" style="width:0" data-w="${pct}"></div></div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function animateBars() {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.querySelectorAll('.score-bar[data-w]').forEach(b => { b.style.width = b.dataset.w + '%'; });
+  }));
+}
+
 // ─── PROGRESS TRACKING ──────────────────────────────────────────────────────
 function updateProgress() {}
 
@@ -1255,7 +1314,8 @@ function toggleListen() {
     setListenState(false);
     return;
   }
-  const text = postInput.value;
+  const fixedPostEdit = document.getElementById('fixedPostEdit');
+  const text = editorCard.classList.contains('applied') ? fixedPostEdit.innerText : postInput.value;
   if (!text.trim()) return;
   const utt = new SpeechSynthesisUtterance(text);
   utt.rate = 0.9;
@@ -1283,8 +1343,14 @@ function applyFixes() {
   fieldLabel.textContent = 'What changed';
   clearHighlight();
 
-  // Move listen button to bottom-right of diff view
-  document.getElementById('diffViewFooter').appendChild(listenBtn);
+  // Populate editable fixed post on left panel
+  const fixedPostEdit = document.getElementById('fixedPostEdit');
+  fixedPostEdit.innerText = fixedText;
+
+  // Inject action row into left panel footer
+  const footer = document.getElementById('diffViewFooter');
+  footer.innerHTML = `<button class="copy-btn" id="copyBtn" onclick="copyFixed()" aria-label="Copy fixed post to clipboard">Copy</button><a href="https://www.linkedin.com/feed/" target="_blank" rel="noopener noreferrer" class="post-linkedin-btn" aria-label="Open LinkedIn to post">Post to LinkedIn</a>`;
+  footer.insertBefore(listenBtn, footer.firstChild);
   issueBadge.classList.remove('visible');
 
   // Build fix summary for right panel
@@ -1341,7 +1407,9 @@ function applyFixes() {
     html = '<p class="fixed-post-empty" style="color:#15803d">All issues were auto-fixed. Nothing left to review.</p>';
   }
 
-  fixedPostBox.innerHTML = html;
+  const updatedScores = renderScoresHTML(voiceIssues, 'Accessibility after fixes');
+  fixedPostBox.innerHTML = updatedScores + '<hr class="score-divider">' + html;
+  animateBars();
   switchPanel('ready');
 }
 
@@ -1349,8 +1417,9 @@ function resetEditor() {
   editorCard.classList.remove('applied');
   fieldLabel.textContent = 'LinkedIn post content';
   diffAppliedContent.innerHTML = '';
-  // Move listen button back to editor footer
+  document.getElementById('fixedPostEdit').innerText = '';
   document.querySelector('.editor-footer-right').appendChild(listenBtn);
+  document.getElementById('diffViewFooter').innerHTML = '';
 }
 
 function clearPost() {
@@ -1381,8 +1450,10 @@ function clearPost() {
 
 // ─── COPY FIXED TEXT ────────────────────────────────────────────────────────
 function copyFixed() {
-  if (!fixedText) return;
-  navigator.clipboard.writeText(fixedText).then(() => {
+  const fixedPostEdit = document.getElementById('fixedPostEdit');
+  const text = fixedPostEdit ? fixedPostEdit.innerText : fixedText;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('copyBtn');
     btn.textContent = 'Copied!';
     btn.classList.add('copied');
@@ -1392,7 +1463,7 @@ function copyFixed() {
     }, 2000);
   }).catch(() => {
     const ta = document.createElement('textarea');
-    ta.value = fixedText;
+    ta.value = text;
     ta.style.position = 'fixed';
     ta.style.opacity = '0';
     document.body.appendChild(ta);
