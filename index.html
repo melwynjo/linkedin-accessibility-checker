@@ -1258,6 +1258,7 @@ function applyFixes() {
 
   // Move listen button to bottom-right of diff view
   document.getElementById('diffViewFooter').appendChild(listenBtn);
+  issueBadge.classList.remove('visible');
 
   // Build fix summary for right panel
   const autoIssues   = checkResults.filter(i => i.fixType === 'auto');
