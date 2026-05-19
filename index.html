@@ -57,6 +57,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:1
 .issue-badge.visible{display:inline-block}
 
 .header-actions{padding:0 16px;height:100%;display:flex;align-items:center;gap:10px;border-left:1px solid var(--border-sub);flex-shrink:0}
+.resource-label{font-size:11.5px;color:var(--text5);white-space:nowrap}
 .accessible-link{font-size:11.5px;color:var(--text4);text-decoration:none;white-space:nowrap}
 .accessible-link:hover{color:var(--blue);text-decoration:underline}
 .feedback-pill{padding:6px 12px;border:1px solid var(--border);border-radius:20px;font-size:11.5px;color:var(--text2);text-decoration:none;transition:border-color .12s,background .12s;white-space:nowrap}
@@ -297,12 +298,13 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
     <div class="nav-item active" id="nav-analyse" role="button" tabindex="0" onclick="switchPanel('analyse')">Analyse</div>
     <div class="nav-item locked" id="nav-issues" role="button" tabindex="0" onclick="switchPanel('issues')">Issues <span class="issue-badge" id="issueBadge" aria-live="polite">0</span></div>
     <div class="nav-item locked" id="nav-ready" role="button" tabindex="0" onclick="switchPanel('ready')">Ready to post</div>
+    <div style="flex:1"></div>
     <div class="nav-item" id="nav-coming" role="button" tabindex="0" onclick="switchPanel('coming')">Coming soon</div>
     <div class="nav-item" id="nav-contributors" role="button" tabindex="0" onclick="switchPanel('contributors')">Contributors</div>
     <span id="navIssuesSub" class="visually-hidden" aria-live="polite">Run check first</span>
   </nav>
   <div class="header-actions">
-    <a href="https://accessible.social" target="_blank" rel="noopener noreferrer" class="accessible-link">Accessible Social by Alexa Heinrich ↗</a>
+    <span class="resource-label">Resource: <a href="https://accessible.social" target="_blank" rel="noopener noreferrer" class="accessible-link">Accessible Social by Alexa Heinrich ↗</a></span>
     <a href="https://tally.so/r/WOKdbv" target="_blank" rel="noopener noreferrer" class="feedback-pill">Share feedback</a>
   </div>
 </header>
@@ -345,7 +347,7 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
   <div class="panel-state active" id="panel-analyse" role="region" aria-label="Analyse">
     <div class="panel-header">
       <div class="panel-title">Analyse your post</div>
-      <div class="panel-sub">10 checks. Takes a few seconds.</div>
+      <div class="panel-sub">12 checks. Takes a few seconds.</div>
     </div>
     <div class="panel-body">
       <button class="run-btn" id="runBtn" onclick="runCheck()" aria-label="Check accessibility and fix issues">
@@ -355,7 +357,7 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
       </button>
 
       <details class="what-we-check" id="whatWeCheck">
-        <summary>What we check (10 rules)</summary>
+        <summary>What we check (12 rules)</summary>
         <div class="check-section">
           <div class="check-section-title">Visual accessibility</div>
           <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🔤</div><div class="check-item-text"><strong>Emoji as bullet</strong><span>Symbol name read before content</span></div></div>
@@ -364,6 +366,7 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
           <div class="check-item"><div class="check-item-icon blue" aria-hidden="true">·</div><div class="check-item-text"><strong>Missing punctuation</strong><span>Sentences merge without pause</span></div></div>
           <div class="check-item"><div class="check-item-icon blue" aria-hidden="true">🔗</div><div class="check-item-text"><strong>Bare link</strong><span>URL read character by character</span></div></div>
           <div class="check-item"><div class="check-item-icon grey" aria-hidden="true">→</div><div class="check-item-text"><strong>Decorative symbol</strong><span>Symbol name interrupts sentence</span></div></div>
+          <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">𝗕</div><div class="check-item-text"><strong>Unicode bold/italic</strong><span>Not real formatting — screen readers break</span></div></div>
         </div>
         <div class="check-section">
           <div class="check-section-title">Cognitive accessibility</div>
@@ -531,7 +534,8 @@ const COPY = {
     'long-sent':'Some sentences are quite long',
     'hashtag-case':'Hashtag written in all lowercase',
     'jargon':'Business jargon some people may not follow',
-    'inclusive':'Words that may unintentionally exclude'
+    'inclusive':'Words that may unintentionally exclude',
+    'unicode-bold':'Bold or italic text made from Unicode symbols'
   },
   descs:{
     'deco-struct':'Screen readers announce the symbol name instead of reading it as a bullet.',
@@ -543,7 +547,8 @@ const COPY = {
     'long-sent':'Long sentences are harder to process for people with cognitive disabilities.',
     'hashtag-case':'All-lowercase hashtags are read as one unbroken word.',
     'jargon':'Business jargon creates barriers for people outside your industry.',
-    'inclusive':'Some terms may unintentionally exclude or offend.'
+    'inclusive':'Some terms may unintentionally exclude or offend.',
+    'unicode-bold':'These are not real bold or italic — they are different Unicode characters. Screen readers skip them or spell out each symbol name.'
   },
   fixes:{
     'deco-struct':'Swap emoji or symbol bullets for a plain dash. Your post will look just as structured and read cleanly out loud.',
@@ -555,7 +560,8 @@ const COPY = {
     'long-sent':'Find the longest sentence and split it into two. Just find a natural pause point, end the sentence there, and start a new one.',
     'hashtag-case':'#contentmarketing becomes #ContentMarketing. It takes a second and makes your hashtags clearer for everyone.',
     'jargon':"Jargon creates invisible barriers. 'Work together' lands better than 'leverage our synergies.' 'We changed direction' is clearer than 'we pivoted.'",
-    'inclusive':"Small swaps keep the meaning exactly the same. Try 'incredible' instead of 'crazy,' 'everyone' instead of 'guys.' Your message reaches more people warmly."
+    'inclusive':"Small swaps keep the meaning exactly the same. Try 'incredible' instead of 'crazy,' 'everyone' instead of 'guys.' Your message reaches more people warmly.",
+    'unicode-bold':'Retype the styled text using plain characters. Use LinkedIn\'s native formatting (bold, italic) if you need emphasis — it works for screen readers. Unicode lookalikes do not.'
   },
   srPreviews:{
     'deco-struct':'e.g. "black star Fast delivery" — symbol name read before the actual content.',
@@ -564,7 +570,8 @@ const COPY = {
     'no-punct':'Without a full stop, the next sentence starts immediately with no pause.',
     'bare-link':'"https colon slash slash bit dot ly slash abc123" — character by character, no destination.',
     'deco-sym':'e.g. "check our insights black rightwards arrow bit dot ly" — symbol name mid-sentence.',
-    'hashtag-case':'"quickcommerce" spoken as one unbroken word — screen readers cannot split it.'
+    'hashtag-case':'"quickcommerce" spoken as one unbroken word — screen readers cannot split it.',
+    'unicode-bold':'𝗕𝗼𝗹𝗱 text may be read as "mathematical bold small b, mathematical bold small o, mathematical bold small l…" or skipped entirely.'
   }
 };
 
@@ -594,8 +601,6 @@ const issuesFooter = document.getElementById('issuesFooter');
 const fixedPostBox = document.getElementById('fixedPostBox');
 const issueBadge   = document.getElementById('issueBadge');
 const navIssuesSub = document.getElementById('navIssuesSub');
-const statChecks   = document.getElementById('statChecks');
-const statFixes    = document.getElementById('statFixes');
 
 // ─── UTILS ──────────────────────────────────────────────────────────────────
 function escHtml(s) {
@@ -778,7 +783,27 @@ function analyse(text) {
     }
   }
 
-  // Check 7: long sentences
+  // Check 7: Unicode bold/italic/styled text
+  {
+    const unicodeRx = /[\u{1D400}-\u{1D7FF}]+/gu;
+    const segs = [];
+    let m;
+    while ((m = unicodeRx.exec(text)) !== null) {
+      segs.push({
+        start: m.index,
+        end:   m.index + m[0].length,
+        orig:  m[0],
+        repl:  null,
+        hint:  'Retype this in plain characters. Screen readers skip Unicode styled text or read out each symbol name individually.'
+      });
+    }
+    if (segs.length > 0) {
+      const excerpts = segs.slice(0, 3).map(s => s.orig.slice(0, 20));
+      issues.push({ id:'unicode-bold', cat:'vis', severity:'error', fixType:'voice', segs, excerpts });
+    }
+  }
+
+  // Check 9: long sentences
   const longSentSegs = [];
   {
     const sentRx = /[^.!?\n]+[.!?]/g;
@@ -800,7 +825,7 @@ function analyse(text) {
     if (longSentSegs.length > 0) issues.push({ id:'long-sent', cat:'cog', severity:'warn', fixType:'voice', segs:longSentSegs, excerpts:[longSentSegs[0].orig.slice(0,50)+'…'] });
   }
 
-  // Check 8: lowercase hashtags
+  // Check 10: lowercase hashtags
   const hashtagSegs = [];
   {
     const hashRx = /#([a-z][a-z0-9]{6,})/g;
@@ -817,7 +842,7 @@ function analyse(text) {
     if (hashtagSegs.length > 0) issues.push({ id:'hashtag-case', cat:'cog', severity:'warn', fixType:'auto', segs:hashtagSegs, excerpts:hashtagSegs.slice(0,4).map(s=>s.orig) });
   }
 
-  // Check 9: jargon
+  // Check 11: jargon
   {
     const sorted = [...JARGON].sort((a,b)=>b.length-a.length);
     const segs = [];
@@ -846,7 +871,7 @@ function analyse(text) {
     }
   }
 
-  // Check 10: inclusive language
+  // Check 12: inclusive language
   {
     const sorted = [...INCLUSIVE].sort((a,b)=>b.length-a.length);
     const segs = [];
@@ -1058,7 +1083,7 @@ function renderIssueCard(issue, idx) {
 }
 
 function getMarkClass(issueId) {
-  if (['deco-struct','emoji-mid','emoji-multi','no-punct','bare-link','deco-sym','hashtag-case'].includes(issueId)) return 'hl-vis';
+  if (['deco-struct','emoji-mid','emoji-multi','no-punct','bare-link','deco-sym','hashtag-case','unicode-bold'].includes(issueId)) return 'hl-vis';
   if (issueId === 'jargon') return 'hl-jarg';
   if (issueId === 'long-sent') return 'hl-long';
   if (issueId === 'inclusive') return 'hl-incl';
@@ -1201,20 +1226,13 @@ function copyFixed() {
 }
 
 // ─── STATS ──────────────────────────────────────────────────────────────────
-function initStats() {
-  const checks = parseInt(localStorage.getItem('lac_total_checks') || '0', 10);
-  const fixes  = parseInt(localStorage.getItem('lac_total_fixes')  || '0', 10);
-  statChecks.textContent = checks.toLocaleString();
-  statFixes.textContent  = fixes.toLocaleString();
-}
+function initStats() {}
 
 function incrementStats(autoFixCount) {
   const checks = parseInt(localStorage.getItem('lac_total_checks') || '0', 10) + 1;
   const fixes  = parseInt(localStorage.getItem('lac_total_fixes')  || '0', 10) + autoFixCount;
   localStorage.setItem('lac_total_checks', checks);
   localStorage.setItem('lac_total_fixes',  fixes);
-  statChecks.textContent = checks.toLocaleString();
-  statFixes.textContent  = fixes.toLocaleString();
 }
 
 // ─── CONTRIBUTORS ────────────────────────────────────────────────────────────
