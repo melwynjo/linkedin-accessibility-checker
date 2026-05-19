@@ -120,9 +120,9 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
 .hl-swatch.hl-incl{background:#fde8e8;outline:1.5px solid #c87070}
 
 /* Listen inline button */
-.listen-inline-btn{display:flex;align-items:center;gap:7px;padding:8px 16px;background:var(--blue);color:#fff;border:none;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .12s;box-shadow:0 1px 4px rgba(10,102,194,.25)}
-.listen-inline-btn:hover{background:var(--blue-dark)}
-.listen-inline-btn.playing{background:#0d5ca6}
+.listen-inline-btn{display:flex;align-items:center;gap:7px;padding:8px 16px;background:#fff;color:var(--blue);border:1.5px solid var(--blue-border);border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .12s,border-color .12s;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.listen-inline-btn:hover{background:var(--blue-bg);border-color:#9fc0e8}
+.listen-inline-btn.playing{background:var(--blue-bg);border-color:var(--blue)}
 .listen-label{}
 .listen-inline-btn.playing .listen-label{display:none}
 .listen-bars{display:none;align-items:flex-end;gap:2px;height:12px}
