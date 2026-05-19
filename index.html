@@ -85,7 +85,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:1
 .editor-card.applied .clear-btn{display:none}
 .diff-applied-view{display:none;flex:1;flex-direction:column;min-height:0;overflow-y:auto}
 .editor-card.applied .diff-applied-view{display:flex}
-.diff-view-footer{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-top:12px}
+.diff-view-footer{display:none;align-items:center;gap:8px;flex-shrink:0;padding:14px 18px;border-top:1px solid var(--border);margin:0 -18px -18px;background:#fff}
+.editor-card.applied .diff-view-footer{display:flex}
 .diff-view-footer .copy-btn,.diff-view-footer .post-linkedin-btn{flex:1;text-align:center}
 .diff-section-label,.fixed-edit-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);margin-bottom:8px;flex-shrink:0}
 .fixed-edit-label{margin-top:18px}
@@ -151,6 +152,18 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
 .listen-bars b{display:block;width:2.5px;border-radius:2px;background:currentColor;animation:audioBar .7s ease-in-out infinite}
 .listen-bars b:nth-child(2){animation-delay:.15s}
 .listen-bars b:nth-child(3){animation-delay:.3s}
+
+/* Leave modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000}
+.modal-overlay.hidden{display:none}
+.modal-box{background:#fff;border-radius:12px;padding:24px;width:320px;box-shadow:0 8px 32px rgba(0,0,0,.18)}
+.modal-title{font-size:15px;font-weight:600;color:var(--text1);margin-bottom:8px}
+.modal-desc{font-size:13px;color:var(--text3);line-height:1.55;margin-bottom:20px}
+.modal-actions{display:flex;gap:8px}
+.modal-stay{flex:1;padding:9px;background:#fff;border:1.5px solid var(--border);border-radius:22px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;transition:border-color .12s}
+.modal-stay:hover{border-color:#aaa}
+.modal-leave{flex:1;padding:9px;background:var(--error);border:none;border-radius:22px;font-size:13px;font-weight:500;color:#fff;cursor:pointer;transition:background .12s}
+.modal-leave:hover{background:#b50e13}
 @keyframes audioBar{0%,100%{height:3px}50%{height:11px}}
 
 
@@ -393,8 +406,8 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
         <div class="diff-applied-content" id="diffAppliedContent"></div>
         <div class="fixed-edit-label">Your fixed post <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text5);font-size:11px">— click to edit</span></div>
         <div class="fixed-post-edit" id="fixedPostEdit" contenteditable="true" role="textbox" aria-label="Fixed post, editable" aria-multiline="true" spellcheck="true"></div>
-        <div class="diff-view-footer" id="diffViewFooter"></div>
       </div>
+      <div class="diff-view-footer" id="diffViewFooter"></div>
     </div>
   </div>
 </main>
@@ -447,11 +460,17 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
     <div class="panel-body" id="issuesBody">
       <div class="empty-state-issues" id="issuesEmpty">
         <svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M20 5L37 33H3L20 5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M20 16v7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="20" cy="27.5" r="1.5" fill="currentColor"/></svg>
-        <p>Run the analyse step first.</p>
+        <p>Run an accessibility check first.</p>
       </div>
     </div>
     <div class="panel-footer" id="issuesFooter" style="display:none">
-      <button class="apply-btn" onclick="applyFixes()" aria-label="Apply all fixes">Apply all fixes</button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="listen-inline-btn" id="listenBtn" onclick="toggleListen()" aria-label="Listen with screen reader">
+          <span class="listen-label">Listen</span>
+          <span class="listen-bars" aria-hidden="true"><b></b><b></b><b></b></span>
+        </button>
+        <button class="apply-btn" style="flex:1" onclick="applyFixes()" aria-label="Apply all fixes">Apply all fixes</button>
+      </div>
     </div>
   </div>
 
@@ -517,6 +536,18 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
 </aside>
 </div><!-- end main-content -->
 </div><!-- end app-shell -->
+
+<!-- Leave warning modal -->
+<div class="modal-overlay hidden" id="leaveModal" role="dialog" aria-modal="true" aria-labelledby="leaveModalTitle">
+  <div class="modal-box">
+    <div class="modal-title" id="leaveModalTitle">Leave the fixed post?</div>
+    <p class="modal-desc">Your edits will be lost. This cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="modal-stay" onclick="stayOnFixed()">Stay</button>
+      <button class="modal-leave" onclick="leaveFixed()">Leave</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // ─── CONSTANTS ──────────────────────────────────────────────────────────────
@@ -634,7 +665,8 @@ let fixedText     = '';
 let hasRunCheck   = false;
 let activeHighlight = null;
 let expandedCards = new Set();
-let isSpeaking    = false; // kept for clearPost cleanup
+let isSpeaking    = false;
+let pendingPanel  = null;
 let currentPanel  = 'analyse';
 
 // ─── DOM ────────────────────────────────────────────────────────────────────
@@ -646,6 +678,7 @@ const charCounter  = document.getElementById('charCounter');
 const hlLegend     = document.getElementById('hlLegend');
 const runBtn       = document.getElementById('runBtn');
 const issuesBody   = document.getElementById('issuesBody');
+const listenBtn    = document.getElementById('listenBtn');
 const issuesEmpty  = document.getElementById('issuesEmpty');
 const issuesFooter = document.getElementById('issuesFooter');
 const fixedPostBox = document.getElementById('fixedPostBox');
@@ -1165,6 +1198,11 @@ function getMarkClass(issueId) {
 
 // ─── PANEL SWITCHING ────────────────────────────────────────────────────────
 function switchPanel(key) {
+  if (editorCard.classList.contains('applied') && (key === 'analyse' || key === 'issues')) {
+    pendingPanel = key;
+    document.getElementById('leaveModal').classList.remove('hidden');
+    return;
+  }
   currentPanel = key;
   document.querySelectorAll('.panel-state').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -1174,6 +1212,36 @@ function switchPanel(key) {
 
   if (key !== 'issues') clearHighlight();
   animateBars();
+}
+
+function stayOnFixed() {
+  document.getElementById('leaveModal').classList.add('hidden');
+  pendingPanel = null;
+}
+
+function leaveFixed() {
+  document.getElementById('leaveModal').classList.add('hidden');
+  pendingPanel = null;
+  clearPost();
+}
+
+// ─── LISTEN (Web Speech) ────────────────────────────────────────────────────
+function setListenState(playing) {
+  isSpeaking = playing;
+  listenBtn.classList.toggle('playing', playing);
+  listenBtn.setAttribute('aria-label', playing ? 'Stop listening' : 'Listen with screen reader');
+}
+
+function toggleListen() {
+  if (!window.speechSynthesis) { alert('Your browser does not support text-to-speech.'); return; }
+  if (isSpeaking) { window.speechSynthesis.cancel(); setListenState(false); return; }
+  const text = postInput.value;
+  if (!text.trim()) return;
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.rate = 0.9;
+  utt.onend = () => setListenState(false);
+  window.speechSynthesis.speak(utt);
+  setListenState(true);
 }
 
 // ─── HIGHLIGHT SYSTEM ───────────────────────────────────────────────────────
