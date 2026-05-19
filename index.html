@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Is My LinkedIn Post Accessible? — Free Checker Tool | linkedinaccessibilitychecker.com</title>
+<meta name="description" content="Paste your LinkedIn post and find out instantly. 11 accessibility checks for screen readers, cognitive load, and inclusive language. Free. No sign-up.">
+<link rel="canonical" href="https://www.linkedinaccessibilitychecker.com/">
+<meta property="og:title" content="Is My LinkedIn Post Accessible?">
+<meta property="og:description" content="11 accessibility checks for LinkedIn posts. Screen reader compatibility, cognitive load, inclusive language, and more. Free tool, no sign-up.">
+<meta property="og:url" content="https://www.linkedinaccessibilitychecker.com/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://www.linkedinaccessibilitychecker.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Is My LinkedIn Post Accessible?">
+<meta name="twitter:description" content="11 accessibility checks for LinkedIn posts. Free tool, no sign-up.">
+<meta name="twitter:image" content="https://www.linkedinaccessibilitychecker.com/og-image.png">
+<meta name="robots" content="index, follow">
+<meta name="keywords" content="LinkedIn accessibility checker, LinkedIn post accessibility, screen reader LinkedIn, accessible LinkedIn post, LinkedIn accessibility tool">
+<meta name="author" content="linkedinaccessibilitychecker.com">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"LinkedIn Accessibility Checker","url":"https://www.linkedinaccessibilitychecker.com","description":"A free tool to check LinkedIn posts for accessibility issues across 11 rules including screen reader compatibility, cognitive load, and inclusive language.","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":["Screen reader compatibility check","Emoji placement analysis","Hashtag CamelCase checker","Business jargon detector","Inclusive language checker","Long sentence detector","Bare link checker","Auto-fix suggestions","Fixed post generator"]}
+</script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a66c2'/><path d='M8 12h4v12H8zm2-6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm6 6h4v2h.1C20.6 13 22 12 24 12c4 0 4 3 4 6v6h-4v-5c0-1.5 0-3-2-3s-2 1.7-2 3v5h-4V12z' fill='white'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#0a66c2;--blue-dark:#004182;--blue-bg:#f0f7ff;--blue-border:#c4dcf5;
+  --error:#cc1016;--warn:#d97706;--success:#15803d;
+  --text1:#1d1d1d;--text2:#444;--text3:#666;--text4:#888;--text5:#999;--text6:#bbb;
+  --border:#e0e0e0;--border-sub:#ebebeb;
+  --bg-page:#f3f2ef;--bg-card:#fff;--bg-sec:#fafafa;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;color:var(--text1);background:var(--bg-page);display:flex;flex-direction:column}
+
+/* SEO banner */
+.seo-banner{flex-shrink:0;background:var(--blue);color:#fff;text-align:center;padding:7px 16px;font-size:12.5px}
+.seo-banner h1{font-size:12.5px;font-weight:500;display:inline;color:#fff}
+
+/* App shell */
+.app-shell{display:flex;flex:1;overflow:hidden}
+
+/* ── Sidenav ── */
+.sidenav{width:216px;flex-shrink:0;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
+.brand{padding:14px 14px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border-sub)}
+.brand-logo{width:32px;height:32px;border-radius:7px;background:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-name{font-size:13px;font-weight:600;color:var(--text1);line-height:1.25}
+.brand-tagline{font-size:10px;color:var(--text4);margin-top:2px}
+
+.stats-strip{display:flex;gap:0;border-bottom:1px solid var(--border-sub)}
+.stat{flex:1;padding:8px 14px;text-align:center}
+.stat:first-child{border-right:1px solid var(--border-sub)}
+.stat-label{font-size:10.5px;color:var(--text5)}
+.stat-value{font-size:11px;font-weight:600;color:var(--blue);margin-top:1px}
+
+.nav-section-label{padding:10px 14px 4px;font-size:10px;font-weight:600;color:#aaa;letter-spacing:.08em;text-transform:uppercase}
+.nav-connector{height:1px;background:var(--border-sub);margin:0 14px}
+
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 12px;cursor:pointer;border-left:3px solid transparent;transition:background .12s,border-color .12s;border-radius:0 6px 6px 0;margin:1px 6px 1px 0;position:relative}
+.nav-item:hover{background:#f9f9f9}
+.nav-item.active{background:var(--blue-bg);border-left-color:var(--blue)}
+.nav-item.active .nav-icon-wrap{background:#dbeafe}
+.nav-item.active .nav-icon-wrap svg{color:var(--blue)}
+.nav-item.active .nav-item-label{color:var(--blue)}
+.nav-item.locked{opacity:.5;pointer-events:none}
+
+.nav-icon-wrap{width:28px;height:28px;border-radius:6px;background:#f2f2f2;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s}
+.nav-icon-wrap svg{width:14px;height:14px;color:var(--text3)}
+.nav-item-label{font-size:12.5px;font-weight:500;color:#333;display:flex;align-items:center;gap:5px}
+.nav-item-sub{font-size:10.5px;color:var(--text4);margin-top:1px}
+
+.issue-badge{background:var(--error);color:#fff;font-size:9.5px;font-weight:600;border-radius:10px;padding:1px 5px;min-width:18px;text-align:center;display:none}
+.issue-badge.visible{display:inline-block}
+
+.sidenav-spacer{flex:1}
+.sidenav-footer{padding:12px 14px;border-top:1px solid var(--border-sub);display:flex;flex-direction:column;gap:8px}
+.accessible-link{font-size:11px;color:var(--blue);text-decoration:none}
+.accessible-link:hover{text-decoration:underline}
+.feedback-pill{display:block;text-align:center;padding:7px 12px;border:1px solid var(--border);border-radius:20px;font-size:11.5px;color:var(--text2);text-decoration:none;transition:border-color .12s,background .12s}
+.feedback-pill:hover{border-color:#bbb;background:#fafafa}
+
+/* ── Editor column ── */
+.editor-col{flex:1;overflow-y:auto;padding:20px;background:var(--bg-page)}
+
+.editor-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px}
+.field-label{font-size:13px;font-weight:600;color:var(--text1);display:block;margin-bottom:4px}
+.field-hint{font-size:12px;color:var(--text3);margin-bottom:10px}
+
+/* Textarea overlay system */
+.post-input-wrapper{position:relative;border:1.5px solid var(--border);border-radius:7px;background:#fff;transition:border-color .15s,box-shadow .15s;cursor:text}
+.post-input-wrapper:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(10,102,194,.1)}
+.post-input-wrapper.error{border-color:var(--error);box-shadow:0 0 0 3px rgba(204,16,22,.1)}
+.post-mirror{font-family:'Inter',-apple-system,sans-serif;font-size:14px;line-height:1.8;padding:11px 13px;min-height:200px;white-space:pre-wrap;word-break:break-word;overflow-wrap:break-word;visibility:hidden;width:100%;border:none}
+.post-rendered{position:absolute;top:0;left:0;right:0;bottom:0;font-family:'Inter',-apple-system,sans-serif;font-size:14px;line-height:1.8;padding:11px 13px;white-space:pre-wrap;word-break:break-word;overflow-wrap:break-word;pointer-events:none;color:var(--text1)}
+.post-textarea{position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;font-family:'Inter',-apple-system,sans-serif;font-size:14px;line-height:1.8;padding:11px 13px;border:none;outline:none;resize:none;background:transparent;color:transparent;caret-color:var(--text1);z-index:1}
+.post-textarea::placeholder{color:var(--text6)}
+
+/* Highlight marks */
+mark.hl-vis{background:#fff3cd;outline:1.5px solid #d4a017;border-radius:2px;color:inherit}
+mark.hl-jarg{background:#e0f0ff;outline:1.5px solid #5b9bd5;border-radius:2px;color:inherit}
+mark.hl-long{background:#e8f5e9;outline:1.5px solid #5ea85e;border-radius:2px;color:inherit}
+mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;color:inherit}
+
+.char-counter{font-size:11.5px;color:var(--text4);text-align:right;margin-top:5px}
+.char-counter.warn{color:var(--warn)}
+.char-counter.error{color:var(--error)}
+
+.hl-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s;pointer-events:none}
+.hl-legend.visible{opacity:1;transform:translateY(0);pointer-events:auto}
+.hl-chip{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)}
+.hl-swatch{width:12px;height:12px;border-radius:2px;display:inline-block}
+.hl-swatch.hl-vis{background:#fff3cd;outline:1.5px solid #d4a017}
+.hl-swatch.hl-jarg{background:#e0f0ff;outline:1.5px solid #5b9bd5}
+.hl-swatch.hl-long{background:#e8f5e9;outline:1.5px solid #5ea85e}
+.hl-swatch.hl-incl{background:#fde8e8;outline:1.5px solid #c87070}
+
+.listen-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#eef5ff;border:1px solid #b8d4f5;border-radius:8px;padding:10px 13px;margin-top:10px}
+.listen-strip.hidden{display:none}
+.listen-text strong{display:block;font-size:12.5px;color:#1a4f8a;font-weight:600}
+.listen-text span{font-size:11px;color:#3d6fa0}
+.listen-btn{padding:6px 14px;background:var(--blue);color:#fff;border:none;border-radius:16px;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .12s}
+.listen-btn:hover{background:var(--blue-dark)}
+.listen-btn.stop{background:var(--error)}
+
+
+/* ── Right panel ── */
+.right-panel{width:336px;flex-shrink:0;background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.panel-state{display:none;flex-direction:column;height:100%}
+.panel-state.active{display:flex}
+.panel-header{padding:14px 16px 12px;border-bottom:1px solid var(--border-sub);flex-shrink:0}
+.panel-title{font-size:14px;font-weight:600;color:var(--text1)}
+.panel-sub{font-size:12px;color:var(--text4);margin-top:2px}
+.panel-body{flex:1;overflow-y:auto;padding:14px 16px}
+.panel-footer{flex-shrink:0;padding:10px 16px;border-top:1px solid var(--border-sub)}
+
+/* Analyse panel */
+.run-btn{width:100%;padding:11px 16px;background:var(--blue);color:#fff;border:none;border-radius:22px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .12s,transform .1s}
+.run-btn:hover{background:var(--blue-dark)}
+.run-btn:active{transform:scale(.98)}
+.run-btn.loading .run-label{display:none}
+.run-btn.loading .run-spinner{display:block}
+.run-spinner{display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.what-we-check{margin-top:14px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.what-we-check summary{padding:9px 12px;font-size:11px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-sec)}
+.what-we-check summary::-webkit-details-marker{display:none}
+.what-we-check summary::after{content:'';display:block;width:8px;height:8px;border-right:1.5px solid #aaa;border-bottom:1.5px solid #aaa;transform:rotate(45deg);transition:transform .18s;margin-top:-3px}
+.what-we-check[open] summary::after{transform:rotate(-135deg);margin-top:3px}
+.check-section{padding:10px 12px}
+.check-section+.check-section{border-top:1px solid var(--border-sub)}
+.check-section-title{font-size:10px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.check-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0}
+.check-item-icon{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px}
+.check-item-icon.amber{background:#fff4e0;color:#d97706}
+.check-item-icon.blue{background:#e8f1fb;color:var(--blue)}
+.check-item-icon.grey{background:#f2f2f2;color:var(--text3)}
+.check-item-icon.green{background:#e6f4ea;color:#15803d}
+.check-item-icon.teal{background:#e0f5f4;color:#0d7377}
+.check-item-icon.pink{background:#fde8f4;color:#be185d}
+.check-item-icon.purple{background:#f0ebff;color:#7c3aed}
+.check-item-text strong{display:block;font-size:11.5px;font-weight:600;color:var(--text1)}
+.check-item-text span{font-size:11px;color:var(--text3);line-height:1.4}
+
+/* Issues panel */
+.empty-state-issues{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;height:100%}
+.empty-state-issues svg{width:40px;height:40px;color:#d8d8d8;margin-bottom:12px}
+.empty-state-issues p{font-size:12.5px;color:var(--text6)}
+
+/* Audience scores */
+.score-section{margin-bottom:14px}
+.score-row{display:flex;align-items:center;gap:8px;padding:5px 0}
+.score-icon{width:26px;height:26px;background:#f4f4f4;border:1px solid #ebebeb;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.score-icon svg{width:12px;height:12px;color:var(--text3)}
+.score-label{font-size:11.5px;font-weight:500;color:var(--text2);flex:1}
+.score-pct{font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;min-width:32px;text-align:right}
+.score-pct.green{color:#15803d}
+.score-pct.amber{color:#d97706}
+.score-pct.red{color:var(--error)}
+.score-bar-wrap{height:4px;background:#f0f0f0;border-radius:2px;margin-top:3px;width:100%}
+.score-bar{height:4px;border-radius:2px;width:0;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.score-bar.green{background:#15803d}
+.score-bar.amber{background:#d97706}
+.score-bar.red{background:var(--error)}
+
+/* Progress tracker */
+.progress-tracker{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-sub);margin-bottom:10px}
+.progress-left p{font-size:11.5px;font-weight:500;color:var(--text2)}
+.progress-left span{font-size:11px;color:var(--text5)}
+.progress-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.progress-pct{font-size:12px;font-weight:600;color:var(--blue)}
+.progress-bar-wrap{width:80px;height:3px;background:#f0f0f0;border-radius:2px}
+.progress-bar-fill{height:3px;background:#15803d;border-radius:2px;width:0;transition:width .4s ease}
+
+/* Issue groups */
+.issue-group-label{font-size:10px;font-weight:600;color:#c8c8c8;text-transform:uppercase;letter-spacing:.07em;margin:10px 0 4px;display:flex;align-items:center;gap:5px}
+.issue-group-hint{font-size:11px;color:#bbb;display:flex;align-items:center;gap:4px;margin-bottom:6px}
+
+/* Issue cards */
+.issue-card{border:1px solid var(--border);border-radius:8px;padding:10px 11px;margin-bottom:6px;cursor:pointer;transition:border-color .12s,background .12s,box-shadow .12s;animation:fadeUp .2s ease both}
+.issue-card:hover{border-color:#b8cfe8;background:#f6faff}
+.issue-card.expanded{border-color:var(--blue);background:var(--blue-bg);box-shadow:0 0 0 2px rgba(10,102,194,.1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+.card-header{display:flex;align-items:flex-start;gap:7px}
+.severity-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.severity-dot.error{background:var(--error);box-shadow:0 0 0 2px rgba(204,16,22,.2)}
+.severity-dot.warn{background:var(--warn);box-shadow:0 0 0 2px rgba(217,119,6,.2)}
+.severity-dot.info{background:var(--blue)}
+.card-title{font-size:12px;font-weight:600;color:var(--text1);flex:1}
+.card-desc{font-size:11.5px;color:#555;line-height:1.55;margin-top:3px;padding-left:13px}
+
+.excerpt-chip{display:inline-flex;align-items:center;gap:5px;background:#fef9ec;border:1px solid #fde68a;border-radius:5px;padding:3px 7px;margin:5px 0 3px 13px;font-size:11px;color:#78350f;font-style:italic;max-width:100%;overflow:hidden}
+.excerpt-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.excerpt-chip svg{width:10px;height:10px;flex-shrink:0;color:#92400e}
+
+.click-pill{display:inline-flex;align-items:center;gap:4px;background:#f4f4f4;border-radius:10px;padding:2px 7px;font-size:10px;color:#888;margin-left:13px;margin-top:2px}
+
+.card-body{margin-top:8px;padding-top:8px;border-top:1px solid #dde8f5;display:none}
+.issue-card.expanded .card-body{display:block}
+
+.sr-preview{background:#f8f8f8;border-radius:5px;padding:6px 8px;margin-bottom:8px}
+.sr-preview-label{font-size:9.5px;font-weight:600;color:#bbb;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.sr-preview-text{font-size:11px;color:#777;font-style:italic;line-height:1.5}
+
+.fix-label{font-size:11.5px;color:#555;line-height:1.55}
+.fix-label strong{color:var(--text1);font-weight:500}
+
+.fix-badge{display:inline-flex;align-items:center;gap:4px;border-radius:4px;padding:3px 7px;font-size:10.5px;font-weight:500;margin-top:7px}
+.fix-badge.auto{background:#e6f4ea;color:#15803d}
+.fix-badge.voice{background:#fff4e0;color:#c97000}
+
+/* Sticky footer for issues */
+.apply-btn{width:100%;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:22px;font-size:13px;font-weight:500;cursor:pointer;transition:background .12s}
+.apply-btn:hover{background:var(--blue-dark)}
+.panel-footer-link{text-align:center;margin-top:6px}
+.panel-footer-link a{font-size:11px;color:var(--blue);text-decoration:none}
+.panel-footer-link a:hover{text-decoration:underline}
+
+/* Ready to post panel */
+.diff-info-strip{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:8px;padding:9px 11px;margin-bottom:12px;font-size:11.5px;color:var(--text2);line-height:1.5}
+.diff-legend-row{display:flex;align-items:center;gap:10px;margin-bottom:5px}
+.diff-del-sample{background:#f8d7da;color:#721c24;text-decoration:line-through;border-radius:3px;padding:1px 4px;font-size:11px}
+.diff-add-sample{background:#d4edda;color:#155724;font-style:italic;border-radius:3px;padding:1px 4px;font-size:11px}
+
+.fixed-post-box{background:#f9f9f9;border:1px solid #e8e8e8;border-radius:8px;padding:14px;font-size:13.5px;line-height:1.8;white-space:pre-wrap;word-break:break-word;color:var(--text1);min-height:120px}
+.fixed-post-empty{color:var(--text5);font-style:italic;font-size:12.5px}
+
+/* Diff spans */
+.diff-del{background:#f8d7da;color:#721c24;text-decoration:line-through;border-radius:3px;padding:0 2px}
+.diff-add{background:#d4edda;color:#155724;font-style:italic;border-radius:3px;padding:0 2px}
+.diff-review{background:#fff8e1;color:#5d4a00;outline:1.5px solid #f0c040;border-radius:3px;padding:0 2px}
+.diff-hint{display:block;font-size:11px;color:#7a5c00;background:#fffbeb;border:1px solid #fde68a;border-radius:5px;padding:5px 8px;margin-top:3px;font-style:italic}
+
+
+/* Action row */
+.action-row{display:flex;gap:8px}
+.copy-btn{flex:1;padding:9px;background:#fff;border:1.5px solid var(--border);border-radius:22px;font-size:12.5px;color:var(--text2);cursor:pointer;font-weight:500;transition:border-color .12s,background .12s}
+.copy-btn:hover{border-color:#aaa;background:#fafafa}
+.copy-btn.copied{border-color:var(--success);color:var(--success)}
+.post-linkedin-btn{flex:1;padding:9px;background:var(--blue);color:#fff;border:none;border-radius:22px;font-size:12.5px;font-weight:500;text-align:center;text-decoration:none;cursor:pointer;transition:background .12s;display:flex;align-items:center;justify-content:center}
+.post-linkedin-btn:hover{background:var(--blue-dark)}
+
+/* Coming soon panel */
+.coming-intro{font-size:12.5px;color:#555;line-height:1.65;margin-bottom:14px}
+.feature-card{border:1px solid var(--border);border-radius:10px;padding:16px}
+.feature-card+.feature-card{margin-top:10px}
+.feature-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.feature-icon.purple{background:#f0ebff;color:#7c3aed}
+.feature-icon.teal{background:#e0f5f4;color:#0d7377}
+.feature-icon svg{width:16px;height:16px}
+.feature-card h3{font-size:13px;font-weight:600;color:var(--text1);margin-bottom:6px}
+.feature-card p{font-size:12px;color:#555;line-height:1.6;margin-bottom:12px}
+.vote-btn{display:block;text-align:center;padding:8px;border-radius:20px;font-size:12px;font-weight:500;text-decoration:none;transition:background .12s}
+.vote-btn.purple{border:1.5px solid #c4b5fd;color:#7c3aed;background:#fff}
+.vote-btn.purple:hover{background:#f0ebff}
+.vote-btn.teal{border:1.5px solid #99d9d8;color:#0d7377;background:#fff}
+.vote-btn.teal:hover{background:#e0f5f4}
+
+/* Contributors panel */
+.contrib-intro{font-size:12.5px;color:#555;line-height:1.65;margin-bottom:14px}
+.contrib-list{display:flex;flex-direction:column}
+.contrib-card{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid #f4f4f4}
+.contrib-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.contrib-name{font-size:12.5px;font-weight:500;color:var(--text1)}
+.contrib-role{font-size:11px;color:#888}
+.contrib-link{margin-left:auto;color:#b8b8b8;text-decoration:none;transition:color .12s}
+.contrib-link:hover{color:var(--blue)}
+.contrib-link svg{width:14px;height:14px}
+.contrib-cta{margin-top:16px;padding-top:14px;border-top:1px solid var(--border-sub)}
+.contrib-cta h3{font-size:13px;font-weight:600;color:var(--text1);margin-bottom:6px}
+.contrib-cta p{font-size:12px;color:#555;line-height:1.55;margin-bottom:12px}
+.feedback-btn-blue{display:block;text-align:center;padding:10px;background:var(--blue);color:#fff;border-radius:22px;font-size:13px;font-weight:500;text-decoration:none;transition:background .12s}
+.feedback-btn-blue:hover{background:var(--blue-dark)}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidenav{display:none}
+  .app-shell{flex-direction:column}
+  .editor-col{overflow-y:visible}
+  .right-panel{width:100%;border-left:none;border-top:1px solid var(--border);height:60vh}
+}
+</style>
+</head>
+<body>
+
+<div class="seo-banner">
+  <h1>Is my LinkedIn post accessible?</h1>
+</div>
+
+<div class="app-shell">
+
+<!-- ── SIDENAV ── -->
+<nav class="sidenav" aria-label="Main navigation">
+  <div class="brand">
+    <div class="brand-logo" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="7" stroke="white" stroke-width="1.8"/><path d="M6 9l2 2 4-4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div>
+      <div class="brand-name">LinkedIn<br>Accessibility Checker</div>
+      <div class="brand-tagline">Is my LinkedIn post accessible?</div>
+    </div>
+  </div>
+
+  <div class="stats-strip" aria-label="Usage statistics">
+    <div class="stat">
+      <div class="stat-label">Posts checked</div>
+      <div class="stat-value" id="statChecks">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Issues fixed</div>
+      <div class="stat-value" id="statFixes">0</div>
+    </div>
+  </div>
+
+  <div class="nav-section-label">STEPS</div>
+
+  <div class="nav-item active" id="nav-analyse" role="button" tabindex="0" aria-label="Analyse — Run the 11 checks" onclick="switchPanel('analyse')">
+    <div class="nav-icon-wrap" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M10 10l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+    <div>
+      <div class="nav-item-label">Analyse</div>
+      <div class="nav-item-sub">Run the 10 checks</div>
+    </div>
+  </div>
+  <div class="nav-connector" aria-hidden="true"></div>
+  <div class="nav-item locked" id="nav-issues" role="button" tabindex="0" aria-label="Issues found" onclick="switchPanel('issues')">
+    <div class="nav-icon-wrap" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2L13 12H1L7 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 6v2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="10" r=".7" fill="currentColor"/></svg>
+    </div>
+    <div>
+      <div class="nav-item-label">Issues found <span class="issue-badge" id="issueBadge" aria-live="polite">0</span></div>
+      <div class="nav-item-sub" id="navIssuesSub">Run check first</div>
+    </div>
+  </div>
+  <div class="nav-connector" aria-hidden="true"></div>
+  <div class="nav-item locked" id="nav-ready" role="button" tabindex="0" aria-label="Ready to post" onclick="switchPanel('ready')">
+    <div class="nav-icon-wrap" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 10l2-2 6.5-6.5a1.4 1.4 0 0 1 2 2L6 10l-2.5.5L2 10Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </div>
+    <div>
+      <div class="nav-item-label">Ready to post</div>
+      <div class="nav-item-sub">Your post with fixes applied</div>
+    </div>
+  </div>
+
+  <div class="nav-section-label" style="margin-top:6px">ALSO</div>
+  <div class="nav-item" id="nav-coming" role="button" tabindex="0" aria-label="Coming soon" onclick="switchPanel('coming')">
+    <div class="nav-icon-wrap" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.5 3 3.5.5-2.5 2.5.5 3.5L7 9l-3 1.5.5-3.5L2 4.5l3.5-.5L7 1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+    </div>
+    <div>
+      <div class="nav-item-label">Coming soon</div>
+      <div class="nav-item-sub">Features in the pipeline</div>
+    </div>
+  </div>
+  <div class="nav-item" id="nav-contributors" role="button" tabindex="0" aria-label="Contributors" onclick="switchPanel('contributors')">
+    <div class="nav-icon-wrap" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12s-5-3.5-5-6.5a3 3 0 0 1 5-2.2A3 3 0 0 1 12 5.5C12 8.5 7 12 7 12Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    </div>
+    <div>
+      <div class="nav-item-label">Contributors</div>
+      <div class="nav-item-sub">People who shaped this</div>
+    </div>
+  </div>
+
+  <div class="sidenav-spacer"></div>
+  <div class="sidenav-footer">
+    <a href="https://accessible.social" target="_blank" rel="noopener noreferrer" class="accessible-link">Accessible Social by Alexa Heinrich ↗</a>
+    <a href="https://tally.so/r/WOKdbv" target="_blank" rel="noopener noreferrer" class="feedback-pill">Share feedback or request a feature</a>
+  </div>
+</nav>
+
+<!-- ── EDITOR COLUMN ── -->
+<main class="editor-col" aria-label="Post editor">
+  <div class="editor-card">
+    <label class="field-label" for="postInput">LinkedIn post content</label>
+    <p class="field-hint">Include emojis, hashtags, links, and line breaks.</p>
+    <div class="post-input-wrapper" id="postWrapper" onclick="document.getElementById('postInput').focus()">
+      <div class="post-mirror" id="postMirror" aria-hidden="true"></div>
+      <div class="post-rendered" id="postRendered" aria-hidden="true"></div>
+      <textarea id="postInput" class="post-textarea" placeholder="Paste or type your LinkedIn post here…" aria-label="LinkedIn post content" spellcheck="true" autocomplete="off"></textarea>
+    </div>
+    <div class="char-counter" id="charCounter" aria-live="polite">0 / 3000</div>
+    <div class="hl-legend" id="hlLegend" aria-hidden="true" role="presentation">
+      <div class="hl-chip"><span class="hl-swatch hl-vis" aria-hidden="true"></span>Visual issue</div>
+      <div class="hl-chip"><span class="hl-swatch hl-jarg" aria-hidden="true"></span>Jargon</div>
+      <div class="hl-chip"><span class="hl-swatch hl-long" aria-hidden="true"></span>Long sentence</div>
+      <div class="hl-chip"><span class="hl-swatch hl-incl" aria-hidden="true"></span>Inclusive language</div>
+    </div>
+    <div class="listen-strip hidden" id="listenStrip" role="region" aria-label="Screen reader preview">
+      <div class="listen-text">
+        <strong>Hear how a screen reader reads this</strong>
+        <span>Listen to your post the way visually impaired users do</span>
+      </div>
+      <button class="listen-btn" id="listenBtn" onclick="toggleListen()" aria-label="Listen to post">Listen</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── RIGHT PANEL ── -->
+<aside class="right-panel" aria-label="Results and actions">
+
+  <!-- PANEL: Analyse -->
+  <div class="panel-state active" id="panel-analyse" role="region" aria-label="Analyse">
+    <div class="panel-header">
+      <div class="panel-title">Analyse your post</div>
+      <div class="panel-sub">10 checks. Takes a few seconds.</div>
+    </div>
+    <div class="panel-body">
+      <button class="run-btn" id="runBtn" onclick="runCheck()" aria-label="Check accessibility and fix issues">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" class="run-icon" aria-hidden="true"><circle cx="6.5" cy="6.5" r="4.5" stroke="white" stroke-width="1.5"/><path d="M11 11l2.5 2.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span class="run-label">Check accessibility and fix issues</span>
+        <span class="run-spinner" aria-hidden="true"></span>
+      </button>
+
+      <details class="what-we-check" id="whatWeCheck">
+        <summary>What we check (10 rules)</summary>
+        <div class="check-section">
+          <div class="check-section-title">Visual accessibility</div>
+          <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🔤</div><div class="check-item-text"><strong>Emoji as bullet</strong><span>Symbol name read before content</span></div></div>
+          <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">😊</div><div class="check-item-text"><strong>Emoji mid-sentence</strong><span>Emoji name interrupts the read</span></div></div>
+          <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🔁</div><div class="check-item-text"><strong>Multiple emojis</strong><span>Names read in sequence</span></div></div>
+          <div class="check-item"><div class="check-item-icon blue" aria-hidden="true">·</div><div class="check-item-text"><strong>Missing punctuation</strong><span>Sentences merge without pause</span></div></div>
+          <div class="check-item"><div class="check-item-icon blue" aria-hidden="true">🔗</div><div class="check-item-text"><strong>Bare link</strong><span>URL read character by character</span></div></div>
+          <div class="check-item"><div class="check-item-icon grey" aria-hidden="true">→</div><div class="check-item-text"><strong>Decorative symbol</strong><span>Symbol name interrupts sentence</span></div></div>
+        </div>
+        <div class="check-section">
+          <div class="check-section-title">Cognitive accessibility</div>
+          <div class="check-item"><div class="check-item-icon green" aria-hidden="true">¶</div><div class="check-item-text"><strong>Long sentences</strong><span>Hard to process</span></div></div>
+          <div class="check-item"><div class="check-item-icon green" aria-hidden="true">#</div><div class="check-item-text"><strong>Lowercase hashtag</strong><span>Read as one unbroken word</span></div></div>
+          <div class="check-item"><div class="check-item-icon teal" aria-hidden="true">💼</div><div class="check-item-text"><strong>Business jargon</strong><span>Creates barriers for some readers</span></div></div>
+          <div class="check-item"><div class="check-item-icon pink" aria-hidden="true">🤝</div><div class="check-item-text"><strong>Inclusive language</strong><span>May unintentionally exclude</span></div></div>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- PANEL: Issues -->
+  <div class="panel-state" id="panel-issues" role="region" aria-label="Issues found">
+    <div class="panel-header">
+      <div class="panel-title">Issues found</div>
+      <div class="panel-sub">Click any issue to highlight it in your post</div>
+    </div>
+    <div class="panel-body" id="issuesBody">
+      <div class="empty-state-issues" id="issuesEmpty">
+        <svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M20 5L37 33H3L20 5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M20 16v7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="20" cy="27.5" r="1.5" fill="currentColor"/></svg>
+        <p>Run the analyse step first.</p>
+      </div>
+    </div>
+    <div class="panel-footer" id="issuesFooter" style="display:none">
+      <button class="apply-btn" onclick="switchPanel('ready')" aria-label="Apply all fixes and view ready to post">Apply all fixes</button>
+      <div class="panel-footer-link"><a href="https://accessible.social" target="_blank" rel="noopener noreferrer">Accessible Social by Alexa Heinrich ↗</a></div>
+    </div>
+  </div>
+
+  <!-- PANEL: Ready to post -->
+  <div class="panel-state" id="panel-ready" role="region" aria-label="Ready to post">
+    <div class="panel-header">
+      <div class="panel-title">Ready to post</div>
+      <div class="panel-sub">Your post with all fixes applied</div>
+    </div>
+    <div class="panel-body">
+      <div class="diff-info-strip">
+        <div class="diff-legend-row">
+          <span class="diff-del-sample">removed</span> Removed &nbsp;
+          <span class="diff-add-sample">added</span> Added
+        </div>
+        Copy and post when you are happy with it.
+      </div>
+      <div class="fixed-post-box" id="fixedPostBox" aria-label="Fixed post content" role="region">
+        <div class="fixed-post-empty">Run the analyse step to see your fixed post.</div>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <div class="action-row">
+        <button class="copy-btn" id="copyBtn" onclick="copyFixed()" aria-label="Copy fixed post to clipboard">Copy</button>
+        <a href="https://www.linkedin.com/feed/" target="_blank" rel="noopener noreferrer" class="post-linkedin-btn" aria-label="Open LinkedIn to post">Post to LinkedIn</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL: Coming soon -->
+  <div class="panel-state" id="panel-coming" role="region" aria-label="Coming soon">
+    <div class="panel-header">
+      <div class="panel-title">Coming soon</div>
+      <div class="panel-sub">Features in the pipeline</div>
+    </div>
+    <div class="panel-body">
+      <p class="coming-intro">These are the features being built next. Vote for the one you want first — it goes to the top of the list.</p>
+      <div class="feature-card">
+        <div class="feature-icon purple" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><path d="M8 1l1.8 3.8L14 5.5l-3 2.9.7 4.1L8 10.4l-3.7 2.1.7-4.1L2 5.5l4.2-.7L8 1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+        <h3>AI Slop Meter</h3>
+        <p>Detects when a post reads like it was written by AI — filler phrases, hollow structure, overly polished language that sounds like no one. Gives you a score and flags the specific lines.</p>
+        <a href="https://tally.so/r/KYWyrV" target="_blank" rel="noopener noreferrer" class="vote-btn purple">Vote for this first</a>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon teal" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><rect x="1" y="10" width="3" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="6" y="7" width="3" height="8" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="4" width="3" height="11" rx="1" stroke="currentColor" stroke-width="1.3"/></svg></div>
+        <h3>Impact Stats Dashboard</h3>
+        <p>A live counter of how many posts have been checked and how many accessibility issues have been fixed across all users. A window into how much more accessible LinkedIn is getting, one post at a time.</p>
+        <a href="https://tally.so/r/KYWyrV" target="_blank" rel="noopener noreferrer" class="vote-btn teal">Vote for this first</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL: Contributors -->
+  <div class="panel-state" id="panel-contributors" role="region" aria-label="Contributors">
+    <div class="panel-header">
+      <div class="panel-title">Thank you</div>
+      <div class="panel-sub">These people made this better</div>
+    </div>
+    <div class="panel-body">
+      <p class="contrib-intro">This tool started as a personal frustration — LinkedIn posts that looked great but excluded people. These are the people who gave their time, their feedback, and their ideas to make it something worth using.</p>
+      <div class="contrib-list" id="contribList" aria-label="Contributors list"></div>
+      <div class="contrib-cta">
+        <h3>Want to help shape this?</h3>
+        <p>Try the tool, break it, use it on your own posts. If you find something that is wrong, missing, or could be better — or you want to request a feature — the form below takes two minutes.</p>
+        <a href="https://tally.so/r/WOKdbv" target="_blank" rel="noopener noreferrer" class="feedback-btn-blue">Share feedback or request a feature</a>
+      </div>
+    </div>
+  </div>
+
+</aside>
+</div><!-- end app-shell -->
+
+<script>
+// ─── CONSTANTS ──────────────────────────────────────────────────────────────
+const FEEDBACK_URL = 'https://tally.so/r/WOKdbv';
+const VOTE_URL     = 'https://tally.so/r/KYWyrV';
+
+const JARGON = [
+  'synergy','synergise','synergize','leverage','leveraging','leveraged',
+  'pivot','pivoting','bandwidth','deep dive','deep-dive','ideate','ideating','ideation',
+  'stakeholder','stakeholders','ecosystem','paradigm','paradigm shift',
+  'agile','robust','empower','empowering','circle back','move the needle',
+  'low-hanging fruit','boil the ocean','best practice','best practices',
+  'thought leader','thought leadership','disruptive','disruption','value add','value-add',
+  'actionable','deliverable','deliverables','scalable','holistic','going forward',
+  'touch base','game changer','game-changer','impactful','proactive','proactively'
+];
+
+const INCLUSIVE = [
+  'crazy','insane','blind spot','blind spots','tone deaf','tone-deaf',
+  'lame','dumb','guys','mankind','manpower','man-hours','man-hour','man hours',
+  'chairman','chairmen','manmade','man-made','blacklist','whitelist',
+  'grandfathered','sanity check','sanity-check','cripple','crippling',
+  'psycho','retard','retarded'
+];
+
+const JARGON_FIXES = {
+  'leverage':'use','leveraging':'using','leveraged':'used',
+  'ideate':'brainstorm','ideating':'brainstorming','ideation':'brainstorming',
+  'bandwidth':'capacity','deep dive':'deep look','deep-dive':'deep look',
+  'synergy':'collaboration','synergise':'collaborate','synergize':'collaborate',
+  'paradigm shift':'fundamental change','paradigm':'model',
+  'stakeholder':'team member','stakeholders':'team members',
+  'circle back':'follow up','move the needle':'make progress','actionable':'practical',
+  'thought leader':'expert','thought leadership':'expertise',
+  'going forward':'from now on','touch base':'check in',
+  'game changer':'major change','game-changer':'major change',
+  'best practice':'recommended approach','best practices':'recommended approaches',
+  'pivot':'change direction','pivoting':'changing direction',
+  'empower':'support','empowering':'supporting'
+};
+
+const INCLUSIVE_FIXES = {
+  'guys':'everyone','mankind':'humanity','manpower':'workforce',
+  'man-hours':'work hours','man hours':'work hours','man-hour':'work hour',
+  'crazy':'intense','insane':'overwhelming',
+  'blind spot':'oversight','blind spots':'oversights',
+  'lame':'disappointing','dumb':'unclear',
+  'tone deaf':'out of touch','tone-deaf':'out of touch',
+  'chairman':'chair','chairmen':'chairs',
+  'blacklist':'blocklist','whitelist':'allowlist',
+  'sanity check':'sense check','sanity-check':'sense check',
+  'cripple':'limit','crippling':'limiting'
+};
+
+const CONTRIBUTORS = [
+  // { name: 'Name Here', role: 'Feedback & testing', linkedin: 'https://linkedin.com/in/placeholder' }
+];
+
+const COPY = {
+  titles:{
+    'deco-struct':'Emoji or symbol used as a bullet point',
+    'emoji-mid':'Emoji before or inside a sentence',
+    'emoji-multi':'Multiple emojis in a row',
+    'no-punct':'Sentence ends without punctuation',
+    'bare-link':'Link with no context around it',
+    'deco-sym':'Decorative symbol inside a sentence',
+    'long-sent':'Some sentences are quite long',
+    'hashtag-case':'Hashtag written in all lowercase',
+    'jargon':'Business jargon some people may not follow',
+    'inclusive':'Words that may unintentionally exclude'
+  },
+  descs:{
+    'deco-struct':'Screen readers announce the symbol name instead of reading it as a bullet.',
+    'emoji-mid':'The emoji name is read aloud before the sentence, breaking the flow.',
+    'emoji-multi':'Multiple emoji names read in sequence create noise, not emphasis.',
+    'no-punct':'Without punctuation, screen readers merge sentences with no pause.',
+    'bare-link':'Short URLs are read character by character — meaningless out loud.',
+    'deco-sym':'Symbol names interrupt the sentence when read aloud.',
+    'long-sent':'Long sentences are harder to process for people with cognitive disabilities.',
+    'hashtag-case':'All-lowercase hashtags are read as one unbroken word.',
+    'jargon':'Business jargon creates barriers for people outside your industry.',
+    'inclusive':'Some terms may unintentionally exclude or offend.'
+  },
+  fixes:{
+    'deco-struct':'Swap emoji or symbol bullets for a plain dash. Your post will look just as structured and read cleanly out loud.',
+    'emoji-mid':'Move emojis to after the full stop at the end of the sentence. They still add personality without interrupting the read.',
+    'emoji-multi':'Keep to one emoji per sentence. A single one lands with more impact anyway.',
+    'no-punct':'Add a full stop, question mark, or exclamation mark to close each sentence. One character makes a real difference for listeners.',
+    'bare-link':"Add a short phrase before the link, like 'Read the full report here:' so people know where they are going before they get there.",
+    'deco-sym':"Replace decorative symbols with a plain word, like 'then' instead of an arrow, or just remove them.",
+    'long-sent':'Find the longest sentence and split it into two. Just find a natural pause point, end the sentence there, and start a new one.',
+    'hashtag-case':'#contentmarketing becomes #ContentMarketing. It takes a second and makes your hashtags clearer for everyone.',
+    'jargon':"Jargon creates invisible barriers. 'Work together' lands better than 'leverage our synergies.' 'We changed direction' is clearer than 'we pivoted.'",
+    'inclusive':"Small swaps keep the meaning exactly the same. Try 'incredible' instead of 'crazy,' 'everyone' instead of 'guys.' Your message reaches more people warmly."
+  },
+  srPreviews:{
+    'deco-struct':'e.g. "black star Fast delivery" — symbol name read before the actual content.',
+    'emoji-mid':'e.g. "Rocket we launched our product" — name announced before the sentence.',
+    'emoji-multi':'e.g. "fire fire fire" — all names read in sequence.',
+    'no-punct':'Without a full stop, the next sentence starts immediately with no pause.',
+    'bare-link':'"https colon slash slash bit dot ly slash abc123" — character by character, no destination.',
+    'deco-sym':'e.g. "check our insights black rightwards arrow bit dot ly" — symbol name mid-sentence.',
+    'hashtag-case':'"quickcommerce" spoken as one unbroken word — screen readers cannot split it.'
+  }
+};
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+let checkResults  = null;
+let fixedHTML     = '';
+let fixedText     = '';
+let hasRunCheck   = false;
+let activeHighlight = null;
+let expandedCards = new Set();
+let isSpeaking    = false;
+let currentPanel  = 'analyse';
+
+// ─── DOM ────────────────────────────────────────────────────────────────────
+const postInput    = document.getElementById('postInput');
+const postMirror   = document.getElementById('postMirror');
+const postRendered = document.getElementById('postRendered');
+const postWrapper  = document.getElementById('postWrapper');
+const charCounter  = document.getElementById('charCounter');
+const hlLegend     = document.getElementById('hlLegend');
+const listenStrip  = document.getElementById('listenStrip');
+const listenBtn    = document.getElementById('listenBtn');
+const runBtn       = document.getElementById('runBtn');
+const issuesBody   = document.getElementById('issuesBody');
+const issuesEmpty  = document.getElementById('issuesEmpty');
+const issuesFooter = document.getElementById('issuesFooter');
+const fixedPostBox = document.getElementById('fixedPostBox');
+const issueBadge   = document.getElementById('issueBadge');
+const navIssuesSub = document.getElementById('navIssuesSub');
+const statChecks   = document.getElementById('statChecks');
+const statFixes    = document.getElementById('statFixes');
+
+// ─── UTILS ──────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escRx(s) { return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+
+const EMOJI_RX = /\p{Emoji_Presentation}|\p{Extended_Pictographic}/u;
+const EMOJI_RX_G = /\p{Emoji_Presentation}|\p{Extended_Pictographic}/gu;
+const DECO_SYM_SET = /[→►▶◆★✦✧▸‣⁃]/;
+
+function isEmoji(ch) { return EMOJI_RX.test(ch); }
+
+function stripTrailingEmoji(line) {
+  const chars = [...line];
+  while (chars.length && isEmoji(chars[chars.length-1])) chars.pop();
+  return chars.join('').trimEnd();
+}
+
+function countWords(s) { return s.trim().split(/\s+/).filter(w=>w.length>0).length; }
+
+function toCamelCase(hashtag) {
+  const tag = hashtag.slice(1);
+  return '#' + tag.charAt(0).toUpperCase() + tag.slice(1);
+}
+
+// ─── ANALYSIS ───────────────────────────────────────────────────────────────
+function analyse(text) {
+  const issues = [];
+  const lines  = text.split('\n');
+  let offset   = 0;
+
+  // Per-line checks
+  const decoStructSegs = [], emojiMidSegs = [], noPunctSegs = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line     = lines[i];
+    const lineStart = offset;
+    const lineEnd   = offset + line.length;
+    const trimmed  = line.trimStart();
+    const chars    = [...trimmed];
+
+    // Check 1: emoji/symbol bullet
+    if (chars.length > 0 && chars[1] === ' ') {
+      const first = chars[0];
+      if (isEmoji(first) || DECO_SYM_SET.test(first)) {
+        const origLen = first.length; // code unit length
+        decoStructSegs.push({
+          start: lineStart + (line.length - trimmed.length),
+          end:   lineStart + (line.length - trimmed.length) + origLen,
+          orig: first,
+          repl: '–'
+        });
+      }
+    }
+
+    // Check 2: emoji mid-sentence (emoji that has text after it on same line)
+    if (line.trim().length > 0) {
+      const emojiRxLocal = new RegExp('(‍|\\p{Emoji_Presentation}|\\p{Extended_Pictographic})', 'gu');
+      let m;
+      let hasMid = false;
+      // check if any emoji in this line is NOT at end (ignoring trailing whitespace+emoji)
+      const stripped = stripTrailingEmoji(line).trimEnd();
+      // if the original line (before stripping trailing emojis) has an emoji and the stripped version
+      // is different, then emojis exist at end — but we want to check if there are emojis NOT at end
+      const lineEmojis = [...line.matchAll(EMOJI_RX_G)];
+      for (const em of lineEmojis) {
+        const afterEmoji = line.slice(em.index + em[0].length);
+        if (afterEmoji.trimEnd().length > 0 && afterEmoji.trimEnd().match(/\S/)) {
+          hasMid = true;
+          break;
+        }
+      }
+      if (hasMid && !(decoStructSegs.find(s => s.start >= lineStart && s.start < lineEnd))) {
+        // Fix: move all emojis in this line to end
+        let fixed = line;
+        const ems = [...line.matchAll(EMOJI_RX_G)].map(m=>m[0]);
+        const unique = [...new Set(ems)];
+        // remove all emojis from line
+        let withoutEmoji = line;
+        for (const e of unique) {
+          withoutEmoji = withoutEmoji.split(e).join('');
+        }
+        withoutEmoji = withoutEmoji.trim();
+        // find punctuation at end
+        const hasPunct = /[.!?]$/.test(withoutEmoji);
+        const emojiStr = ems.join(' ');
+        fixed = hasPunct ? `${withoutEmoji} ${emojiStr}` : `${withoutEmoji} ${emojiStr}`;
+        emojiMidSegs.push({
+          start: lineStart,
+          end:   lineEnd,
+          orig:  line,
+          repl:  fixed
+        });
+      }
+    }
+
+    // Check 4: missing punctuation
+    if (line.length > 10) {
+      const stripped2 = stripTrailingEmoji(line.trimEnd());
+      const lastChar  = stripped2.slice(-1);
+      const firstChar = line.trimStart()[0];
+      if (firstChar !== '#' && firstChar !== '@' && !/^https?:\/\//i.test(line.trim())) {
+        if (stripped2.length > 3 && !/[.!?:"""»]$/.test(lastChar) && !/^\s*$/.test(stripped2)) {
+          noPunctSegs.push({
+            start: lineStart + line.length,
+            end:   lineStart + line.length,
+            orig:  '',
+            repl:  '.'
+          });
+        }
+      }
+    }
+
+    offset += line.length + 1;
+  }
+
+  if (decoStructSegs.length > 0) issues.push({ id:'deco-struct', cat:'vis', severity:'warn', fixType:'auto', segs:decoStructSegs, excerpts: decoStructSegs.slice(0,3).map(s=>s.orig) });
+  if (emojiMidSegs.length > 0)  issues.push({ id:'emoji-mid',   cat:'vis', severity:'error', fixType:'auto', segs:emojiMidSegs,  excerpts: emojiMidSegs.slice(0,2).map(s=>s.orig.slice(0,40)) });
+  if (noPunctSegs.length > 0)   issues.push({ id:'no-punct',    cat:'vis', severity:'info',  fixType:'auto', segs:noPunctSegs,   excerpts:[] });
+
+  // Check 3: multiple emojis in a row
+  const multiEmojiSegs = [];
+  {
+    const rx = /(\p{Emoji_Presentation}|\p{Extended_Pictographic}){2,}/gu;
+    let m;
+    while ((m = rx.exec(text)) !== null) {
+      multiEmojiSegs.push({
+        start: m.index,
+        end:   m.index + m[0].length,
+        orig:  m[0],
+        repl:  null,
+        hint:  `${[...m[0]].length} emojis in a row — consider keeping just the first one. The message stays the same.`
+      });
+    }
+    if (multiEmojiSegs.length > 0) issues.push({ id:'emoji-multi', cat:'vis', severity:'warn', fixType:'voice', segs:multiEmojiSegs, excerpts:[...multiEmojiSegs[0].orig].slice(0,4).join('') });
+  }
+
+  // Check 5: bare links
+  const bareLinkSegs = [];
+  {
+    const urlRx = /https?:\/\/(?:bit\.ly|lnkd\.in|ow\.ly|t\.co|tinyurl\.com|goo\.gl|buff\.ly|[a-zA-Z0-9-]+\.[a-zA-Z]{2,})[^\s]*/gi;
+    let m;
+    while ((m = urlRx.exec(text)) !== null) {
+      const beforeUrl = text.slice(Math.max(0, m.index - 12), m.index);
+      if (!/read more|here:|at $/i.test(beforeUrl)) {
+        bareLinkSegs.push({
+          start: m.index,
+          end:   m.index,
+          orig:  '',
+          repl:  'Read more: ',
+          excerpt: m[0].slice(0,50)
+        });
+      }
+    }
+    if (bareLinkSegs.length > 0) issues.push({ id:'bare-link', cat:'vis', severity:'warn', fixType:'auto', segs:bareLinkSegs, excerpts:bareLinkSegs.slice(0,2).map(s=>s.excerpt) });
+  }
+
+  // Check 6: decorative symbols mid-text (not at start of bullet lines)
+  const decoSymSegs = [];
+  {
+    const symRx = /[→►▶◆★✦✧▸‣⁃]/g;
+    const bulletStarts = new Set(decoStructSegs.map(s=>s.start));
+    let m;
+    while ((m = symRx.exec(text)) !== null) {
+      if (!bulletStarts.has(m.index)) {
+        const replacement = m[0] === '→' ? 'then' : '';
+        decoSymSegs.push({
+          start: m.index,
+          end:   m.index + m[0].length,
+          orig:  m[0],
+          repl:  replacement
+        });
+      }
+    }
+    if (decoSymSegs.length > 0) {
+      const unique = [...new Set(decoSymSegs.map(s=>s.orig))];
+      issues.push({ id:'deco-sym', cat:'vis', severity:'warn', fixType:'auto', segs:decoSymSegs, excerpts:unique.slice(0,4) });
+    }
+  }
+
+  // Check 7: long sentences
+  const longSentSegs = [];
+  {
+    const sentRx = /[^.!?\n]+[.!?]/g;
+    let m;
+    while ((m = sentRx.exec(text)) !== null) {
+      const sentence = m[0].trim();
+      const words = sentence.split(/\s+/).filter(w=>w.length>0);
+      if (words.length > 25) {
+        const mid = words[Math.floor(words.length/2)] || '';
+        longSentSegs.push({
+          start: m.index,
+          end:   m.index + m[0].length,
+          orig:  m[0],
+          repl:  null,
+          hint:  `This sentence has ${words.length} words. Try splitting it after "${mid}" — the meaning stays exactly the same.`
+        });
+      }
+    }
+    if (longSentSegs.length > 0) issues.push({ id:'long-sent', cat:'cog', severity:'warn', fixType:'voice', segs:longSentSegs, excerpts:[longSentSegs[0].orig.slice(0,50)+'…'] });
+  }
+
+  // Check 8: lowercase hashtags
+  const hashtagSegs = [];
+  {
+    const hashRx = /#([a-z][a-z0-9]{6,})/g;
+    let m;
+    while ((m = hashRx.exec(text)) !== null) {
+      const fixed = toCamelCase(m[0]);
+      hashtagSegs.push({
+        start: m.index,
+        end:   m.index + m[0].length,
+        orig:  m[0],
+        repl:  fixed
+      });
+    }
+    if (hashtagSegs.length > 0) issues.push({ id:'hashtag-case', cat:'cog', severity:'warn', fixType:'auto', segs:hashtagSegs, excerpts:hashtagSegs.slice(0,4).map(s=>s.orig) });
+  }
+
+  // Check 9: jargon
+  {
+    const sorted = [...JARGON].sort((a,b)=>b.length-a.length);
+    const segs = [];
+    const usedRanges = [];
+    for (const term of sorted) {
+      const rx = new RegExp(`\\b${escRx(term)}\\b`,'gi');
+      let m;
+      while ((m = rx.exec(text)) !== null) {
+        const start = m.index, end = m.index + m[0].length;
+        if (!usedRanges.some(([s,e])=>start<e && end>s)) {
+          const suggestion = JARGON_FIXES[term.toLowerCase()] || JARGON_FIXES[m[0].toLowerCase()];
+          segs.push({
+            start, end,
+            orig: m[0],
+            repl: null,
+            hint: suggestion ? `Consider '${suggestion}' instead of '${m[0]}' — same meaning, clearer to everyone.` : `Consider a plain alternative to '${m[0]}'.`
+          });
+          usedRanges.push([start, end]);
+        }
+      }
+    }
+    if (segs.length > 0) {
+      const excerpts = segs.slice(0,4).map(s=>s.orig);
+      if (segs.length > 4) excerpts.push('…');
+      issues.push({ id:'jargon', cat:'cog', severity:'info', fixType:'voice', segs, excerpts });
+    }
+  }
+
+  // Check 10: inclusive language
+  {
+    const sorted = [...INCLUSIVE].sort((a,b)=>b.length-a.length);
+    const segs = [];
+    const usedRanges = [];
+    for (const term of sorted) {
+      const rx = new RegExp(`\\b${escRx(term)}\\b`,'gi');
+      let m;
+      while ((m = rx.exec(text)) !== null) {
+        const start = m.index, end = m.index + m[0].length;
+        if (!usedRanges.some(([s,e])=>start<e && end>s)) {
+          const suggestion = INCLUSIVE_FIXES[term.toLowerCase()] || INCLUSIVE_FIXES[m[0].toLowerCase()];
+          segs.push({
+            start, end,
+            orig: m[0],
+            repl: null,
+            hint: suggestion ? `Consider '${suggestion}' instead of '${m[0]}' — small swap, wider welcome.` : `Consider a more inclusive alternative to '${m[0]}'.`
+          });
+          usedRanges.push([start, end]);
+        }
+      }
+    }
+    if (segs.length > 0) {
+      const excerpts = segs.slice(0,4).map(s=>s.orig);
+      issues.push({ id:'inclusive', cat:'cog', severity:'error', fixType:'voice', segs, excerpts });
+    }
+  }
+
+  return issues;
+}
+
+// ─── FIXED POST GENERATION ──────────────────────────────────────────────────
+function buildFixed(text, issues) {
+  // Flatten all segments from all issues, tagging with issue info
+  const allSegs = [];
+  for (const issue of issues) {
+    for (const seg of issue.segs) {
+      allSegs.push({ ...seg, fixType: issue.fixType, issueId: issue.id });
+    }
+  }
+  // Sort by start position, then by length desc (longer first if same start)
+  allSegs.sort((a,b) => a.start - b.start || (b.end-b.start) - (a.end-a.start));
+
+  // Remove overlapping segments
+  const filtered = [];
+  let lastEnd = 0;
+  for (const seg of allSegs) {
+    if (seg.start >= lastEnd) {
+      filtered.push(seg);
+      lastEnd = seg.end;
+    }
+  }
+
+  let html = '', plain = '', pos = 0;
+  for (const seg of filtered) {
+    const before = text.slice(pos, seg.start);
+    html  += escHtml(before);
+    plain += before;
+
+    const origText = seg.orig || text.slice(seg.start, seg.end);
+
+    if (seg.fixType === 'auto') {
+      if (origText === '') {
+        html  += `<span class="diff-add">${escHtml(seg.repl)}</span>`;
+        plain += seg.repl;
+      } else if (seg.repl === '') {
+        html  += `<span class="diff-del">${escHtml(origText)}</span>`;
+      } else if (seg.repl === null) {
+        html  += escHtml(origText);
+        plain += origText;
+      } else {
+        html  += `<span class="diff-del">${escHtml(origText)}</span><span class="diff-add">${escHtml(seg.repl)}</span>`;
+        plain += seg.repl;
+      }
+    } else {
+      // NEEDS YOUR VOICE
+      html  += `<span class="diff-review">${escHtml(origText)}</span>`;
+      if (seg.hint) html += `<span class="diff-hint">💡 Suggestion: ${escHtml(seg.hint)}</span>`;
+      plain += origText;
+    }
+    pos = seg.end;
+  }
+  const tail = text.slice(pos);
+  html  += escHtml(tail);
+  plain += tail;
+
+  fixedHTML = html;
+  fixedText = plain;
+}
+
+// ─── RUN CHECK ──────────────────────────────────────────────────────────────
+async function runCheck() {
+  const text = postInput.value.trim();
+  if (!text) {
+    postWrapper.classList.add('error');
+    setTimeout(() => postWrapper.classList.remove('error'), 1600);
+    return;
+  }
+
+  // Loading state
+  runBtn.classList.add('loading');
+  runBtn.disabled = true;
+
+  await new Promise(r => setTimeout(r, 30)); // allow UI to update
+
+  checkResults  = analyse(text);
+  expandedCards = new Set();
+  hasRunCheck   = true;
+  activeHighlight = null;
+
+  buildFixed(text, checkResults);
+  buildResults(checkResults);
+
+  // Unlock nav
+  document.getElementById('nav-issues').classList.remove('locked');
+  document.getElementById('nav-ready').classList.remove('locked');
+
+  // Update issues nav sub-label and badge
+  const errorWarnCount = checkResults.filter(i=>i.severity==='error'||i.severity==='warn').length;
+  navIssuesSub.textContent = `${checkResults.length} issue${checkResults.length!==1?'s':''} found`;
+  issueBadge.textContent = errorWarnCount;
+  if (errorWarnCount > 0) issueBadge.classList.add('visible');
+
+  // Hide "what we check" accordion
+  document.getElementById('whatWeCheck').style.display = 'none';
+
+  // Show listen strip
+  listenStrip.classList.remove('hidden');
+
+  // Update fixed post panel
+  fixedPostBox.innerHTML = fixedHTML || '<div class="fixed-post-empty">No changes needed.</div>';
+
+  // Stats
+  const autoFixCount = checkResults.reduce((n,i)=>n+(i.fixType==='auto'?i.segs.length:0),0);
+  incrementStats(autoFixCount);
+
+  runBtn.classList.remove('loading');
+  runBtn.disabled = false;
+
+  switchPanel('issues');
+}
+
+// ─── BUILD RESULTS UI ───────────────────────────────────────────────────────
+function buildResults(issues) {
+  // Clear old
+  const existingScores = issuesBody.querySelector('.score-section');
+  const existingTracker = issuesBody.querySelector('.progress-tracker');
+  const existingGroups = issuesBody.querySelectorAll('.issue-group-wrapper');
+  existingScores && existingScores.remove();
+  existingTracker && existingTracker.remove();
+  existingGroups.forEach(g=>g.remove());
+
+  issuesEmpty.style.display = 'none';
+
+  if (issues.length === 0) {
+    issuesEmpty.innerHTML = '<svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="16" stroke="#15803d" stroke-width="2"/><path d="M13 20l5 5 9-9" stroke="#15803d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p style="color:#15803d;font-size:13px;font-weight:500;margin-top:8px">No issues found. Great work!</p>';
+    issuesEmpty.style.display = 'flex';
+    issuesFooter.style.display = 'none';
+    return;
+  }
+
+  // Scores
+  const visIssues = issues.filter(i=>i.cat==='vis');
+  const cogIssues = issues.filter(i=>i.cat==='cog');
+  const visScore  = Math.max(10, 100 - visIssues.length * 15);
+  const cogScore  = Math.max(10, 100 - cogIssues.length * 14);
+  const genScore  = Math.round((visScore + cogScore) / 2);
+
+  function scoreClass(n) { return n>=80?'green':n>=55?'amber':'red'; }
+
+  const scoreHTML = `
+  <div class="score-section" aria-label="Audience reach scores">
+    ${[
+      {label:'General audience', score:genScore, icon:'<svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="4" r="2.2" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 11c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'},
+      {label:'Visual impairments', score:visScore, icon:'<svg viewBox="0 0 12 12" fill="none"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4Z" stroke="currentColor" stroke-width="1.2"/><circle cx="6" cy="6" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>'},
+      {label:'Cognitive disabilities', score:cogScore, icon:'<svg viewBox="0 0 12 12" fill="none"><path d="M6 1C3.8 1 2 2.8 2 5c0 1.2.5 2.2 1.3 3L4 11h4l.7-3c.8-.8 1.3-1.8 1.3-3 0-2.2-1.8-4-4-4Z" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 11.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'}
+    ].map(({label,score,icon}) => `
+      <div class="score-row">
+        <div class="score-icon" aria-hidden="true">${icon}</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span class="score-label">${label}</span>
+            <span class="score-pct ${scoreClass(score)}">${score}%</span>
+          </div>
+          <div class="score-bar-wrap"><div class="score-bar ${scoreClass(score)}" data-target="${score}" style="width:0"></div></div>
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+
+  const progressHTML = `
+  <div class="progress-tracker" aria-label="Review progress">
+    <div class="progress-left">
+      <p id="progressLabel">0 of ${issues.length} reviewed</p>
+      <span>Click an issue to see the fix</span>
+    </div>
+    <div class="progress-right">
+      <span class="progress-pct" id="progressPct">0%</span>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
+    </div>
+  </div>`;
+
+  const visGroup  = issues.filter(i=>i.cat==='vis');
+  const cogGroup  = issues.filter(i=>i.cat==='cog');
+
+  function renderGroup(items, label) {
+    if (!items.length) return '';
+    return `<div class="issue-group-wrapper">
+      <div class="issue-group-label" aria-hidden="true">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2"/></svg>
+        ${label}
+      </div>
+      ${items.map((issue,idx) => renderIssueCard(issue, idx)).join('')}
+    </div>`;
+  }
+
+  issuesBody.insertAdjacentHTML('afterbegin',
+    scoreHTML + progressHTML +
+    '<div class="issue-group-wrapper">' +
+    '<div class="issue-group-hint" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2"/><line x1="5" y1="4" x2="5" y2="7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Click any issue to highlight it in your post</div>' +
+    '</div>'
+  );
+
+  issuesBody.insertAdjacentHTML('beforeend',
+    renderGroup(visGroup, 'Visual') +
+    renderGroup(cogGroup, 'Cognitive')
+  );
+
+  // Animate score bars
+  setTimeout(() => {
+    document.querySelectorAll('.score-bar').forEach((bar, i) => {
+      setTimeout(() => {
+        bar.style.width = bar.dataset.target + '%';
+      }, i * 120);
+    });
+  }, 80);
+
+  // Animate cards
+  document.querySelectorAll('.issue-card').forEach((card, i) => {
+    card.style.animationDelay = (i * 50) + 'ms';
+  });
+
+  issuesFooter.style.display = 'block';
+  updateProgress();
+}
+
+function renderIssueCard(issue, idx) {
+  const sev = issue.severity;
+  const isVoice = issue.fixType === 'voice';
+  const hlClass = getMarkClass(issue.id);
+  const hasSR = !!COPY.srPreviews[issue.id];
+
+  const excerptHTML = issue.excerpts && issue.excerpts.length
+    ? `<div class="excerpt-chip"><svg viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3h6M2 5h6M2 7h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg><span title="${issue.excerpts.join(', ')}">${escHtml(issue.excerpts.join(', '))}</span></div>`
+    : '';
+
+  return `<div class="issue-card" id="card-${issue.id}" data-id="${issue.id}" onclick="toggleIssue('${issue.id}')" role="button" tabindex="0" aria-expanded="false" aria-label="${escHtml(COPY.titles[issue.id])}">
+    <div class="card-header">
+      <div class="severity-dot ${sev}" aria-label="Severity: ${sev}"></div>
+      <div>
+        <div class="card-title">${escHtml(COPY.titles[issue.id])}</div>
+        <div class="card-desc">${escHtml(COPY.descs[issue.id])}</div>
+        ${excerptHTML}
+        ${hlClass ? '<div class="click-pill" aria-hidden="true"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><circle cx="3.5" cy="3.5" r="2.5" stroke="currentColor" stroke-width="1"/><path d="M6 6l1.5 1.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>click to highlight</div>' : ''}
+      </div>
+    </div>
+    <div class="card-body">
+      ${hasSR ? `<div class="sr-preview"><div class="sr-preview-label">SCREEN READER PREVIEW</div><div class="sr-preview-text">${escHtml(COPY.srPreviews[issue.id])}</div></div>` : ''}
+      <div class="fix-label"><strong>How to fix it:</strong> ${escHtml(COPY.fixes[issue.id])}</div>
+      <div class="fix-badge ${isVoice ? 'voice' : 'auto'}">${isVoice ? '⚠️ Needs your voice — see suggestion below' : '✓ Auto-fixed in Ready to post'}</div>
+    </div>
+  </div>`;
+}
+
+function getMarkClass(issueId) {
+  if (['deco-struct','emoji-mid','emoji-multi','no-punct','bare-link','deco-sym','hashtag-case'].includes(issueId)) return 'hl-vis';
+  if (issueId === 'jargon') return 'hl-jarg';
+  if (issueId === 'long-sent') return 'hl-long';
+  if (issueId === 'inclusive') return 'hl-incl';
+  return '';
+}
+
+// ─── PANEL SWITCHING ────────────────────────────────────────────────────────
+function switchPanel(key) {
+  currentPanel = key;
+  document.querySelectorAll('.panel-state').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`panel-${key}`).classList.add('active');
+  const navEl = document.getElementById(`nav-${key}`);
+  if (navEl) navEl.classList.add('active');
+
+  if (key !== 'issues') clearHighlight();
+}
+
+// ─── HIGHLIGHT SYSTEM ───────────────────────────────────────────────────────
+function toggleIssue(issueId) {
+  const card = document.getElementById('card-' + issueId);
+  if (!card) return;
+
+  const wasExpanded = card.classList.contains('expanded');
+
+  document.querySelectorAll('.issue-card.expanded').forEach(c => {
+    c.classList.remove('expanded');
+    c.setAttribute('aria-expanded','false');
+  });
+
+  if (wasExpanded) {
+    clearHighlight();
+  } else {
+    card.classList.add('expanded');
+    card.setAttribute('aria-expanded','true');
+    expandedCards.add(issueId);
+    activeHighlight = issueId;
+    renderPost();
+    // Show legend
+    hlLegend.classList.add('visible');
+    hlLegend.setAttribute('aria-hidden','false');
+  }
+  updateProgress();
+}
+
+function clearHighlight() {
+  activeHighlight = null;
+  renderPost();
+  hlLegend.classList.remove('visible');
+  hlLegend.setAttribute('aria-hidden','true');
+}
+
+function renderPost() {
+  const text = postInput.value;
+  postMirror.textContent = text + '​';
+
+  if (!activeHighlight || !checkResults) {
+    postRendered.textContent = text;
+    return;
+  }
+
+  const issue = checkResults.find(i => i.id === activeHighlight);
+  if (!issue || !issue.segs || issue.segs.length === 0) {
+    postRendered.textContent = text;
+    return;
+  }
+
+  const markClass = getMarkClass(issue.id);
+  const segs = [...issue.segs].sort((a,b) => a.start - b.start);
+
+  let html = '', pos = 0;
+  for (const seg of segs) {
+    if (seg.start < pos) continue;
+    html += escHtml(text.slice(pos, seg.start));
+    const segText = seg.orig || text.slice(seg.start, seg.end);
+    if (seg.start === seg.end) {
+      html += escHtml(text.slice(pos, seg.start));
+    } else {
+      html += `<mark class="${markClass}">${escHtml(segText)}</mark>`;
+    }
+    pos = seg.end;
+  }
+  html += escHtml(text.slice(pos));
+  postRendered.innerHTML = html;
+}
+
+// ─── PROGRESS TRACKING ──────────────────────────────────────────────────────
+function updateProgress() {
+  if (!checkResults) return;
+  const total = checkResults.length;
+  if (!total) return;
+  const done = expandedCards.size;
+  const pct  = Math.round((done / total) * 100);
+
+  const label = document.getElementById('progressLabel');
+  const pctEl = document.getElementById('progressPct');
+  const fill  = document.getElementById('progressFill');
+
+  if (label) label.textContent = `${done} of ${total} reviewed`;
+  if (pctEl) pctEl.textContent = `${pct}%`;
+  if (fill)  fill.style.width  = `${pct}%`;
+}
+
+// ─── LISTEN (Web Speech) ────────────────────────────────────────────────────
+function toggleListen() {
+  if (!window.speechSynthesis) {
+    alert('Sorry, your browser does not support text-to-speech.');
+    return;
+  }
+  if (isSpeaking) {
+    window.speechSynthesis.cancel();
+    isSpeaking = false;
+    listenBtn.textContent = 'Listen';
+    listenBtn.classList.remove('stop');
+    listenBtn.setAttribute('aria-label','Listen to post');
+    return;
+  }
+  const text = postInput.value;
+  if (!text.trim()) return;
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.rate = 0.9;
+  utt.onend = () => {
+    isSpeaking = false;
+    listenBtn.textContent = 'Listen';
+    listenBtn.classList.remove('stop');
+    listenBtn.setAttribute('aria-label','Listen to post');
+  };
+  window.speechSynthesis.speak(utt);
+  isSpeaking = true;
+  listenBtn.textContent = 'Stop';
+  listenBtn.classList.add('stop');
+  listenBtn.setAttribute('aria-label','Stop listening');
+}
+
+// ─── COPY FIXED TEXT ────────────────────────────────────────────────────────
+function copyFixed() {
+  if (!fixedText) return;
+  navigator.clipboard.writeText(fixedText).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = fixedText;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
+// ─── STATS ──────────────────────────────────────────────────────────────────
+function initStats() {
+  const checks = parseInt(localStorage.getItem('lac_total_checks') || '0', 10);
+  const fixes  = parseInt(localStorage.getItem('lac_total_fixes')  || '0', 10);
+  statChecks.textContent = checks.toLocaleString();
+  statFixes.textContent  = fixes.toLocaleString();
+}
+
+function incrementStats(autoFixCount) {
+  const checks = parseInt(localStorage.getItem('lac_total_checks') || '0', 10) + 1;
+  const fixes  = parseInt(localStorage.getItem('lac_total_fixes')  || '0', 10) + autoFixCount;
+  localStorage.setItem('lac_total_checks', checks);
+  localStorage.setItem('lac_total_fixes',  fixes);
+  statChecks.textContent = checks.toLocaleString();
+  statFixes.textContent  = fixes.toLocaleString();
+}
+
+// ─── CONTRIBUTORS ────────────────────────────────────────────────────────────
+const AVATAR_PALETTES = [
+  {bg:'#dbeafe',color:'#1e40af'},{bg:'#fde8f4',color:'#9d174d'},
+  {bg:'#e6f4ea',color:'#14532d'},{bg:'#fff4e0',color:'#92400e'}
+];
+
+function renderContributors() {
+  const list = document.getElementById('contribList');
+  if (!CONTRIBUTORS.length) {
+    list.innerHTML = '<p style="font-size:12px;color:#bbb;padding:8px 0">No contributors listed yet — be the first!</p>';
+    return;
+  }
+  list.innerHTML = CONTRIBUTORS.map((c, i) => {
+    const palette = AVATAR_PALETTES[i % AVATAR_PALETTES.length];
+    const initials = c.name.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+    return `<div class="contrib-card">
+      <div class="contrib-avatar" style="background:${palette.bg};color:${palette.color}" aria-hidden="true">${initials}</div>
+      <div>
+        <div class="contrib-name">${escHtml(c.name)}</div>
+        <div class="contrib-role">${escHtml(c.role)}</div>
+      </div>
+      ${c.linkedin ? `<a href="${escHtml(c.linkedin)}" target="_blank" rel="noopener noreferrer" class="contrib-link" aria-label="View ${escHtml(c.name)} on LinkedIn"><svg viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M4 6.5v3.5M4 4.5v.1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M7 10V8c0-1 .5-1.5 1.5-1.5S10 7 10 8v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></a>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ─── CHAR COUNTER & INPUT SYNC ───────────────────────────────────────────────
+postInput.addEventListener('input', () => {
+  const len = postInput.value.length;
+  charCounter.textContent = `${len.toLocaleString()} / 3000`;
+  charCounter.className = 'char-counter' + (len >= 3000 ? ' error' : len >= 2700 ? ' warn' : '');
+
+  postMirror.textContent = postInput.value + '​';
+  if (activeHighlight) renderPost();
+  else postRendered.textContent = postInput.value;
+});
+
+// Keyboard accessibility for nav items
+document.querySelectorAll('.nav-item[role="button"]').forEach(el => {
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+  });
+});
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+function init() {
+  initStats();
+  renderContributors();
+  postMirror.textContent = '​';
+  postRendered.textContent = '';
+}
+
+init();
+</script>
+</body>
+</html>
