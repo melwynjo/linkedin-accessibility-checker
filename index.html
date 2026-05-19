@@ -383,10 +383,6 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
         <div class="hl-legend" id="hlLegend" aria-hidden="true" role="presentation"></div>
         <div class="editor-footer-right">
           <span class="char-counter" id="charCounter" aria-live="polite">0 / 3000</span>
-          <button class="listen-inline-btn hidden" id="listenBtn" onclick="toggleListen()" aria-label="Listen to post with screen reader simulation">
-            <span class="listen-label">Listen with screen reader</span>
-            <span class="listen-bars" aria-hidden="true"><b></b><b></b><b></b></span>
-          </button>
         </div>
       </div>
       <div class="diff-applied-view" id="diffAppliedView">
@@ -488,10 +484,16 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
         <a href="https://tally.so/r/KYWyrV" target="_blank" rel="noopener noreferrer" class="vote-btn purple">Vote for this first</a>
       </div>
       <div class="feature-card">
-        <div class="feature-icon teal" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><rect x="1" y="10" width="3" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="6" y="7" width="3" height="8" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="4" width="3" height="11" rx="1" stroke="currentColor" stroke-width="1.3"/></svg></div>
-        <h3>Impact Stats Dashboard</h3>
-        <p>A live counter of how many posts have been checked and how many accessibility issues have been fixed across all users. A window into how much more accessible LinkedIn is getting, one post at a time.</p>
+        <div class="feature-icon teal" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 9l2-2.5 2 2 2-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 14h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M8 12v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <h3>Image Accessibility Check</h3>
+        <p>Flags posts that rely on text inside images, which screen readers cannot read. Reminds you to add alt text descriptions so your visual content is accessible to everyone.</p>
         <a href="https://tally.so/r/KYWyrV" target="_blank" rel="noopener noreferrer" class="vote-btn teal">Vote for this first</a>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon purple" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h7M3 12h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="13" cy="11" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M15 13l1.5 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <h3>Grammar & Spell Check</h3>
+        <p>Catches typos, grammar errors, and unclear phrasing before you post. Because accessibility and quality go hand in hand.</p>
+        <a href="https://tally.so/r/KYWyrV" target="_blank" rel="noopener noreferrer" class="vote-btn purple">Vote for this first</a>
       </div>
     </div>
   </div>
@@ -633,7 +635,7 @@ let fixedText     = '';
 let hasRunCheck   = false;
 let activeHighlight = null;
 let expandedCards = new Set();
-let isSpeaking    = false;
+let isSpeaking    = false; // kept for clearPost cleanup
 let currentPanel  = 'analyse';
 
 // ─── DOM ────────────────────────────────────────────────────────────────────
@@ -643,7 +645,6 @@ const postRendered = document.getElementById('postRendered');
 const postWrapper  = document.getElementById('postWrapper');
 const charCounter  = document.getElementById('charCounter');
 const hlLegend     = document.getElementById('hlLegend');
-const listenBtn    = document.getElementById('listenBtn');
 const runBtn       = document.getElementById('runBtn');
 const issuesBody   = document.getElementById('issuesBody');
 const issuesEmpty  = document.getElementById('issuesEmpty');
@@ -1059,9 +1060,6 @@ async function runCheck() {
   // Hide "what we check" accordion
   document.getElementById('whatWeCheck').style.display = 'none';
 
-  // Show listen strip
-  listenBtn.classList.remove('hidden');
-
   // Stats
   const autoFixCount = checkResults.reduce((n,i)=>n+(i.fixType==='auto'?i.segs.length:0),0);
   incrementStats(autoFixCount);
@@ -1177,11 +1175,6 @@ function switchPanel(key) {
 
   if (key !== 'issues') clearHighlight();
   animateBars();
-
-  // Hide listen button on analyse tab; show it on issues tab after a check has run
-  if (!editorCard.classList.contains('applied')) {
-    listenBtn.classList.toggle('hidden', key === 'analyse');
-  }
 }
 
 // ─── HIGHLIGHT SYSTEM ───────────────────────────────────────────────────────
@@ -1298,32 +1291,6 @@ function animateBars() {
 // ─── PROGRESS TRACKING ──────────────────────────────────────────────────────
 function updateProgress() {}
 
-// ─── LISTEN (Web Speech) ────────────────────────────────────────────────────
-function setListenState(playing) {
-  isSpeaking = playing;
-  listenBtn.classList.toggle('playing', playing);
-  listenBtn.setAttribute('aria-label', playing ? 'Stop listening' : 'Listen to post with screen reader simulation');
-}
-
-function toggleListen() {
-  if (!window.speechSynthesis) {
-    alert('Sorry, your browser does not support text-to-speech.');
-    return;
-  }
-  if (isSpeaking) {
-    window.speechSynthesis.cancel();
-    setListenState(false);
-    return;
-  }
-  const fixedPostEdit = document.getElementById('fixedPostEdit');
-  const text = editorCard.classList.contains('applied') ? fixedPostEdit.innerText : postInput.value;
-  if (!text.trim()) return;
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.rate = 0.9;
-  utt.onend = () => setListenState(false);
-  window.speechSynthesis.speak(utt);
-  setListenState(true);
-}
 
 // ─── APPLY FIXES / RESET ────────────────────────────────────────────────────
 const editorCard        = document.getElementById('editorCard');
@@ -1438,8 +1405,6 @@ function clearPost() {
   fixedText = '';
   issueBadge.classList.remove('visible');
   if (isSpeaking) window.speechSynthesis.cancel();
-  listenBtn.classList.add('hidden');
-  setListenState(false);
   document.getElementById('nav-issues').classList.add('locked');
   document.getElementById('nav-ready').classList.add('locked');
   document.getElementById('whatWeCheck').style.display = '';
