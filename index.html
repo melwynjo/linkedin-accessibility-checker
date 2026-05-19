@@ -745,10 +745,12 @@ function analyse(text) {
     // Check 4: missing punctuation
     if (line.length > 10) {
       const stripped2 = stripTrailingEmoji(line.trimEnd());
-      const lastChar  = stripped2.slice(-1);
+      // Strip trailing closing brackets/parens to find the real last punctuation
+      const stripped3 = stripped2.replace(/[)\]]+$/, '').trimEnd();
+      const lastChar  = stripped3.slice(-1);
       const firstChar = line.trimStart()[0];
       if (firstChar !== '#' && firstChar !== '@' && !/^https?:\/\//i.test(line.trim())) {
-        if (stripped2.length > 3 && !/[.!?:"""»]$/.test(lastChar) && !/^\s*$/.test(stripped2)) {
+        if (stripped3.length > 3 && !/[.!?:"""»]$/.test(lastChar) && !/^\s*$/.test(stripped3)) {
           const lastCharPos = lineStart + stripped2.length - 1;
           noPunctSegs.push({
             start: lastCharPos,
