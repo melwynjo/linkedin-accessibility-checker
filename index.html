@@ -210,25 +210,19 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
 .severity-dot.warn{background:var(--warn);box-shadow:0 0 0 2px rgba(217,119,6,.2)}
 .severity-dot.info{background:var(--blue)}
 .card-title{font-size:13.5px;font-weight:600;color:var(--text1);flex:1}
-.card-desc{font-size:13px;color:var(--text3);line-height:1.55;margin-top:4px;padding-left:15px}
+.card-desc{font-size:12.5px;color:var(--text3);line-height:1.5;margin-top:3px}
 
-.excerpt-chip{display:inline-flex;align-items:center;gap:5px;background:#fef9ec;border:1px solid #fde68a;border-radius:5px;padding:4px 8px;margin:6px 0 3px 15px;font-size:12px;color:#78350f;font-style:italic;max-width:100%;overflow:hidden}
-.excerpt-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.excerpt-chip svg{width:11px;height:11px;flex-shrink:0;color:#92400e}
+.card-meta{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap}
+.count-badge{font-size:11px;font-weight:600;background:#f0f0f0;color:var(--text3);border-radius:10px;padding:2px 8px}
+.fix-pill{display:inline-flex;align-items:center;gap:4px;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:500}
+.fix-pill.auto{background:#e6f4ea;color:#15803d}
+.fix-pill.voice{background:#fff4e0;color:#c97000}
 
 .card-body{margin-top:10px;padding-top:10px;border-top:1px solid #dde8f5;display:none}
 .issue-card.expanded .card-body{display:block}
 
-.sr-preview{background:#f8f8f8;border-radius:5px;padding:8px 10px;margin-bottom:10px}
-.sr-preview-label{font-size:10px;font-weight:600;color:#bbb;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
-.sr-preview-text{font-size:12.5px;color:#666;font-style:italic;line-height:1.5}
-
-.fix-label{font-size:13px;color:var(--text3);line-height:1.6}
+.fix-label{font-size:12.5px;color:var(--text3);line-height:1.6}
 .fix-label strong{color:var(--text1);font-weight:500}
-
-.fix-badge{display:inline-flex;align-items:center;gap:4px;border-radius:4px;padding:4px 8px;font-size:11.5px;font-weight:500;margin-top:8px}
-.fix-badge.auto{background:#e6f4ea;color:#15803d}
-.fix-badge.voice{background:#fff4e0;color:#c97000}
 
 /* Sticky footer for issues */
 .apply-btn{width:100%;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:22px;font-size:14px;font-weight:500;cursor:pointer;transition:background .12s}
@@ -1099,26 +1093,23 @@ function buildResults(issues) {
 function renderIssueCard(issue, idx) {
   const sev = issue.severity;
   const isVoice = issue.fixType === 'voice';
-  const hlClass = getMarkClass(issue.id);
-  const hasSR = !!COPY.srPreviews[issue.id];
-
-  const excerptHTML = issue.excerpts && issue.excerpts.length
-    ? `<div class="excerpt-chip"><svg viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3h6M2 5h6M2 7h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg><span title="${issue.excerpts.join(', ')}">${escHtml(issue.excerpts.join(', '))}</span></div>`
-    : '';
+  const count = issue.segs ? issue.segs.length : 1;
+  const countLabel = count === 1 ? '1 found' : `${count} found`;
 
   return `<div class="issue-card" id="card-${issue.id}" data-id="${issue.id}" onclick="toggleIssue('${issue.id}')" role="button" tabindex="0" aria-expanded="false" aria-label="${escHtml(COPY.titles[issue.id])}">
     <div class="card-header">
       <div class="severity-dot ${sev}" aria-label="Severity: ${sev}"></div>
-      <div>
+      <div style="flex:1;min-width:0">
         <div class="card-title">${escHtml(COPY.titles[issue.id])}</div>
         <div class="card-desc">${escHtml(COPY.descs[issue.id])}</div>
-        ${excerptHTML}
+        <div class="card-meta">
+          <span class="count-badge">${countLabel}</span>
+          <span class="fix-pill ${isVoice ? 'voice' : 'auto'}">${isVoice ? '⚠ Fix manually' : '✓ Auto-fixable'}</span>
+        </div>
       </div>
     </div>
     <div class="card-body">
-      ${hasSR ? `<div class="sr-preview"><div class="sr-preview-label">SCREEN READER PREVIEW</div><div class="sr-preview-text">${escHtml(COPY.srPreviews[issue.id])}</div></div>` : ''}
       <div class="fix-label"><strong>How to fix it:</strong> ${escHtml(COPY.fixes[issue.id])}</div>
-      <div class="fix-badge ${isVoice ? 'voice' : 'auto'}">${isVoice ? '⚠️ Needs your voice — see suggestion below' : '✓ Auto-fixed in Ready to post'}</div>
     </div>
   </div>`;
 }
