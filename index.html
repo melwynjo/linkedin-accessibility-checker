@@ -100,11 +100,19 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:1
 .post-textarea{position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;font-family:'Inter',-apple-system,sans-serif;font-size:15px;line-height:1.8;padding:12px 14px;border:none;outline:none;resize:none;background:transparent;color:transparent;caret-color:var(--text1);z-index:1}
 .post-textarea::placeholder{color:var(--text5)}
 
-/* Highlight marks */
-mark.hl-vis{background:#fff3cd;outline:1.5px solid #d4a017;border-radius:2px;color:inherit}
-mark.hl-jarg{background:#e0f0ff;outline:1.5px solid #5b9bd5;border-radius:2px;color:inherit}
-mark.hl-long{background:#e8f5e9;outline:1.5px solid #5ea85e;border-radius:2px;color:inherit}
-mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;color:inherit}
+/* Highlight marks — per issue */
+mark[class^="hl-"]{border-radius:2px;color:inherit}
+mark.hl-deco-struct{background:#fff3cd;outline:1.5px solid #d4a017}
+mark.hl-emoji-mid{background:#ffe4cc;outline:1.5px solid #e07818}
+mark.hl-emoji-multi{background:#ffd9b3;outline:1.5px solid #c96800}
+mark.hl-no-punct{background:#dbeafe;outline:1.5px solid #3b82f6}
+mark.hl-link-context{background:#ede9fe;outline:1.5px solid #7c3aed}
+mark.hl-deco-sym{background:#f1f5f9;outline:1.5px solid #94a3b8}
+mark.hl-unicode-bold{background:#fee2e2;outline:1.5px solid #ef4444}
+mark.hl-hashtag-case{background:#d1fae5;outline:1.5px solid #10b981}
+mark.hl-long-sent{background:#f0fdf4;outline:1.5px solid #4ade80}
+mark.hl-jarg{background:#e0f2fe;outline:1.5px solid #38bdf8}
+mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
 
 .editor-footer{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;margin-top:8px;gap:8px;min-height:26px}
 .editor-footer-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
@@ -113,11 +121,18 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
 .hl-legend{display:flex;gap:10px;flex-wrap:wrap;opacity:0;transform:translateY(3px);transition:opacity .2s,transform .2s;pointer-events:none}
 .hl-legend.visible{opacity:1;transform:translateY(0);pointer-events:auto}
 .hl-chip{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3)}
-.hl-swatch{width:13px;height:13px;border-radius:2px;display:inline-block}
-.hl-swatch.hl-vis{background:#fff3cd;outline:1.5px solid #d4a017}
-.hl-swatch.hl-jarg{background:#e0f0ff;outline:1.5px solid #5b9bd5}
-.hl-swatch.hl-long{background:#e8f5e9;outline:1.5px solid #5ea85e}
-.hl-swatch.hl-incl{background:#fde8e8;outline:1.5px solid #c87070}
+.hl-swatch{width:13px;height:13px;border-radius:2px;display:inline-block;flex-shrink:0}
+.hl-swatch.hl-deco-struct{background:#fff3cd;outline:1.5px solid #d4a017}
+.hl-swatch.hl-emoji-mid{background:#ffe4cc;outline:1.5px solid #e07818}
+.hl-swatch.hl-emoji-multi{background:#ffd9b3;outline:1.5px solid #c96800}
+.hl-swatch.hl-no-punct{background:#dbeafe;outline:1.5px solid #3b82f6}
+.hl-swatch.hl-link-context{background:#ede9fe;outline:1.5px solid #7c3aed}
+.hl-swatch.hl-deco-sym{background:#f1f5f9;outline:1.5px solid #94a3b8}
+.hl-swatch.hl-unicode-bold{background:#fee2e2;outline:1.5px solid #ef4444}
+.hl-swatch.hl-hashtag-case{background:#d1fae5;outline:1.5px solid #10b981}
+.hl-swatch.hl-long-sent{background:#f0fdf4;outline:1.5px solid #4ade80}
+.hl-swatch.hl-jarg{background:#e0f2fe;outline:1.5px solid #38bdf8}
+.hl-swatch.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
 
 /* Listen inline button */
 .listen-inline-btn{display:flex;align-items:center;gap:7px;padding:8px 16px;background:#fff;color:var(--blue);border:1.5px solid var(--blue-border);border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .12s,border-color .12s;box-shadow:0 1px 3px rgba(0,0,0,.06)}
@@ -356,12 +371,7 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
         <textarea id="postInput" class="post-textarea" placeholder="Paste or type your LinkedIn post here…" aria-label="LinkedIn post content" spellcheck="true" autocomplete="off"></textarea>
       </div>
       <div class="editor-footer">
-        <div class="hl-legend" id="hlLegend" aria-hidden="true" role="presentation">
-          <div class="hl-chip"><span class="hl-swatch hl-vis" aria-hidden="true"></span>Screen reader</div>
-          <div class="hl-chip"><span class="hl-swatch hl-jarg" aria-hidden="true"></span>Jargon</div>
-          <div class="hl-chip"><span class="hl-swatch hl-long" aria-hidden="true"></span>Long sentence</div>
-          <div class="hl-chip"><span class="hl-swatch hl-incl" aria-hidden="true"></span>Inclusive language</div>
-        </div>
+        <div class="hl-legend" id="hlLegend" aria-hidden="true" role="presentation"></div>
         <div class="editor-footer-right">
           <span class="char-counter" id="charCounter" aria-live="polite">0 / 3000</span>
           <button class="listen-inline-btn hidden" id="listenBtn" onclick="toggleListen()" aria-label="Listen to post with screen reader simulation">
@@ -408,7 +418,7 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
           <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">😊</div><div class="check-item-text"><strong>Emoji mid-sentence</strong><span>Emoji name interrupts the read</span></div></div>
           <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🔁</div><div class="check-item-text"><strong>Multiple emojis</strong><span>Names read in sequence</span></div></div>
           <div class="check-item"><div class="check-item-icon blue" aria-hidden="true">·</div><div class="check-item-text"><strong>Missing punctuation</strong><span>Sentences merge without pause</span></div></div>
-          <div class="check-item"><div class="check-item-icon blue" aria-hidden="true">🔗</div><div class="check-item-text"><strong>Bare link</strong><span>URL read character by character</span></div></div>
+          <div class="check-item"><div class="check-item-icon blue" aria-hidden="true">🔗</div><div class="check-item-text"><strong>Link with no context</strong><span>Reader can't tell where the link goes</span></div></div>
           <div class="check-item"><div class="check-item-icon grey" aria-hidden="true">→</div><div class="check-item-text"><strong>Decorative symbol</strong><span>Symbol name interrupts sentence</span></div></div>
           <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">𝗕</div><div class="check-item-text"><strong>Unicode bold/italic</strong><span>Not real formatting — screen readers break</span></div></div>
         </div>
@@ -566,7 +576,7 @@ const COPY = {
     'emoji-mid':'Emoji before or inside a sentence',
     'emoji-multi':'Multiple emojis in a row',
     'no-punct':'Sentence ends without punctuation',
-    'bare-link':'Link with no context around it',
+    'link-context':'Link with no context around it',
     'deco-sym':'Decorative symbol inside a sentence',
     'long-sent':'Some sentences are quite long',
     'hashtag-case':'Hashtag written in all lowercase',
@@ -579,7 +589,7 @@ const COPY = {
     'emoji-mid':'The emoji name is read aloud before the sentence, breaking the flow.',
     'emoji-multi':'Multiple emoji names read in sequence create noise, not emphasis.',
     'no-punct':'Without punctuation, screen readers merge sentences with no pause.',
-    'bare-link':'Short URLs are read character by character — meaningless out loud.',
+    'link-context':'The surrounding text does not tell the reader where this link goes before they click.',
     'deco-sym':'Symbol names interrupt the sentence when read aloud.',
     'long-sent':'Long sentences are harder to process for people with cognitive disabilities.',
     'hashtag-case':'All-lowercase hashtags are read as one unbroken word.',
@@ -592,7 +602,7 @@ const COPY = {
     'emoji-mid':'Move emojis to after the full stop at the end of the sentence. They still add personality without interrupting the read.',
     'emoji-multi':'Keep to one emoji per sentence. A single one lands with more impact anyway.',
     'no-punct':'Add a full stop, question mark, or exclamation mark to close each sentence. One character makes a real difference for listeners.',
-    'bare-link':"Add a short phrase before the link, like 'Read the full report here:' so people know where they are going before they get there.",
+    'link-context':"Add a short phrase before the link that describes what it leads to — 'Read our accessibility guide here:' tells the reader what to expect before they click.",
     'deco-sym':"Replace decorative symbols with a plain word, like 'then' instead of an arrow, or just remove them.",
     'long-sent':'Find the longest sentence and split it into two. Just find a natural pause point, end the sentence there, and start a new one.',
     'hashtag-case':'#contentmarketing becomes #ContentMarketing. It takes a second and makes your hashtags clearer for everyone.',
@@ -605,7 +615,7 @@ const COPY = {
     'emoji-mid':'e.g. "Rocket we launched our product" — name announced before the sentence.',
     'emoji-multi':'e.g. "fire fire fire" — all names read in sequence.',
     'no-punct':'Without a full stop, the next sentence starts immediately with no pause.',
-    'bare-link':'"https colon slash slash bit dot ly slash abc123" — character by character, no destination.',
+    'link-context':'Screen readers reach the URL with no prior description of what the link leads to.',
     'deco-sym':'e.g. "check our insights black rightwards arrow bit dot ly" — symbol name mid-sentence.',
     'hashtag-case':'"quickcommerce" spoken as one unbroken word — screen readers cannot split it.',
     'unicode-bold':'𝗕𝗼𝗹𝗱 text may be read as "mathematical bold small b, mathematical bold small o, mathematical bold small l…" or skipped entirely.'
@@ -776,24 +786,22 @@ function analyse(text) {
     if (multiEmojiSegs.length > 0) issues.push({ id:'emoji-multi', cat:'vis', severity:'warn', fixType:'voice', segs:multiEmojiSegs, excerpts:[...multiEmojiSegs[0].orig].slice(0,4).join('') });
   }
 
-  // Check 5: bare links
-  const bareLinkSegs = [];
+  // Check 5: link with no context
   {
-    const urlRx = /https?:\/\/(?:bit\.ly|lnkd\.in|ow\.ly|t\.co|tinyurl\.com|goo\.gl|buff\.ly|[a-zA-Z0-9-]+\.[a-zA-Z]{2,})[^\s]*/gi;
+    const urlRx = /https?:\/\/[^\s]+/gi;
+    const VAGUE = new Set(['click','here','this','read','more','link','see','view','check','go','visit','at','via','follow','open','find','out']);
+    const linkCtxSegs = [];
     let m;
     while ((m = urlRx.exec(text)) !== null) {
-      const beforeUrl = text.slice(Math.max(0, m.index - 12), m.index);
-      if (!/read more|here:|at $/i.test(beforeUrl)) {
-        bareLinkSegs.push({
-          start: m.index,
-          end:   m.index + m[0].length,
-          orig:  m[0],
-          repl:  'Read more: ' + m[0],
-          excerpt: m[0].slice(0,50)
-        });
+      const lineStart = text.lastIndexOf('\n', m.index) + 1;
+      const before = text.slice(lineStart, m.index).trim().replace(/[:.,!?]+$/, '');
+      const words = before.split(/\s+/).filter(w => w.length > 0);
+      const meaningful = words.filter(w => !VAGUE.has(w.toLowerCase()) && w.length > 2);
+      if (meaningful.length < 3) {
+        linkCtxSegs.push({ start: m.index, end: m.index + m[0].length, orig: m[0], repl: null, excerpt: m[0].slice(0, 50) });
       }
     }
-    if (bareLinkSegs.length > 0) issues.push({ id:'bare-link', cat:'vis', severity:'warn', fixType:'auto', segs:bareLinkSegs, excerpts:bareLinkSegs.slice(0,2).map(s=>s.excerpt) });
+    if (linkCtxSegs.length > 0) issues.push({ id:'link-context', cat:'vis', severity:'warn', fixType:'voice', segs:linkCtxSegs, excerpts:linkCtxSegs.slice(0,2).map(s=>s.excerpt) });
   }
 
   // Check 6: decorative symbols mid-text (not at start of bullet lines)
@@ -1035,10 +1043,10 @@ async function runCheck() {
   document.getElementById('nav-issues').classList.remove('locked');
 
   // Update issues nav sub-label and badge
-  const errorWarnCount = checkResults.filter(i=>i.severity==='error'||i.severity==='warn').length;
-  navIssuesSub.textContent = `${checkResults.length} issue${checkResults.length!==1?'s':''} found`;
-  issueBadge.textContent = errorWarnCount;
-  if (errorWarnCount > 0) issueBadge.classList.add('visible');
+  const totalCount = checkResults.length;
+  navIssuesSub.textContent = `${totalCount} issue${totalCount!==1?'s':''} found`;
+  issueBadge.textContent = totalCount;
+  if (totalCount > 0) issueBadge.classList.add('visible');
 
   // Hide "what we check" accordion
   document.getElementById('whatWeCheck').style.display = 'none';
@@ -1096,6 +1104,12 @@ function buildResults(issues) {
 
   issuesFooter.style.display = 'block';
   updateProgress();
+
+  // Populate legend with only the issues found
+  hlLegend.innerHTML = issues.map(issue => {
+    const cls = getMarkClass(issue.id);
+    return `<div class="hl-chip"><span class="hl-swatch ${cls}" aria-hidden="true"></span>${escHtml(COPY.titles[issue.id])}</div>`;
+  }).join('');
 }
 
 function renderIssueCard(issue, idx) {
@@ -1123,11 +1137,20 @@ function renderIssueCard(issue, idx) {
 }
 
 function getMarkClass(issueId) {
-  if (['deco-struct','emoji-mid','emoji-multi','no-punct','bare-link','deco-sym','hashtag-case','unicode-bold'].includes(issueId)) return 'hl-vis';
-  if (issueId === 'jargon') return 'hl-jarg';
-  if (issueId === 'long-sent') return 'hl-long';
-  if (issueId === 'inclusive') return 'hl-incl';
-  return '';
+  const map = {
+    'deco-struct':  'hl-deco-struct',
+    'emoji-mid':    'hl-emoji-mid',
+    'emoji-multi':  'hl-emoji-multi',
+    'no-punct':     'hl-no-punct',
+    'link-context': 'hl-link-context',
+    'deco-sym':     'hl-deco-sym',
+    'unicode-bold': 'hl-unicode-bold',
+    'hashtag-case': 'hl-hashtag-case',
+    'long-sent':    'hl-long-sent',
+    'jargon':       'hl-jarg',
+    'inclusive':    'hl-incl',
+  };
+  return map[issueId] || 'hl-no-punct';
 }
 
 // ─── PANEL SWITCHING ────────────────────────────────────────────────────────
