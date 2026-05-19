@@ -67,7 +67,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:1
 .main-content{display:flex;flex:1;overflow:hidden}
 
 /* ── Editor column ── */
-.editor-col{flex:1;overflow-y:auto;padding:22px;background:var(--bg-page)}
+.editor-col{flex:1;overflow:hidden;background:var(--bg-page);display:flex;flex-direction:column}
+.editor-scroll{flex:1;overflow-y:auto;padding:22px}
 
 .editor-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px}
 .field-label{font-size:14px;font-weight:600;color:var(--text1);display:block;margin-bottom:5px}
@@ -101,7 +102,7 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
 .hl-swatch.hl-long{background:#e8f5e9;outline:1.5px solid #5ea85e}
 .hl-swatch.hl-incl{background:#fde8e8;outline:1.5px solid #c87070}
 
-.listen-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#eef5ff;border:1px solid #b8d4f5;border-radius:8px;padding:11px 14px;margin-top:12px}
+.listen-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#eef5ff;border-top:1px solid #b8d4f5;padding:12px 22px;flex-shrink:0}
 .listen-strip.hidden{display:none}
 .listen-text strong{display:block;font-size:13.5px;color:#1a4f8a;font-weight:600}
 .listen-text span{font-size:12px;color:#3d6fa0}
@@ -275,7 +276,7 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
   .header-nav{width:100%;height:44px;padding:0;border-top:1px solid var(--border-sub);order:1}
   .header-actions{display:none}
   .main-content{flex-direction:column}
-  .editor-col{overflow-y:visible}
+  .editor-scroll{overflow-y:visible}
   .right-panel{width:100%;border-left:none;border-top:1px solid var(--border);height:60vh}
 }
 </style>
@@ -314,30 +315,31 @@ mark.hl-incl{background:#fde8e8;outline:1.5px solid #c87070;border-radius:2px;co
 
 <!-- ── EDITOR COLUMN ── -->
 <main class="editor-col" aria-label="Post editor">
-  <div class="editor-card">
-    <label class="field-label" for="postInput">LinkedIn post content</label>
-    <p class="field-hint">Include emojis, hashtags, links, and line breaks.</p>
-    <div class="post-input-wrapper" id="postWrapper" onclick="document.getElementById('postInput').focus()">
-      <div class="post-mirror" id="postMirror" aria-hidden="true"></div>
-      <div class="post-rendered" id="postRendered" aria-hidden="true"></div>
-      <textarea id="postInput" class="post-textarea" placeholder="Paste or type your LinkedIn post here…" aria-label="LinkedIn post content" spellcheck="true" autocomplete="off"></textarea>
-    </div>
-    <div class="char-counter" id="charCounter" aria-live="polite">0 / 3000</div>
-    <div class="hl-legend" id="hlLegend" aria-hidden="true" role="presentation">
-      <div class="hl-chip"><span class="hl-swatch hl-vis" aria-hidden="true"></span>Visual issue</div>
-      <div class="hl-chip"><span class="hl-swatch hl-jarg" aria-hidden="true"></span>Jargon</div>
-      <div class="hl-chip"><span class="hl-swatch hl-long" aria-hidden="true"></span>Long sentence</div>
-      <div class="hl-chip"><span class="hl-swatch hl-incl" aria-hidden="true"></span>Inclusive language</div>
-    </div>
-    <div class="listen-strip hidden" id="listenStrip" role="region" aria-label="Screen reader preview">
-      <div class="listen-text">
-        <strong>Hear how a screen reader reads this</strong>
-        <span>Listen to your post the way visually impaired users do</span>
+  <div class="editor-scroll">
+    <div class="editor-card">
+      <label class="field-label" for="postInput">LinkedIn post content</label>
+      <p class="field-hint">Include emojis, hashtags, links, and line breaks.</p>
+      <div class="post-input-wrapper" id="postWrapper" onclick="document.getElementById('postInput').focus()">
+        <div class="post-mirror" id="postMirror" aria-hidden="true"></div>
+        <div class="post-rendered" id="postRendered" aria-hidden="true"></div>
+        <textarea id="postInput" class="post-textarea" placeholder="Paste or type your LinkedIn post here…" aria-label="LinkedIn post content" spellcheck="true" autocomplete="off"></textarea>
       </div>
-      <button class="listen-btn" id="listenBtn" onclick="toggleListen()" aria-label="Listen to post">Listen</button>
+      <div class="char-counter" id="charCounter" aria-live="polite">0 / 3000</div>
+      <div class="hl-legend" id="hlLegend" aria-hidden="true" role="presentation">
+        <div class="hl-chip"><span class="hl-swatch hl-vis" aria-hidden="true"></span>Visual issue</div>
+        <div class="hl-chip"><span class="hl-swatch hl-jarg" aria-hidden="true"></span>Jargon</div>
+        <div class="hl-chip"><span class="hl-swatch hl-long" aria-hidden="true"></span>Long sentence</div>
+        <div class="hl-chip"><span class="hl-swatch hl-incl" aria-hidden="true"></span>Inclusive language</div>
+      </div>
     </div>
   </div>
-
+  <div class="listen-strip hidden" id="listenStrip" role="region" aria-label="NVDA screen reader preview">
+    <div class="listen-text">
+      <strong>Preview NVDA screen reader</strong>
+      <span>Hear how NVDA and other screen readers read your post aloud</span>
+    </div>
+    <button class="listen-btn" id="listenBtn" onclick="toggleListen()" aria-label="Listen to post with screen reader simulation">Listen</button>
+  </div>
 </main>
 
 <!-- ── RIGHT PANEL ── -->
