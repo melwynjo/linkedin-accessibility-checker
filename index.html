@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Free LinkedIn Post Accessibility Checker Tool</title>
-<meta name="description" content="Paste your LinkedIn post and find out instantly. 11 accessibility checks for screen readers, cognitive load, and inclusive language. Free. No sign-up.">
+<meta name="description" content="Check if your LinkedIn post works for screen readers and all users. Free tool with 12 accessibility checks — emoji placement, hashtags, jargon, long sentences, and more. Auto-fix included. No sign-up.">
 <link rel="canonical" href="https://www.linkedinaccessibilitychecker.com/">
 <meta property="og:title" content="Is My LinkedIn Post Accessible?">
 <meta property="og:description" content="11 accessibility checks for LinkedIn posts. Screen reader compatibility, cognitive load, inclusive language, and more. Free tool, no sign-up.">
@@ -346,13 +346,44 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
 
 /* Responsive */
 @media(max-width:900px){
-  .app-header{height:auto;flex-wrap:wrap;padding:10px 16px 0;gap:0}
-  .brand{border-right:none;padding:10px 0;height:auto}
-  .header-nav{width:100%;height:44px;padding:0;border-top:1px solid var(--border-sub);order:1}
+  /* Allow natural scrolling on mobile */
+  html,body{height:auto;overflow-y:auto}
+  .app-shell{height:auto;min-height:100vh;overflow:visible}
+
+  /* Sticky header */
+  .app-header{position:sticky;top:0;z-index:100;height:auto;flex-wrap:wrap;padding:10px 16px 0;gap:0;background:#fff}
+  .brand{border-right:none;padding:8px 0;height:auto}
+  .header-nav{width:100%;height:40px;padding:0;border-top:1px solid var(--border-sub);order:1;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .header-nav::-webkit-scrollbar{display:none}
+  .nav-item{padding:0 12px;font-size:12.5px;white-space:nowrap;flex-shrink:0}
   .header-actions{display:none}
-  .main-content{flex-direction:column}
-  .editor-scroll{overflow-y:visible}
-  .right-panel{width:100%;border-left:none;border-top:1px solid var(--border);height:60vh}
+
+  /* Stack editor and panel vertically */
+  .main-content{flex-direction:column;overflow:visible;flex:none}
+
+  /* Editor column */
+  .editor-col{overflow:visible;flex:none}
+  .editor-scroll{overflow-y:visible;flex:none;padding:14px}
+  .editor-card{flex:none;min-height:260px}
+  .diff-applied-view{overflow-y:visible;flex:none}
+
+  /* Right panel becomes full width below editor */
+  .right-panel{width:100%;border-left:none;border-top:1px solid var(--border);flex:none;overflow:visible}
+  .panel-state{height:auto;flex:none}
+  .panel-body{overflow:visible;flex:none}
+  .panel-footer{position:static}
+
+  /* Live stats */
+  .live-stats{flex-shrink:1}
+
+  /* Score bars */
+  .score-section{padding:12px 0}
+
+  /* Issue cards */
+  .issue-card{margin-bottom:8px}
+
+  /* Modals */
+  .modal-box{width:calc(100vw - 40px);max-width:340px}
 }
 </style>
 </head>
