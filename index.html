@@ -679,7 +679,7 @@ const COPY = {
     'hashtag-case':'All-lowercase hashtags are read as one unbroken word.',
     'jargon':'Business jargon creates barriers for people outside your industry.',
     'inclusive':'Some terms may unintentionally exclude or offend.',
-    'unicode-bold':'These are not real bold or italic — they are different Unicode characters. Some screen readers skip them entirely; others spell out each symbol name. Results vary.'
+    'unicode-bold':'These are not real bold or italic. They are different Unicode characters. Some screen readers may handle them correctly; others skip them or spell out each symbol name individually.'
   },
   fixes:{
     'deco-struct':'Swap emoji or symbol bullets for a plain dash. Your post will look just as structured and read cleanly out loud.',
@@ -692,7 +692,7 @@ const COPY = {
     'hashtag-case':'#contentmarketing becomes #ContentMarketing. It takes a second and makes your hashtags clearer for everyone.',
     'jargon':"Jargon creates invisible barriers. 'Work together' lands better than 'leverage our synergies.' 'We changed direction' is clearer than 'we pivoted.'",
     'inclusive':"Small swaps keep the meaning exactly the same. Try 'incredible' instead of 'crazy,' 'everyone' instead of 'guys.' Your message reaches more people warmly.",
-    'unicode-bold':'Retype the styled text using plain characters. Use LinkedIn\'s native formatting (bold, italic) if you need emphasis. Use the Listen button to hear how your screen reader handles it — some will skip it, others will read each character name aloud.'
+    'unicode-bold':'Retype the styled text using plain characters. Some screen readers may get it right, others may not. Use the Listen with screen reader feature to check how it actually sounds.'
   },
   srPreviews:{
     'deco-struct':'e.g. "black star Fast delivery", where the symbol name is read before the actual content.',
@@ -1250,7 +1250,7 @@ function renderIssueCard(issue, idx) {
     </div>
     <div class="card-body">
       <div class="fix-label"><strong>How to fix it:</strong> ${escHtml(COPY.fixes[issue.id])}</div>
-      ${['deco-sym','unicode-bold'].includes(issue.id) ? `<div class="fix-label" style="margin-top:8px;padding:7px 9px;background:#f0f7ff;border:1px solid #c4dcf5;border-radius:6px;font-size:12px;color:#004182;">👂 <strong>Tip:</strong> Use the <em>Listen with screen reader</em> button above to hear exactly how this reads — it may or may not be a problem for your audience.</div>` : ''}
+      ${['deco-sym','unicode-bold'].includes(issue.id) ? `<div class="fix-label" style="margin-top:8px;padding:7px 9px;background:#f0f7ff;border:1px solid #c4dcf5;border-radius:6px;font-size:12px;color:#004182;">👂 <strong>Tip:</strong> Use the <em>Listen with screen reader</em> feature to hear exactly how this reads. It may or may not be a problem for your audience.</div>` : ''}
     </div>
   </div>`;
 }
