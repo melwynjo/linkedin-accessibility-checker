@@ -1476,7 +1476,7 @@ function applyFixes() {
 
   // Inject 3 CTAs into left panel footer
   const footer = document.getElementById('diffViewFooter');
-  footer.innerHTML = `<button class="copy-btn" onclick="resetEditor()">Edit post</button><button class="copy-btn" id="copyBtn" onclick="copyFixed()">Copy post</button><a href="https://www.linkedin.com/feed/" target="_blank" rel="noopener noreferrer" class="post-linkedin-btn">Post to LinkedIn</a>`;
+  footer.innerHTML = `<button class="copy-btn" onclick="editFixed()">Edit post</button><button class="copy-btn" id="copyBtn" onclick="copyFixed()">Copy post</button><a href="https://www.linkedin.com/feed/" target="_blank" rel="noopener noreferrer" class="post-linkedin-btn">Post to LinkedIn</a>`;
   issueBadge.classList.remove('visible');
 
   // Build fix summary for right panel
@@ -1549,6 +1549,14 @@ function resetEditor() {
   fieldLabel.textContent = 'LinkedIn post content';
   document.getElementById('fixedPostEdit').innerText = '';
   document.getElementById('diffViewFooter').innerHTML = '';
+}
+
+function editFixed() {
+  const fixedPostEdit = document.getElementById('fixedPostEdit');
+  const text = (fixedPostEdit ? fixedPostEdit.innerText : fixedText).trim();
+  resetEditor();
+  postInput.value = text;
+  postInput.dispatchEvent(new Event('input'));
 }
 
 function clearPost() {
