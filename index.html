@@ -143,17 +143,20 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
 .hl-swatch.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
 
 /* Listen inline button */
+@keyframes listenIdle{0%{box-shadow:0 0 0 0 rgba(10,102,194,.45)}70%{box-shadow:0 0 0 8px rgba(10,102,194,0)}100%{box-shadow:0 0 0 0 rgba(10,102,194,0)}}
+@keyframes listenPlayGlow{0%,100%{box-shadow:0 0 0 2px rgba(10,102,194,.3)}50%{box-shadow:0 0 0 7px rgba(10,102,194,.07)}}
 .listen-inline-btn.hidden{display:none}
 .listen-inline-btn{display:flex;align-items:center;gap:7px;padding:9px 16px;background:#fff;color:var(--text2);border:1.5px solid var(--border);border-radius:22px;font-size:12.5px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .12s,border-color .12s,color .12s}
+.listen-inline-btn:not(.playing){animation:listenIdle 2s ease-out infinite}
 .listen-inline-btn:hover{border-color:#aaa;background:#fafafa}
-.listen-inline-btn.playing{background:#eef4fb;border-color:var(--blue);color:var(--blue)}
+.listen-inline-btn.playing{background:#eef4fb;border-color:var(--blue);color:var(--blue);animation:listenPlayGlow .7s ease-in-out infinite}
 .listen-label{}
 .listen-inline-btn.playing .listen-label{display:none}
-.listen-bars{display:none;align-items:flex-end;gap:2px;height:12px}
+.listen-bars{display:none;align-items:flex-end;gap:2px;height:14px}
 .listen-inline-btn.playing .listen-bars{display:flex}
-.listen-bars b{display:block;width:2.5px;border-radius:2px;background:currentColor;animation:audioBar .7s ease-in-out infinite}
-.listen-bars b:nth-child(2){animation-delay:.15s}
-.listen-bars b:nth-child(3){animation-delay:.3s}
+.listen-bars b{display:block;width:3px;border-radius:2px;background:currentColor;animation:audioBar .6s ease-in-out infinite}
+.listen-bars b:nth-child(2){animation-delay:.12s;animation-duration:.5s}
+.listen-bars b:nth-child(3){animation-delay:.25s;animation-duration:.7s}
 
 /* Leave modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000}
@@ -674,7 +677,7 @@ const COPY = {
     'emoji-multi':'Multiple emoji names read in sequence create noise, not emphasis.',
     'no-punct':'Without punctuation, screen readers merge sentences with no pause.',
     'link-context':'The surrounding text does not tell the reader where this link goes before they click.',
-    'deco-sym':'Symbol names may be read aloud mid-sentence — though behaviour varies by screen reader.',
+    'deco-sym':'Symbol names may be read aloud mid-sentence. Some screen readers may get it right, some may not.',
     'long-sent':'Long sentences are harder to process for people with cognitive disabilities.',
     'hashtag-case':'All-lowercase hashtags are read as one unbroken word.',
     'jargon':'Business jargon creates barriers for people outside your industry.',
@@ -687,12 +690,12 @@ const COPY = {
     'emoji-multi':'Keep to one emoji per sentence. A single one lands with more impact anyway.',
     'no-punct':'Add a full stop, question mark, or exclamation mark to close each sentence. One character makes a real difference for listeners.',
     'link-context':"Add a short phrase before the link that describes what it leads to: 'Read our accessibility guide here' tells the reader what to expect before they click.",
-    'deco-sym':"Replace decorative symbols with a plain word, like 'then' instead of an arrow, or remove them. Use the Listen button to hear how your screen reader actually handles it — behaviour varies.",
+    'deco-sym':"Replace decorative symbols with a plain word, like 'then' instead of an arrow, or remove them.",
     'long-sent':'Find the longest sentence and split it into two. Just find a natural pause point, end the sentence there, and start a new one.',
     'hashtag-case':'#contentmarketing becomes #ContentMarketing. It takes a second and makes your hashtags clearer for everyone.',
     'jargon':"Jargon creates invisible barriers. 'Work together' lands better than 'leverage our synergies.' 'We changed direction' is clearer than 'we pivoted.'",
     'inclusive':"Small swaps keep the meaning exactly the same. Try 'incredible' instead of 'crazy,' 'everyone' instead of 'guys.' Your message reaches more people warmly.",
-    'unicode-bold':'Retype the styled text using plain characters. Some screen readers may get it right, others may not. Use the Listen with screen reader feature to check how it actually sounds.'
+    'unicode-bold':'Retype the styled text using plain characters.'
   },
   srPreviews:{
     'deco-struct':'e.g. "black star Fast delivery", where the symbol name is read before the actual content.',
@@ -1321,7 +1324,14 @@ function toggleListen() {
   const text = postInput.value;
   if (!text.trim()) return;
   const utt = new SpeechSynthesisUtterance(text);
-  utt.rate = 0.9;
+  utt.rate = 1.0; // NVDA medium pace
+  // Prefer a synthetic voice that approximates NVDA's default eSpeak output
+  const voices = window.speechSynthesis.getVoices();
+  const voice = voices.find(v => /microsoft.*david|microsoft.*zira|espeak/i.test(v.name))
+    || voices.find(v => /microsoft/i.test(v.name) && v.lang.startsWith('en'))
+    || voices.find(v => v.lang.startsWith('en'))
+    || null;
+  if (voice) utt.voice = voice;
   utt.onend = () => setListenState(false);
   window.speechSynthesis.speak(utt);
   setListenState(true);
