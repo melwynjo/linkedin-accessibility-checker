@@ -474,8 +474,8 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
           <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🔁</div><div class="check-item-text"><strong>Multiple emojis</strong><span>Names read in sequence</span></div></div>
           <div class="check-item"><div class="check-item-icon blue" aria-hidden="true">·</div><div class="check-item-text"><strong>Missing punctuation</strong><span>Sentences merge without pause</span></div></div>
           <div class="check-item"><div class="check-item-icon blue" aria-hidden="true">🔗</div><div class="check-item-text"><strong>Link with no context</strong><span>Reader can't tell where the link goes</span></div></div>
-          <div class="check-item"><div class="check-item-icon grey" aria-hidden="true">→</div><div class="check-item-text"><strong>Decorative symbol</strong><span>Symbol name interrupts sentence</span></div></div>
-          <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">𝗕</div><div class="check-item-text"><strong>Unicode bold/italic</strong><span>Not real formatting. Screen readers break</span></div></div>
+          <div class="check-item"><div class="check-item-icon grey" aria-hidden="true">→</div><div class="check-item-text"><strong>Decorative symbol</strong><span>May affect screen reader flow</span></div></div>
+          <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">𝗕</div><div class="check-item-text"><strong>Unicode bold/italic</strong><span>Screen readers may skip or misread</span></div></div>
         </div>
         <div class="check-section">
           <div class="check-section-title">Cognitive accessibility</div>
@@ -674,12 +674,12 @@ const COPY = {
     'emoji-multi':'Multiple emoji names read in sequence create noise, not emphasis.',
     'no-punct':'Without punctuation, screen readers merge sentences with no pause.',
     'link-context':'The surrounding text does not tell the reader where this link goes before they click.',
-    'deco-sym':'Symbol names interrupt the sentence when read aloud.',
+    'deco-sym':'Symbol names may be read aloud mid-sentence — though behaviour varies by screen reader.',
     'long-sent':'Long sentences are harder to process for people with cognitive disabilities.',
     'hashtag-case':'All-lowercase hashtags are read as one unbroken word.',
     'jargon':'Business jargon creates barriers for people outside your industry.',
     'inclusive':'Some terms may unintentionally exclude or offend.',
-    'unicode-bold':'These are not real bold or italic. They are different Unicode characters. Screen readers skip them or spell out each symbol name.'
+    'unicode-bold':'These are not real bold or italic — they are different Unicode characters. Some screen readers skip them entirely; others spell out each symbol name. Results vary.'
   },
   fixes:{
     'deco-struct':'Swap emoji or symbol bullets for a plain dash. Your post will look just as structured and read cleanly out loud.',
@@ -687,12 +687,12 @@ const COPY = {
     'emoji-multi':'Keep to one emoji per sentence. A single one lands with more impact anyway.',
     'no-punct':'Add a full stop, question mark, or exclamation mark to close each sentence. One character makes a real difference for listeners.',
     'link-context':"Add a short phrase before the link that describes what it leads to: 'Read our accessibility guide here' tells the reader what to expect before they click.",
-    'deco-sym':"Replace decorative symbols with a plain word, like 'then' instead of an arrow, or just remove them.",
+    'deco-sym':"Replace decorative symbols with a plain word, like 'then' instead of an arrow, or remove them. Use the Listen button to hear how your screen reader actually handles it — behaviour varies.",
     'long-sent':'Find the longest sentence and split it into two. Just find a natural pause point, end the sentence there, and start a new one.',
     'hashtag-case':'#contentmarketing becomes #ContentMarketing. It takes a second and makes your hashtags clearer for everyone.',
     'jargon':"Jargon creates invisible barriers. 'Work together' lands better than 'leverage our synergies.' 'We changed direction' is clearer than 'we pivoted.'",
     'inclusive':"Small swaps keep the meaning exactly the same. Try 'incredible' instead of 'crazy,' 'everyone' instead of 'guys.' Your message reaches more people warmly.",
-    'unicode-bold':'Retype the styled text using plain characters. Use LinkedIn\'s native formatting (bold, italic) if you need emphasis. It works for screen readers. Unicode lookalikes do not.'
+    'unicode-bold':'Retype the styled text using plain characters. Use LinkedIn\'s native formatting (bold, italic) if you need emphasis. Use the Listen button to hear how your screen reader handles it — some will skip it, others will read each character name aloud.'
   },
   srPreviews:{
     'deco-struct':'e.g. "black star Fast delivery", where the symbol name is read before the actual content.',
@@ -779,13 +779,20 @@ function analyse(text) {
     if (chars.length > 0 && chars[1] === ' ') {
       const first = chars[0];
       if (isEmoji(first) || DECO_SYM_SET.test(first)) {
-        const origLen = first.length; // code unit length
-        decoStructSegs.push({
-          start: lineStart + (line.length - trimmed.length),
-          end:   lineStart + (line.length - trimmed.length) + origLen,
-          orig: first,
-          repl: '–'
-        });
+        // If the content after the emoji looks like a full sentence (5+ words, ends with
+        // sentence punctuation), leave it for the emoji-mid check — it's a sentence-start
+        // emoji, not a structural bullet. e.g. "🚀 We launched today!" ≠ bullet.
+        const contentAfter = trimmed.slice(first.length + 1).trimEnd();
+        const looksLikeSentence = countWords(contentAfter) > 4 && /[.!?]$/.test(stripTrailingEmoji(contentAfter));
+        if (!looksLikeSentence) {
+          const origLen = first.length; // code unit length
+          decoStructSegs.push({
+            start: lineStart + (line.length - trimmed.length),
+            end:   lineStart + (line.length - trimmed.length) + origLen,
+            orig: first,
+            repl: '–'
+          });
+        }
       }
     }
 
@@ -929,7 +936,7 @@ function analyse(text) {
     }
     if (segs.length > 0) {
       const excerpts = segs.slice(0, 3).map(s => s.orig.slice(0, 20));
-      issues.push({ id:'unicode-bold', cat:'vis', severity:'error', fixType:'voice', segs, excerpts });
+      issues.push({ id:'unicode-bold', cat:'vis', severity:'warn', fixType:'voice', segs, excerpts });
     }
   }
 
@@ -1243,6 +1250,7 @@ function renderIssueCard(issue, idx) {
     </div>
     <div class="card-body">
       <div class="fix-label"><strong>How to fix it:</strong> ${escHtml(COPY.fixes[issue.id])}</div>
+      ${['deco-sym','unicode-bold'].includes(issue.id) ? `<div class="fix-label" style="margin-top:8px;padding:7px 9px;background:#f0f7ff;border:1px solid #c4dcf5;border-radius:6px;font-size:12px;color:#004182;">👂 <strong>Tip:</strong> Use the <em>Listen with screen reader</em> button above to hear exactly how this reads — it may or may not be a problem for your audience.</div>` : ''}
     </div>
   </div>`;
 }
