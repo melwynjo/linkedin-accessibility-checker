@@ -19,7 +19,7 @@
 <meta name="keywords" content="LinkedIn accessibility checker, LinkedIn post accessibility, screen reader LinkedIn, accessible LinkedIn post, LinkedIn accessibility tool">
 <meta name="author" content="linkedinaccessibilitychecker.com">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"LinkedIn Accessibility Checker","url":"https://www.linkedinaccessibilitychecker.com","description":"A free tool to check LinkedIn posts for accessibility issues across 11 rules including screen reader compatibility, cognitive load, and inclusive language.","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":["Screen reader compatibility check","Emoji placement analysis","Hashtag CamelCase checker","Business jargon detector","Inclusive language checker","Long sentence detector","Bare link checker","Auto-fix suggestions","Fixed post generator"]}
+{"@context":"https://schema.org","@type":"WebApplication","name":"LinkedIn Accessibility Checker","url":"https://www.linkedinaccessibilitychecker.com","description":"A free tool to check LinkedIn posts for accessibility issues across 11 rules including screen reader compatibility, cognitive load, and inclusive language.","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":["Screen reader compatibility check","Emoji placement analysis","Hashtag CamelCase checker","Grade 8 vocabulary checker","Inclusive language checker","Long sentence detector","Bare link checker","Auto-fix suggestions","Fixed post generator"]}
 </script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230a66c2'/><circle cx='16' cy='7.5' r='3.5' fill='white'/><path d='M5 14h22M16 11v11M11 31l5-9 5 9' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%230a66c2'/><circle cx='90' cy='42' r='20' fill='white'/><path d='M28 80h124M90 62v62M62 174l28-50 28 50' stroke='white' stroke-width='17' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
@@ -484,7 +484,7 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
           <div class="check-section-title">Cognitive accessibility</div>
           <div class="check-item"><div class="check-item-icon green" aria-hidden="true">¶</div><div class="check-item-text"><strong>Long sentences</strong><span>Hard to process</span></div></div>
           <div class="check-item"><div class="check-item-icon green" aria-hidden="true">#</div><div class="check-item-text"><strong>Lowercase hashtag</strong><span>Read as one unbroken word</span></div></div>
-          <div class="check-item"><div class="check-item-icon teal" aria-hidden="true">💼</div><div class="check-item-text"><strong>Business jargon</strong><span>Creates barriers for some readers</span></div></div>
+          <div class="check-item"><div class="check-item-icon teal" aria-hidden="true">💼</div><div class="check-item-text"><strong>Words above Grade 8</strong><span>Complex vocabulary check</span></div></div>
           <div class="check-item"><div class="check-item-icon pink" aria-hidden="true">🤝</div><div class="check-item-text"><strong>Inclusive language</strong><span>May unintentionally exclude</span></div></div>
         </div>
       </details>
@@ -605,16 +605,72 @@ mark.hl-incl{background:#fce7f3;outline:1.5px solid #f472b6}
 const FEEDBACK_URL = 'https://tally.so/r/WOKdbv';
 const VOTE_URL     = 'https://tally.so/r/KYWyrV';
 
-const JARGON = [
-  'synergy','synergise','synergize','leverage','leveraging','leveraged',
-  'pivot','pivoting','bandwidth','deep dive','deep-dive','ideate','ideating','ideation',
-  'stakeholder','stakeholders','ecosystem','paradigm','paradigm shift',
-  'agile','robust','empower','empowering','circle back','move the needle',
-  'low-hanging fruit','boil the ocean','best practice','best practices',
-  'thought leader','thought leadership','disruptive','disruption','value add','value-add',
-  'actionable','deliverable','deliverables','scalable','holistic','going forward',
-  'touch base','game changer','game-changer','impactful','proactive','proactively'
+// Multi-word LinkedIn clichés (phrases can't be caught by syllable counting)
+const JARGON_PHRASES = [
+  'deep dive','deep-dive','circle back','move the needle',
+  'low-hanging fruit','low hanging fruit','boil the ocean',
+  'best practice','best practices','thought leader','thought leadership',
+  'value add','value-add','game changer','game-changer',
+  'touch base','going forward','paradigm shift'
 ];
+
+// Common words with 3+ syllables that are Grade 8 or below — don't flag these
+const GRADE8_WORDS = new Set([
+  'absolutely','accommodate','accommodation','actually','already',
+  'amazing','another','anyone','anything','anywhere','appreciate',
+  'appropriate','approximately','article','association','attention',
+  'audience','available','average','beautiful','beginning',
+  'capable','carefully','category','celebrate','celebration',
+  'certainly','character','citizen','collection','comfortable',
+  'committee','communicate','communication','community','company',
+  'competition','completely','computer','confident','congratulations',
+  'connection','consider','continue','contribute','creative',
+  'currently','customer','decision','definitely','deliver',
+  'development','different','differently','digital','direction',
+  'discover','economy','education','effectively','electricity',
+  'element','emotion','employee','encourage','encouraging',
+  'environment','eventually','everything','excellent','exciting',
+  'exercise','example','examination','experience','family',
+  'favorite','favourite','finally','following','forever',
+  'foundation','general','government','happening','history',
+  'holiday','honestly','hospital','however','identify',
+  'immediately','important','independently','individual',
+  'industry','information','inspiring','interesting','internet',
+  'interview','investigation','investor','leadership',
+  'library','literally','management','marketing','medical',
+  'memory','mentoring','national','natural','naturally',
+  'necessary','negative','networking','objective','offering',
+  'ordinary','organization','overcome','particular','passionate',
+  'personal','popular','positive','possible','powerful',
+  'president','primary','priority','probably','professional',
+  'program','property','quality','recently','recognize',
+  'recommend','regular','relationship','relative','religion',
+  'remember','represent','research','responsibility',
+  'revenue','security','serious','similar','society',
+  'strategy','talented','technical','technology','television',
+  'tomorrow','totally','training','typically','understand',
+  'understanding','university','usually','valuable','variety',
+  'various','vehicle','volunteer','whatever','whenever',
+  'wherever','wonderful','yesterday','yourself',
+]);
+
+function countSyllables(word) {
+  word = word.toLowerCase().replace(/[^a-z]/g, '');
+  if (!word) return 0;
+  if (word.length <= 3) return 1;
+  const vowels = 'aeiouy';
+  let count = 0, prev = false;
+  for (const ch of word) {
+    const v = vowels.includes(ch);
+    if (v && !prev) count++;
+    prev = v;
+  }
+  // Subtract for silent e (e.g. "make", "like") — but not before consonant+le
+  if (word.endsWith('e') && word.length > 1 && !vowels.includes(word[word.length - 2])) count--;
+  // Add back for consonant+le ending (e.g. "table", "possible", "article")
+  if (word.length > 2 && word.endsWith('le') && !vowels.includes(word[word.length - 3])) count++;
+  return Math.max(1, count);
+}
 
 const INCLUSIVE = [
   'crazy','insane','blind spot','blind spots','tone deaf','tone-deaf',
@@ -624,21 +680,6 @@ const INCLUSIVE = [
   'psycho','retard','retarded'
 ];
 
-const JARGON_FIXES = {
-  'leverage':'use','leveraging':'using','leveraged':'used',
-  'ideate':'brainstorm','ideating':'brainstorming','ideation':'brainstorming',
-  'bandwidth':'capacity','deep dive':'deep look','deep-dive':'deep look',
-  'synergy':'collaboration','synergise':'collaborate','synergize':'collaborate',
-  'paradigm shift':'fundamental change','paradigm':'model',
-  'stakeholder':'team member','stakeholders':'team members',
-  'circle back':'follow up','move the needle':'make progress','actionable':'practical',
-  'thought leader':'expert','thought leadership':'expertise',
-  'going forward':'from now on','touch base':'check in',
-  'game changer':'major change','game-changer':'major change',
-  'best practice':'recommended approach','best practices':'recommended approaches',
-  'pivot':'change direction','pivoting':'changing direction',
-  'empower':'support','empowering':'supporting'
-};
 
 const INCLUSIVE_FIXES = {
   'guys':'everyone','mankind':'humanity','manpower':'workforce',
@@ -667,7 +708,7 @@ const COPY = {
     'deco-sym':'Decorative symbol inside a sentence',
     'long-sent':'Some sentences are quite long',
     'hashtag-case':'Hashtag written in all lowercase',
-    'jargon':'Business jargon some people may not follow',
+    'jargon':'Words above Grade 8 reading level',
     'inclusive':'Words that may unintentionally exclude',
     'unicode-bold':'Bold or italic text made from Unicode symbols'
   },
@@ -680,7 +721,7 @@ const COPY = {
     'deco-sym':'Symbol names may be read aloud mid-sentence. Some screen readers may get it right, some may not.',
     'long-sent':'Long sentences are harder to process for people with cognitive disabilities.',
     'hashtag-case':'All-lowercase hashtags are read as one unbroken word.',
-    'jargon':'Business jargon creates barriers for people outside your industry.',
+    'jargon':'These words may be hard for readers with cognitive disabilities, or anyone reading in a second language.',
     'inclusive':'Some terms may unintentionally exclude or offend.',
     'unicode-bold':'These are not real bold or italic. They are different Unicode characters. Some screen readers may handle them correctly; others skip them or spell out each symbol name individually.'
   },
@@ -693,7 +734,7 @@ const COPY = {
     'deco-sym':"Replace decorative symbols with a plain word, like 'then' instead of an arrow, or remove them.",
     'long-sent':'Find the longest sentence and split it into two. Just find a natural pause point, end the sentence there, and start a new one.',
     'hashtag-case':'#contentmarketing becomes #ContentMarketing. It takes a second and makes your hashtags clearer for everyone.',
-    'jargon':"Jargon creates invisible barriers. 'Work together' lands better than 'leverage our synergies.' 'We changed direction' is clearer than 'we pivoted.'",
+    'jargon':"These are highlighted, but only you know the right simpler word for your context. Aim for words a 13-year-old would know — shorter words almost always land harder anyway.",
     'inclusive':"Small swaps keep the meaning exactly the same. Try 'incredible' instead of 'crazy,' 'everyone' instead of 'guys.' Your message reaches more people warmly.",
     'unicode-bold':'Retype the styled text using plain characters.'
   },
@@ -956,7 +997,7 @@ function analyse(text) {
         longSentSegs.push({ start: m.index, end: m.index + m[0].length, orig: m[0], repl });
       }
     }
-    if (longSentSegs.length > 0) issues.push({ id:'long-sent', cat:'cog', severity:'warn', fixType:'review', segs:longSentSegs, excerpts:[longSentSegs[0].orig.slice(0,50)+'…'] });
+    if (longSentSegs.length > 0) issues.push({ id:'long-sent', cat:'cog', severity:'warn', fixType:'voice', segs:longSentSegs, excerpts:[longSentSegs[0].orig.slice(0,50)+'…'] });
   }
 
   // Check 10: lowercase hashtags
@@ -976,32 +1017,45 @@ function analyse(text) {
     if (hashtagSegs.length > 0) issues.push({ id:'hashtag-case', cat:'cog', severity:'warn', fixType:'auto', segs:hashtagSegs, excerpts:hashtagSegs.slice(0,4).map(s=>s.orig) });
   }
 
-  // Check 11: jargon
+  // Check 11: complex vocabulary (Grade 8+) and multi-word LinkedIn clichés
   {
-    const sorted = [...JARGON].sort((a,b)=>b.length-a.length);
     const segs = [];
     const usedRanges = [];
-    for (const term of sorted) {
-      const rx = new RegExp(`\\b${escRx(term)}\\b`,'gi');
+
+    // Multi-word phrases first (longest first to avoid partial overlaps)
+    const sortedPhrases = [...JARGON_PHRASES].sort((a,b) => b.length - a.length);
+    for (const phrase of sortedPhrases) {
+      const rx = new RegExp(`\\b${escRx(phrase)}\\b`, 'gi');
       let m;
       while ((m = rx.exec(text)) !== null) {
         const start = m.index, end = m.index + m[0].length;
-        if (!usedRanges.some(([s,e])=>start<e && end>s)) {
-          const suggestion = JARGON_FIXES[term.toLowerCase()] || JARGON_FIXES[m[0].toLowerCase()];
-          segs.push({
-            start, end,
-            orig: m[0],
-            repl: suggestion || null,
-            hint: suggestion ? `Replaced with '${suggestion}'. Review if it fits.` : `Consider a plain alternative to '${m[0]}'.`
-          });
+        if (!usedRanges.some(([s,e]) => start < e && end > s)) {
+          segs.push({ start, end, orig: m[0], repl: null });
           usedRanges.push([start, end]);
         }
       }
     }
+
+    // Syllable-based: flag words with 3+ syllables not in the Grade 8 whitelist
+    const wordRx = /\b[a-zA-Z]{4,}\b/g;
+    let wm;
+    while ((wm = wordRx.exec(text)) !== null) {
+      const word = wm[0], lower = word.toLowerCase();
+      const start = wm.index, end = wm.index + word.length;
+      if (!GRADE8_WORDS.has(lower) &&
+          !usedRanges.some(([s,e]) => start < e && end > s) &&
+          countSyllables(lower) >= 3) {
+        segs.push({ start, end, orig: word, repl: null });
+        usedRanges.push([start, end]);
+      }
+    }
+
+    segs.sort((a,b) => a.start - b.start);
+
     if (segs.length > 0) {
       const excerpts = segs.slice(0,4).map(s=>s.orig);
       if (segs.length > 4) excerpts.push('…');
-      issues.push({ id:'jargon', cat:'cog', severity:'info', fixType:'review', segs, excerpts });
+      issues.push({ id:'jargon', cat:'cog', severity:'info', fixType:'voice', segs, excerpts });
     }
   }
 
