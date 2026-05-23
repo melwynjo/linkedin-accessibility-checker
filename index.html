@@ -60,7 +60,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:1
 .issue-badge{background:var(--error);color:#fff;font-size:10px;font-weight:700;border-radius:6px;padding:1px 5px;min-width:18px;text-align:center;display:none;border:1.5px solid var(--border)}
 .issue-badge.visible{display:inline-block}
 
-.header-actions{padding:0 16px;height:100%;display:flex;align-items:center;gap:10px;border-left:2px solid var(--border);flex-shrink:0}
+.header-actions{padding:0 16px;height:100%;display:flex;align-items:center;gap:10px;border-left:2px solid var(--border);flex-shrink:0;width:420px;justify-content:flex-end}
 .resource-label{font-size:11.5px;color:var(--text5);white-space:nowrap}
 .accessible-link{font-size:11.5px;color:var(--text4);text-decoration:none;white-space:nowrap}
 .accessible-link:hover{color:var(--blue);text-decoration:underline}
@@ -398,6 +398,11 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
 .why-matters-stat{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px;color:var(--text3);line-height:1.4}
 .why-matters-stat::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0}
 
+/* Panel back button */
+.panel-back-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:1.5px solid var(--border-sub);border-radius:7px;padding:4px 10px;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;font-family:inherit;transition:all .1s;margin-bottom:8px}
+.panel-back-btn:hover{border-color:var(--border);color:var(--text1);transform:translate(-1px,-1px);box-shadow:2px 2px 0 var(--border)}
+.panel-back-btn svg{width:10px;height:10px}
+
 /* Cmd+Enter hint */
 .kbd-hint{font-size:11px;color:var(--text5);font-weight:500;white-space:nowrap}
 kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);border-radius:4px;font-size:10px;font-family:inherit;background:#fff;color:var(--text4);font-weight:700;box-shadow:0 1px 0 var(--border-sub)}
@@ -579,6 +584,10 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
   <!-- PANEL: Coming soon -->
   <div class="panel-state" id="panel-coming" role="region" aria-label="Coming soon">
     <div class="panel-header">
+      <button class="panel-back-btn" onclick="switchPanel('analyse')" aria-label="Back to Analyse">
+        <svg viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M7 2L3 5l4 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back
+      </button>
       <div class="panel-title">Coming soon</div>
       <div class="panel-sub">Features in the pipeline</div>
     </div>
@@ -608,6 +617,10 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
   <!-- PANEL: Contributors -->
   <div class="panel-state" id="panel-contributors" role="region" aria-label="Contributors">
     <div class="panel-header">
+      <button class="panel-back-btn" onclick="switchPanel('analyse')" aria-label="Back to Analyse">
+        <svg viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M7 2L3 5l4 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back
+      </button>
       <div class="panel-title">Thank you</div>
       <div class="panel-sub">These people made this better</div>
     </div>
