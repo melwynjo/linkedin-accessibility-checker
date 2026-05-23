@@ -124,6 +124,7 @@ mark.hl-hashtag-case{background:#ccfbf1;outline:2px solid #0d9488}
 mark.hl-long-sent{background:#dcfce7;outline:2px solid #16a34a}
 mark.hl-jarg{background:#e0f2fe;outline:2px solid #38bdf8}
 mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
+mark.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 
 .editor-footer{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;margin-top:8px;gap:8px;min-height:26px}
 .editor-footer-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
@@ -144,6 +145,7 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
 .hl-swatch.hl-long-sent{background:#dcfce7;outline:2px solid #16a34a}
 .hl-swatch.hl-jarg{background:#e0f2fe;outline:2px solid #38bdf8}
 .hl-swatch.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
+.hl-swatch.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 
 /* Listen inline button */
 @keyframes listenIdle{0%{box-shadow:2px 2px 0 var(--border),0 0 0 0 rgba(10,102,194,.45)}70%{box-shadow:2px 2px 0 var(--border),0 0 0 8px rgba(10,102,194,0)}100%{box-shadow:2px 2px 0 var(--border),0 0 0 0 rgba(10,102,194,0)}}
@@ -1016,7 +1018,8 @@ const COPY = {
     'hashtag-case':'Hashtag written in all lowercase',
     'jargon':'Idioms or phrases that may confuse',
     'inclusive':'Words that may unintentionally exclude',
-    'unicode-bold':'Bold or italic text made from Unicode symbols'
+    'unicode-bold':'Bold or italic text made from Unicode symbols',
+    'grammar':'Spelling & grammar'
   },
   descs:{
     'deco-struct':'Screen readers announce the symbol name instead of reading it as a bullet.',
@@ -1029,7 +1032,8 @@ const COPY = {
     'hashtag-case':'All-lowercase hashtags are read as one unbroken word.',
     'jargon':'These expressions have non-obvious meanings — someone reading in a second language may not understand them.',
     'inclusive':'Some terms may unintentionally exclude or offend.',
-    'unicode-bold':'These are not real bold or italic. They are different Unicode characters. Some screen readers may handle them correctly; others skip them or spell out each symbol name individually.'
+    'unicode-bold':'These are not real bold or italic. They are different Unicode characters. Some screen readers may handle them correctly; others skip them or spell out each symbol name individually.',
+    'grammar':'Possible spelling mistakes or grammar errors that could make your post harder to read.'
   },
   fixes:{
     'deco-struct':'Swap emoji or symbol bullets for a plain dash. Your post will look just as structured and read cleanly out loud.',
@@ -1042,7 +1046,8 @@ const COPY = {
     'hashtag-case':'#contentmarketing becomes #ContentMarketing. It takes a second and makes your hashtags clearer for everyone.',
     'jargon':"Replace with plain language. 'Follow up' instead of 'circle back'. 'An easy win' instead of 'low-hanging fruit'. If the meaning isn't obvious from the words, your global audience will miss it.",
     'inclusive':"Small swaps keep the meaning exactly the same. Try 'incredible' instead of 'crazy,' 'everyone' instead of 'guys.' Your message reaches more people warmly.",
-    'unicode-bold':'Retype the styled text using plain characters.'
+    'unicode-bold':'Retype the styled text using plain characters.',
+    'grammar':'Review each highlighted word or phrase — expand the card to see specific suggestions for each one.'
   },
   srPreviews:{
     'deco-struct':'e.g. "black star Fast delivery", where the symbol name is read before the actual content.',
@@ -1538,12 +1543,15 @@ async function runCheck() {
   listenBtn.classList.remove('hidden');
 
   switchPanel('issues');
+
+  // Grammar & spelling — async, non-blocking, appends to results when done
+  startGrammarCheck(text);
 }
 
 // ─── BUILD RESULTS UI ───────────────────────────────────────────────────────
 function buildResults(issues) {
-  // Clear old
-  issuesBody.querySelectorAll('.issue-group-wrapper, .score-section, .score-divider').forEach(el=>el.remove());
+  // Clear old (including any grammar card from previous run)
+  issuesBody.querySelectorAll('.issue-group-wrapper, .score-section, .score-divider, #grammarSection, #grammarLoadingCard').forEach(el=>el.remove());
 
   issuesEmpty.style.display = 'none';
 
@@ -1633,6 +1641,7 @@ function renderIssueCard(issue, idx) {
     <div class="card-body">
       <div class="fix-label"><strong>How to fix it:</strong> ${escHtml(COPY.fixes[issue.id])}</div>
       ${issue.id === 'jargon' ? renderJargonSuggestions(issue.segs) : ''}
+      ${issue.id === 'grammar' ? renderGrammarDetails(issue.segs) : ''}
       ${['deco-sym','unicode-bold'].includes(issue.id) ? `<div class="fix-label" style="margin-top:8px;padding:7px 9px;background:#f0f7ff;border:1px solid #c4dcf5;border-radius:6px;font-size:12px;color:#004182;">👂 <strong>Tip:</strong> Use the <em>Listen with screen reader</em> feature to hear exactly how this reads. It may or may not be a problem for your audience.</div>` : ''}
     </div>
   </div>`;
@@ -1662,6 +1671,83 @@ function renderJargonSuggestions(segs) {
   </div>`;
 }
 
+function renderGrammarDetails(segs) {
+  if (!segs || !segs.length) return '';
+  return `<div style="margin-top:10px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);margin-bottom:7px">What was found</div>
+    <div style="display:flex;flex-direction:column;gap:5px">
+      ${segs.map(s => `
+        <div style="padding:7px 10px;background:#faf5ff;border:1.5px solid #ede9fe;border-radius:7px;font-size:12px;line-height:1.55">
+          <span style="font-weight:700;color:var(--text1)">"${escHtml(s.orig)}"</span>${s.repl ? ` <span style="color:var(--text4)">→</span> <span style="font-weight:700;color:#7c3aed">${escHtml(s.repl)}</span>` : ''}
+          <span style="display:block;color:var(--text4);margin-top:1px">${escHtml(s.hint)}</span>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text5)">Checked via <a href="https://languagetool.org" target="_blank" rel="noopener" style="color:var(--text4);text-decoration:underline">LanguageTool</a> — your post text is sent to their server for this check.</div>
+  </div>`;
+}
+
+// ─── GRAMMAR & SPELLING (LanguageTool API) ───────────────────────────────────
+const LT_DISABLED_RULES = [
+  'WHITESPACE_RULE','EN_QUOTES','COMMA_PARENTHESIS_WHITESPACE',
+  'UPPERCASE_SENTENCE_START','SENTENCE_WHITESPACE','DASH_RULE',
+  'EN_UNPAIRED_BRACKETS','WORD_CONTAINS_UNDERSCORE',
+  'UNLIKELY_OPENING_PUNCTUATION','TOO_LONG_SENTENCE',
+  'COMMA_COMPOUND_SENTENCE','AGREEMENT_SENT_START'
+].join(',');
+
+let grammarCheckId = 0;
+
+async function startGrammarCheck(text) {
+  const myId = ++grammarCheckId;
+
+  // Show loading card
+  const loadEl = document.createElement('div');
+  loadEl.id = 'grammarLoadingCard';
+  loadEl.className = 'issue-card';
+  loadEl.style.cssText = 'opacity:.55;pointer-events:none;display:flex;align-items:center;gap:10px;padding:12px 14px';
+  loadEl.innerHTML = `<div class="run-spinner" style="display:block;border-color:rgba(124,58,237,.25);border-top-color:#7c3aed"></div><div style="font-size:13px;font-weight:600;color:var(--text3)">Checking spelling & grammar…</div>`;
+  issuesBody.appendChild(loadEl);
+
+  let matches = null;
+  try {
+    const res = await fetch('https://api.languagetool.org/v2/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ text, language: 'en-US', disabledRules: LT_DISABLED_RULES, disabledCategories: 'STYLE,REDUNDANCY' })
+    });
+    if (res.ok) { const d = await res.json(); matches = d.matches || []; }
+  } catch {}
+
+  // If a newer check ran while we were waiting, bail
+  if (grammarCheckId !== myId) return;
+  document.getElementById('grammarLoadingCard')?.remove();
+  if (!matches || !matches.length) return;
+
+  const segs = matches.map(m => ({
+    start: m.offset,
+    end:   m.offset + m.length,
+    orig:  text.slice(m.offset, m.offset + m.length),
+    repl:  m.replacements?.[0]?.value || null,
+    hint:  m.message
+  }));
+
+  const issue = { id:'grammar', cat:'cog', severity:'warn', fixType:'voice', segs, excerpts: segs.slice(0,3).map(s=>s.orig) };
+  checkResults.push(issue);
+
+  // Insert card
+  issuesBody.insertAdjacentHTML('beforeend', `<div id="grammarSection">${renderIssueCard(issue, 99)}</div>`);
+
+  // Update badge
+  const n = checkResults.length;
+  navIssuesSub.textContent = `${n} issue${n!==1?'s':''} found`;
+  issueBadge.textContent = n;
+  issueBadge.classList.add('visible');
+
+  // Update legend
+  const cls = getMarkClass('grammar');
+  hlLegend.insertAdjacentHTML('beforeend', `<div class="hl-chip"><span class="hl-swatch ${cls}" aria-hidden="true"></span>${escHtml(COPY.titles['grammar'])}</div>`);
+}
+
 function getMarkClass(issueId) {
   const map = {
     'deco-struct':  'hl-deco-struct',
@@ -1675,6 +1761,7 @@ function getMarkClass(issueId) {
     'long-sent':    'hl-long-sent',
     'jargon':       'hl-jarg',
     'inclusive':    'hl-incl',
+    'grammar':      'hl-grammar',
   };
   return map[issueId] || 'hl-no-punct';
 }
