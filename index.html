@@ -538,7 +538,7 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
           <div class="check-section-title">Cognitive accessibility</div>
           <div class="check-item"><div class="check-item-icon green" aria-hidden="true">¶</div><div class="check-item-text"><strong>Long sentences</strong><span>Hard to process</span></div></div>
           <div class="check-item"><div class="check-item-icon green" aria-hidden="true">#</div><div class="check-item-text"><strong>Lowercase hashtag</strong><span>Read as one unbroken word</span></div></div>
-          <div class="check-item"><div class="check-item-icon teal" aria-hidden="true">💼</div><div class="check-item-text"><strong>Jargon & advanced words</strong><span>Complex vocabulary check</span></div></div>
+          <div class="check-item"><div class="check-item-icon teal" aria-hidden="true">💼</div><div class="check-item-text"><strong>Idioms that may confuse</strong><span>Business idioms non-native speakers may not understand</span></div></div>
           <div class="check-item"><div class="check-item-icon pink" aria-hidden="true">🤝</div><div class="check-item-text"><strong>Inclusive language</strong><span>May unintentionally exclude</span></div></div>
         </div>
       </details>
@@ -684,89 +684,35 @@ const FEEDBACK_URL = 'https://tally.so/r/WOKdbv';
 const VOTE_URL     = 'https://tally.so/r/KYWyrV';
 
 // Multi-word LinkedIn clichés (phrases can't be caught by syllable counting)
-// LinkedIn-specific multi-word phrases, idioms and clichés
+// Business idioms that are confusing for non-native English speakers
+// (phrases where the meaning is NOT obvious from the words themselves)
 const JARGON_PHRASES = [
-  // Idioms & clichés
-  'circle back','take this offline','take that offline','move the needle',
-  'hit the ground running','think outside the box','boil the ocean',
-  'low-hanging fruit','low hanging fruit','push the envelope',
-  'skin in the game','all hands on deck','at the end of the day',
-  'it is what it is','bring to the table','touch base','reach out to me',
-  'bleeding edge','cutting edge','state of the art','world class',
-  'best in class','industry leading','next level','level up',
-  'deep dive','deep-dive','double down','fail forward',
-  'move fast and break things','done is better than perfect',
-  'work smarter not harder','rise and grind','laser focused','laser-focused',
-  // Corporate phrases
-  'best practice','best practices','going forward','paradigm shift',
-  'thought leader','thought leadership',
-  'value add','value-add','value proposition',
-  'game changer','game-changer','game changing','game-changing',
-  'add value','create value','deliver value','drive value','unlock value',
-  'unlock potential','maximize potential',
-  'key takeaway','key takeaways','lessons learned',
-  'growth mindset','growth hacking',
-  'personal brand','build in public',
-  'data driven','data-driven','results driven','results-driven',
-  'purpose driven','purpose-driven','mission driven','mission-driven',
-  'human centric','human-centric','customer centric','customer-centric',
-  'people first','people-first','client centric','client-centric',
-  // Humble-brag openers
-  'humbled to share','humbled to announce','humbled to say',
-  'excited to share','excited to announce','thrilled to share','thrilled to announce',
-  'honoured to share','honored to share','blessed to share',
-  'i almost did not post this','i almost didn\'t post this',
-  'if this helps just one person','read that again','let that sink in',
-  'i will let that sink in','i\'ll let that sink in',
-  'unpopular opinion','hot take','dropping this here',
+  // Idioms with non-obvious meanings
+  'hit the ground running','circle back','move the needle',
+  'boil the ocean','low-hanging fruit','low hanging fruit',
+  'push the envelope','skin in the game','all hands on deck',
+  'touch base','in the weeds','throw under the bus','threw under the bus',
+  'wear many hats','wearing many hats','think outside the box',
+  'ahead of the curve','behind the curve','raise the bar','set the bar',
+  'drop the ball','get the ball rolling','bite the bullet',
+  'go back to the drawing board','under the radar','up to speed',
+  'blue sky thinking','move the goalposts','moved the goalposts',
+  'ballpark figure','in the ballpark','take this offline','take that offline',
+  'elephant in the room','out of left field','slam dunk',
+  'hit a home run','hit it out of the park','pass the buck',
+  'par for the course','on the same page','break the ice',
+  'weather the storm','at the end of the day',
+  'bleeding edge','deep dive','deep-dive','paradigm shift',
 ];
 
-// LinkedIn buzzwords — single words to always flag
+// Genuinely obscure single words — very short list, only words
+// a competent non-native English speaker would likely not know
 const JARGON_WORDS = new Set([
-  // Overused verbs
-  'utilize','utilise','utilizes','utilises','utilizing','utilising','utilized','utilised',
-  'leverage','leverages','leveraging','leveraged',
-  'facilitate','facilitates','facilitated','facilitating',
-  'optimize','optimise','optimizes','optimises','optimizing','optimising','optimized','optimised',
-  'strategize','strategise','strategizing','strategising',
   'ideate','ideation',
-  'iterate','iteration','iterating','iterated',
-  'streamline','streamlines','streamlined','streamlining',
-  'operationalize','operationalise',
-  'incentivize','incentivise',
-  'actualize','actualise',
+  'operationalize','operationalise','operationalizing','operationalising',
   'synergize','synergise',
-  // Overused adjectives
-  'synergy','synergies','synergistic',
-  'paradigm','paradigms',
-  'scalable','scalability',
-  'actionable',
-  'holistic',
-  'proactive',
-  'transformative',
-  'disruptive','disruption','disruptor',
-  'overarching',
-  'robust',
-  'seamless','seamlessly',
-  'impactful',
-  'granular','granularity',
-  // Role/identity buzzwords
-  'rockstar','rock-star',
-  'ninja',
-  'guru',
-  'evangelist',
-  'visionary',
-  'trailblazer',
-  'changemaker','change-maker',
-  'maven',
-  'luminary',
-  // Culture buzzwords
-  'hustle','hustling','hustler',
-  'grind','grinding',
-  'pivot','pivoting','pivoted',
   'learnings',
-  'ideation',
-  'ecosystem',
+  'bespoke',
 ]);
 
 // Common words with 3+ syllables that are Grade 8 or below — don't flag these
@@ -1067,7 +1013,7 @@ const COPY = {
     'deco-sym':'Decorative symbol inside a sentence',
     'long-sent':'Some sentences are quite long',
     'hashtag-case':'Hashtag written in all lowercase',
-    'jargon':'Jargon & advanced words',
+    'jargon':'Idioms or phrases that may confuse',
     'inclusive':'Words that may unintentionally exclude',
     'unicode-bold':'Bold or italic text made from Unicode symbols'
   },
@@ -1080,7 +1026,7 @@ const COPY = {
     'deco-sym':'Symbol names may be read aloud mid-sentence. Some screen readers may get it right, some may not.',
     'long-sent':'Long sentences are harder to process for people with cognitive disabilities.',
     'hashtag-case':'All-lowercase hashtags are read as one unbroken word.',
-    'jargon':'LinkedIn jargon and corporate idioms that can make your post feel hollow or harder to read.',
+    'jargon':'These expressions have non-obvious meanings — someone reading in a second language may not understand them.',
     'inclusive':'Some terms may unintentionally exclude or offend.',
     'unicode-bold':'These are not real bold or italic. They are different Unicode characters. Some screen readers may handle them correctly; others skip them or spell out each symbol name individually.'
   },
@@ -1093,7 +1039,7 @@ const COPY = {
     'deco-sym':"Replace decorative symbols with a plain word, like 'then' instead of an arrow, or remove them.",
     'long-sent':'Find the longest sentence and split it into two. Just find a natural pause point, end the sentence there, and start a new one.',
     'hashtag-case':'#contentmarketing becomes #ContentMarketing. It takes a second and makes your hashtags clearer for everyone.',
-    'jargon':"Replace with plain language. 'Use' beats 'utilize'. 'Start' beats 'commence'. Specific, direct words always land harder than corporate filler.",
+    'jargon':"Replace with plain language. 'Follow up' instead of 'circle back'. 'An easy win' instead of 'low-hanging fruit'. If the meaning isn't obvious from the words, your global audience will miss it.",
     'inclusive':"Small swaps keep the meaning exactly the same. Try 'incredible' instead of 'crazy,' 'everyone' instead of 'guys.' Your message reaches more people warmly.",
     'unicode-bold':'Retype the styled text using plain characters.'
   },
