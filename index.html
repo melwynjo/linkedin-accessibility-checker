@@ -684,36 +684,89 @@ const FEEDBACK_URL = 'https://tally.so/r/WOKdbv';
 const VOTE_URL     = 'https://tally.so/r/KYWyrV';
 
 // Multi-word LinkedIn clichés (phrases can't be caught by syllable counting)
+// LinkedIn-specific multi-word phrases, idioms and clichés
 const JARGON_PHRASES = [
-  'deep dive','deep-dive','circle back','move the needle',
-  'low-hanging fruit','low hanging fruit','boil the ocean',
-  'best practice','best practices','thought leader','thought leadership',
-  'value add','value-add','game changer','game-changer',
-  'touch base','going forward','paradigm shift'
+  // Idioms & clichés
+  'circle back','take this offline','take that offline','move the needle',
+  'hit the ground running','think outside the box','boil the ocean',
+  'low-hanging fruit','low hanging fruit','push the envelope',
+  'skin in the game','all hands on deck','at the end of the day',
+  'it is what it is','bring to the table','touch base','reach out to me',
+  'bleeding edge','cutting edge','state of the art','world class',
+  'best in class','industry leading','next level','level up',
+  'deep dive','deep-dive','double down','fail forward',
+  'move fast and break things','done is better than perfect',
+  'work smarter not harder','rise and grind','laser focused','laser-focused',
+  // Corporate phrases
+  'best practice','best practices','going forward','paradigm shift',
+  'thought leader','thought leadership',
+  'value add','value-add','value proposition',
+  'game changer','game-changer','game changing','game-changing',
+  'add value','create value','deliver value','drive value','unlock value',
+  'unlock potential','maximize potential',
+  'key takeaway','key takeaways','lessons learned',
+  'growth mindset','growth hacking',
+  'personal brand','build in public',
+  'data driven','data-driven','results driven','results-driven',
+  'purpose driven','purpose-driven','mission driven','mission-driven',
+  'human centric','human-centric','customer centric','customer-centric',
+  'people first','people-first','client centric','client-centric',
+  // Humble-brag openers
+  'humbled to share','humbled to announce','humbled to say',
+  'excited to share','excited to announce','thrilled to share','thrilled to announce',
+  'honoured to share','honored to share','blessed to share',
+  'i almost did not post this','i almost didn\'t post this',
+  'if this helps just one person','read that again','let that sink in',
+  'i will let that sink in','i\'ll let that sink in',
+  'unpopular opinion','hot take','dropping this here',
 ];
 
-// Explicit corporate/LinkedIn jargon to always flag (even if only 3 syllables)
+// LinkedIn buzzwords — single words to always flag
 const JARGON_WORDS = new Set([
+  // Overused verbs
   'utilize','utilise','utilizes','utilises','utilizing','utilising','utilized','utilised',
   'leverage','leverages','leveraging','leveraged',
-  'paradigm','paradigms',
-  'synergy','synergies','synergistic',
   'facilitate','facilitates','facilitated','facilitating',
-  'optimize','optimise','optimizes','optimising','optimizing','optimized','optimised',
-  'optimization','optimisation',
-  'scalability','scalable',
+  'optimize','optimise','optimizes','optimises','optimizing','optimising','optimized','optimised',
+  'strategize','strategise','strategizing','strategising',
+  'ideate','ideation',
+  'iterate','iteration','iterating','iterated',
+  'streamline','streamlines','streamlined','streamlining',
+  'operationalize','operationalise',
+  'incentivize','incentivise',
+  'actualize','actualise',
+  'synergize','synergise',
+  // Overused adjectives
+  'synergy','synergies','synergistic',
+  'paradigm','paradigms',
+  'scalable','scalability',
   'actionable',
   'holistic',
   'proactive',
   'transformative',
-  'ideate','ideation',
-  'iterate','iteration','iterating',
-  'granular','granularity',
+  'disruptive','disruption','disruptor',
   'overarching',
-  'streamline','streamlines','streamlined','streamlining',
-  'disruptive','disruption',
+  'robust',
+  'seamless','seamlessly',
+  'impactful',
+  'granular','granularity',
+  // Role/identity buzzwords
+  'rockstar','rock-star',
+  'ninja',
+  'guru',
+  'evangelist',
+  'visionary',
+  'trailblazer',
+  'changemaker','change-maker',
+  'maven',
+  'luminary',
+  // Culture buzzwords
+  'hustle','hustling','hustler',
+  'grind','grinding',
+  'pivot','pivoting','pivoted',
+  'learnings',
+  'ideation',
   'ecosystem',
-  'strategize','strategise','strategizing',
 ]);
 
 // Common words with 3+ syllables that are Grade 8 or below — don't flag these
@@ -1027,7 +1080,7 @@ const COPY = {
     'deco-sym':'Symbol names may be read aloud mid-sentence. Some screen readers may get it right, some may not.',
     'long-sent':'Long sentences are harder to process for people with cognitive disabilities.',
     'hashtag-case':'All-lowercase hashtags are read as one unbroken word.',
-    'jargon':'These words may be hard for readers with cognitive disabilities, or anyone reading in a second language.',
+    'jargon':'LinkedIn jargon and corporate idioms that can make your post feel hollow or harder to read.',
     'inclusive':'Some terms may unintentionally exclude or offend.',
     'unicode-bold':'These are not real bold or italic. They are different Unicode characters. Some screen readers may handle them correctly; others skip them or spell out each symbol name individually.'
   },
@@ -1040,7 +1093,7 @@ const COPY = {
     'deco-sym':"Replace decorative symbols with a plain word, like 'then' instead of an arrow, or remove them.",
     'long-sent':'Find the longest sentence and split it into two. Just find a natural pause point, end the sentence there, and start a new one.',
     'hashtag-case':'#contentmarketing becomes #ContentMarketing. It takes a second and makes your hashtags clearer for everyone.',
-    'jargon':"These are highlighted, but only you know the right simpler word for your context. Aim for words a 13-year-old would know — shorter words almost always land harder anyway.",
+    'jargon':"Replace with plain language. 'Use' beats 'utilize'. 'Start' beats 'commence'. Specific, direct words always land harder than corporate filler.",
     'inclusive':"Small swaps keep the meaning exactly the same. Try 'incredible' instead of 'crazy,' 'everyone' instead of 'guys.' Your message reaches more people warmly.",
     'unicode-bold':'Retype the styled text using plain characters.'
   },
@@ -1342,15 +1395,14 @@ function analyse(text) {
       }
     }
 
-    // Syllable-based: flag words with 3+ syllables not in the Grade 8 whitelist
-    const wordRx = /\b[a-zA-Z]{4,}\b/g;
+    // Single-word LinkedIn buzzwords — only flag words explicitly in JARGON_WORDS
+    const wordRx = /\b[a-zA-Z]{3,}\b/g;
     let wm;
     while ((wm = wordRx.exec(text)) !== null) {
       const word = wm[0], lower = word.toLowerCase();
       const start = wm.index, end = wm.index + word.length;
-      // Skip words that are part of a hashtag (#WebDesign → skip "WebDesign")
       if (start > 0 && text[start - 1] === '#') continue;
-      if ((JARGON_WORDS.has(lower) || (!GRADE8_WORDS.has(lower) && countSyllables(lower) >= 4)) &&
+      if (JARGON_WORDS.has(lower) &&
           !usedRanges.some(([s,e]) => start < e && end > s)) {
         segs.push({ start, end, orig: word, repl: null });
         usedRanges.push([start, end]);
