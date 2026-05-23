@@ -719,6 +719,53 @@ const GRADE8_WORDS = new Set([
   'understanding','university','usually','valuable','variety',
   'various','vehicle','volunteer','whatever','whenever',
   'wherever','wonderful','yesterday','yourself',
+  // Common words that the syllable counter overcounts or that are Grade 8 standard
+  'every','sometimes','together','exactly','entire','forward','toward',
+  'outside','inside','nothing','nowhere','somehow','someone','somewhere',
+  'design','designed','designer','designing',
+  'created','creates','creator','creating','creative',
+  'festival','international','creativity',
+  'social','visual','mental','physical','medical','logical','critical',
+  'global','local','annual','final','total','vital','major','minor',
+  'benefit','content','moment','simple','single','special','central',
+  'business','service','product','project','process','system',
+  'platform','program','partner','client','market','brand',
+  'media','event','award','story','vision','impact','focus',
+  'using','moving','trying','getting','helping','sharing',
+  'growing','leading','starting','thinking','speaking',
+  'looking','working','coming','going','seeing','being',
+  'doing','having','running','talking','writing','reading',
+  'building','turning','changing','opening','closing',
+  'choosing','becoming','following',
+  'truly','fully','daily','weekly','quickly','simply',
+  'direct','connect','collect','reflect','protect','detect',
+  'achieve','believe','receive','perceive','relieve',
+  'grateful','thankful','helpful','useful','powerful', // already has powerful
+  'outcome','overcome','input','output','update','upgrade',
+  'network','teamwork','framework','feedback','mindset',
+  'insight','outlook','overview','breakdown','setup',
+  'engage','engaged','engaging','engagement',
+  'inspired','inspires','inspiring','inspiration',
+  'dedicated','dedication','committed','commitment',
+  'achieved','achieving','achievement',
+  'announced','announcing','announcement',
+  'introduced','introducing','introduction',
+  'recognized','recognizing','recognition',
+  'appreciated','appreciating','appreciation',
+  'supported','supporting','support',
+  'connected','connecting','connection', // already has connection
+  'mentioned','mentioning','mention',
+  'discussed','discussing','discussion',
+  'contributed','contributing','contribution',
+  'developed','developing','developer',
+  'delivered','delivering','delivery',
+  'established','establishing',
+  'celebrated','celebrating',
+  'collaborated','collaborating','collaboration',
+  'opportunities','opportunity',
+  'solution','solutions',
+  'partnership','partnerships',
+  'expertise','experienced',
 ]);
 
 function countSyllables(word) {
@@ -736,6 +783,8 @@ function countSyllables(word) {
   if (word.endsWith('e') && word.length > 1 && !vowels.includes(word[word.length - 2])) count--;
   // Add back for consonant+le ending (e.g. "table", "possible", "article")
   if (word.length > 2 && word.endsWith('le') && !vowels.includes(word[word.length - 3])) count++;
+  // Subtract for silent e before consonant+ed (e.g. "designed"→de-signed, "aligned", "assigned")
+  if (/[^aeiou][^aeiou]ed$/.test(word) && !/[td]ed$/.test(word)) count--;
   return Math.max(1, count);
 }
 
@@ -1109,6 +1158,8 @@ function analyse(text) {
     while ((wm = wordRx.exec(text)) !== null) {
       const word = wm[0], lower = word.toLowerCase();
       const start = wm.index, end = wm.index + word.length;
+      // Skip words that are part of a hashtag (#WebDesign → skip "WebDesign")
+      if (start > 0 && text[start - 1] === '#') continue;
       if (!GRADE8_WORDS.has(lower) &&
           !usedRanges.some(([s,e]) => start < e && end > s) &&
           countSyllables(lower) >= 3) {
