@@ -61,9 +61,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:1
 .issue-badge.visible{display:inline-block}
 
 .header-actions{padding:0 18px;height:100%;display:flex;align-items:center;gap:8px;border-left:2px solid var(--border);flex-shrink:0;width:420px;justify-content:flex-start}
-.resource-label{font-size:13px;font-weight:600;color:var(--text3);white-space:nowrap}
-.accessible-link{font-size:13px;font-weight:700;color:var(--text1);text-decoration:none;white-space:nowrap}
-.accessible-link:hover{color:var(--blue);text-decoration:underline}
+.accessible-link{font-size:13px;font-weight:700;color:var(--text2);text-decoration:none;white-space:nowrap;border-bottom:2px solid var(--border-soft)}
+.accessible-link:hover{color:var(--blue);border-bottom-color:var(--blue)}
 .feedback-pill{padding:6px 12px;border:2px solid var(--border);border-radius:8px;font-size:11.5px;font-weight:600;color:var(--text2);text-decoration:none;transition:all .1s;white-space:nowrap;box-shadow:var(--shadow-btn-sm)}
 .feedback-pill:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--border)}
 
@@ -461,7 +460,7 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
     <span id="navIssuesSub" class="visually-hidden" aria-live="polite">Run check first</span>
   </nav>
   <div class="header-actions">
-    <span class="resource-label">Resource: <a href="https://www.accessible-social.com/" target="_blank" rel="noopener noreferrer" class="accessible-link">Accessible Social by Alexa Heinrich ↗</a></span>
+    <a href="https://www.accessible-social.com/" target="_blank" rel="noopener noreferrer" class="accessible-link">Accessible Social by Alexa Heinrich ↗</a>
   </div>
 </header>
 
@@ -539,7 +538,7 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
           <div class="check-section-title">Cognitive accessibility</div>
           <div class="check-item"><div class="check-item-icon green" aria-hidden="true">¶</div><div class="check-item-text"><strong>Long sentences</strong><span>Hard to process</span></div></div>
           <div class="check-item"><div class="check-item-icon green" aria-hidden="true">#</div><div class="check-item-text"><strong>Lowercase hashtag</strong><span>Read as one unbroken word</span></div></div>
-          <div class="check-item"><div class="check-item-icon teal" aria-hidden="true">💼</div><div class="check-item-text"><strong>Words above Grade 8</strong><span>Complex vocabulary check</span></div></div>
+          <div class="check-item"><div class="check-item-icon teal" aria-hidden="true">💼</div><div class="check-item-text"><strong>Jargon & advanced words</strong><span>Complex vocabulary check</span></div></div>
           <div class="check-item"><div class="check-item-icon pink" aria-hidden="true">🤝</div><div class="check-item-text"><strong>Inclusive language</strong><span>May unintentionally exclude</span></div></div>
         </div>
       </details>
@@ -859,7 +858,11 @@ const INCLUSIVE = [
   'lame','dumb','guys','mankind','manpower','man-hours','man-hour','man hours',
   'chairman','chairmen','manmade','man-made','blacklist','whitelist',
   'grandfathered','sanity check','sanity-check','cripple','crippling',
-  'psycho','retard','retarded'
+  'psycho','retard','retarded',
+  'dumbass','dumb ass','idiot','moron','stupid','imbecile','jackass','jack ass',
+  'asshole','ass hole','bastard','bitch','dipshit','dip shit','dimwit','dim wit',
+  'numbskull','numb skull','airhead','bonehead','halfwit','half wit',
+  'jerk','douche','loser','freak','weirdo','nutcase','nut case','nutjob','nut job'
 ];
 
 
@@ -873,7 +876,74 @@ const INCLUSIVE_FIXES = {
   'chairman':'chair','chairmen':'chairs',
   'blacklist':'blocklist','whitelist':'allowlist',
   'sanity check':'sense check','sanity-check':'sense check',
-  'cripple':'limit','crippling':'limiting'
+  'cripple':'limit','crippling':'limiting',
+  'idiot':'person who made a mistake','moron':'person who got it wrong',
+  'stupid':'misguided','imbecile':'person who missed the mark',
+  'dimwit':'person who overlooked something','halfwit':'person who missed the point',
+  'dumbass':'someone who got it wrong','dumb ass':'someone who got it wrong',
+  'airhead':'unfocused person','bonehead':'someone who slipped up',
+  'jerk':'difficult person','loser':'underperformer',
+  'freak':'unconventional person','weirdo':'unconventional person',
+  'nutcase':'person under pressure','nut case':'person under pressure'
+};
+
+// Simpler word suggestions for common LinkedIn jargon
+const SIMPLE_WORDS = {
+  'utilize':'use','utilise':'use','utilizes':'uses','utilising':'using','utilizing':'using',
+  'implement':'build','implements':'builds','implemented':'built','implementing':'building',
+  'facilitate':'help','facilitates':'helps','facilitated':'helped','facilitating':'helping',
+  'commence':'start','commences':'starts','commenced':'started','commencing':'starting',
+  'endeavour':'try','endeavor':'try','endeavours':'tries','endeavors':'tries',
+  'cognizant':'aware','cognisant':'aware',
+  'synergy':'teamwork','synergies':'teamwork','synergistic':'team-based',
+  'paradigm':'model','paradigms':'models','paradigmatic':'model-based',
+  'optimize':'improve','optimise':'improve','optimizes':'improves','optimising':'improving','optimizing':'improving','optimized':'improved','optimised':'improved','optimization':'improvement','optimisation':'improvement',
+  'scalability':'growth','scalable':'flexible',
+  'actionable':'useful','actionability':'usefulness',
+  'transformative':'game-changing','transformation':'change','transforming':'changing',
+  'accelerate':'speed up','accelerates':'speeds up','accelerating':'speeding up','accelerated':'sped up',
+  'amplify':'boost','amplifies':'boosts','amplifying':'boosting','amplified':'boosted',
+  'navigate':'handle','navigates':'handles','navigating':'handling','navigated':'handled',
+  'collaborate':'work together','collaboration':'teamwork','collaborating':'working together','collaborated':'worked together',
+  'communicate':'share','communication':'sharing','communicating':'sharing',
+  'prioritize':'focus on','prioritise':'focus on','prioritizing':'focusing on','prioritised':'focused on','prioritized':'focused on',
+  'demonstrate':'show','demonstrates':'shows','demonstrating':'showing','demonstrated':'showed',
+  'opportunity':'chance','opportunities':'chances',
+  'initiative':'project','initiatives':'projects',
+  'empower':'help','empowers':'helps','empowering':'helping','empowered':'helped',
+  'innovative':'new','innovation':'new idea','innovations':'new ideas',
+  'transparency':'openness','transparent':'open',
+  'authenticity':'realness','authentic':'real',
+  'productivity':'output','productive':'useful',
+  'fundamental':'basic','fundamentally':'basically',
+  'comprehensive':'complete','comprehensively':'fully',
+  'significant':'big','significantly':'a lot','significance':'importance',
+  'considerable':'large','considerably':'a lot',
+  'exceptional':'great','exceptionally':'really',
+  'remarkable':'great','remarkably':'very',
+  'individual':'person','individuals':'people',
+  'additionally':'also',
+  'approximately':'about',
+  'necessary':'needed','unnecessary':'not needed',
+  'sufficient':'enough',
+  'establish':'set up','establishes':'sets up','establishing':'setting up','established':'set up',
+  'visibility':'reach',
+  'trajectory':'path',
+  'narrative':'story',
+  'momentum':'pace',
+  'strategic':'planned','strategy':'plan','strategies':'plans',
+  'solution':'answer','solutions':'answers',
+  'challenge':'problem','challenges':'problems','challenging':'hard',
+  'environment':'setting','environments':'settings',
+  'community':'group','communities':'groups',
+  'organization':'company','organisations':'companies','organizations':'companies','organisation':'company',
+  'professional':'expert','professionals':'experts',
+  'responsibility':'duty','responsibilities':'duties',
+  'perspective':'view','perspectives':'views',
+  'engagement':'interaction','engaging':'interesting',
+  'consistently':'always','consistency':'steadiness',
+  'effectively':'well','effectiveness':'how well it works',
+  'efficiently':'quickly','efficiency':'speed',
 };
 
 const CONTRIBUTORS = [
@@ -890,7 +960,7 @@ const COPY = {
     'deco-sym':'Decorative symbol inside a sentence',
     'long-sent':'Some sentences are quite long',
     'hashtag-case':'Hashtag written in all lowercase',
-    'jargon':'Words above Grade 8 reading level',
+    'jargon':'Jargon & advanced words',
     'inclusive':'Words that may unintentionally exclude',
     'unicode-bold':'Bold or italic text made from Unicode symbols'
   },
@@ -1510,8 +1580,33 @@ function renderIssueCard(issue, idx) {
     </div>
     <div class="card-body">
       <div class="fix-label"><strong>How to fix it:</strong> ${escHtml(COPY.fixes[issue.id])}</div>
+      ${issue.id === 'jargon' ? renderJargonSuggestions(issue.segs) : ''}
       ${['deco-sym','unicode-bold'].includes(issue.id) ? `<div class="fix-label" style="margin-top:8px;padding:7px 9px;background:#f0f7ff;border:1px solid #c4dcf5;border-radius:6px;font-size:12px;color:#004182;">👂 <strong>Tip:</strong> Use the <em>Listen with screen reader</em> feature to hear exactly how this reads. It may or may not be a problem for your audience.</div>` : ''}
     </div>
+  </div>`;
+}
+
+function renderJargonSuggestions(segs) {
+  if (!segs || !segs.length) return '';
+  const seen = new Set();
+  const pairs = [];
+  for (const seg of segs) {
+    const lower = seg.orig.toLowerCase();
+    if (seen.has(lower)) continue;
+    seen.add(lower);
+    const simpler = SIMPLE_WORDS[lower];
+    if (simpler) pairs.push({ orig: seg.orig, simpler });
+  }
+  if (!pairs.length) return '';
+  return `<div style="margin-top:10px;padding:9px 11px;background:#f8f3ec;border:1.5px solid var(--border-sub);border-radius:8px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);margin-bottom:7px">Quick swaps</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">${pairs.map(p =>
+      `<span style="display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid var(--border-sub);border-radius:6px;padding:3px 8px;font-size:12px">
+        <span style="color:var(--text2);font-weight:600">${escHtml(p.orig)}</span>
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 5h6M6 3l2 2-2 2" stroke="#888" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="color:var(--success);font-weight:600">${escHtml(p.simpler)}</span>
+      </span>`
+    ).join('')}</div>
   </div>`;
 }
 
