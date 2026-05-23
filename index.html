@@ -1638,8 +1638,8 @@ function renderIssueCard(issue, idx) {
   const isGrammar = issue.id === 'grammar';
   const count = issue.segs ? issue.segs.length : 1;
   const countLabel = count === 1 ? '1 found' : `${count} found`;
-  const pillClass = isGrammar ? 'grammar-auto' : (isVoice ? 'voice' : 'auto');
-  const pillText  = isGrammar ? '✓ Auto-fixed · please review' : (isVoice ? '⚠ Fix manually' : '✓ Auto-fixable');
+  const pillClass = isVoice ? 'voice' : 'auto';
+  const pillText  = isVoice ? '⚠ Fix manually' : '✓ Auto-fixable';
 
   return `<div class="issue-card" id="card-${issue.id}" data-id="${issue.id}" onclick="highlightIssue('${issue.id}')" role="button" tabindex="0" aria-label="${escHtml(COPY.titles[issue.id])}">
     <div class="card-header">
