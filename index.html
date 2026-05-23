@@ -398,6 +398,11 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
 .why-matters-stat{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px;color:var(--text3);line-height:1.4}
 .why-matters-stat::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0}
 
+/* Check another post button */
+.check-another-btn{width:100%;padding:10px;background:#fff;border:2px solid var(--border);border-radius:10px;font-size:13px;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .1s;box-shadow:var(--shadow-btn-sm);font-family:inherit}
+.check-another-btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--border)}
+.check-another-btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--border)}
+
 /* Panel back button */
 .panel-back-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:1.5px solid var(--border-sub);border-radius:7px;padding:4px 10px;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;font-family:inherit;transition:all .1s;margin-bottom:8px}
 .panel-back-btn:hover{border-color:var(--border);color:var(--text1);transform:translate(-1px,-1px);box-shadow:2px 2px 0 var(--border)}
@@ -571,6 +576,12 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
         <div class="fixed-post-empty">Apply fixes to see your fixed post here.</div>
       </div>
     </div>
+    <div class="panel-footer">
+      <button class="check-another-btn" onclick="checkAnother()" aria-label="Check another post">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true"><path d="M11 6.5A4.5 4.5 0 1 1 2.5 4M2 2v3h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Check another post
+      </button>
+    </div>
   </div>
 
   <!-- PANEL: Coming soon -->
@@ -659,10 +670,10 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
 <div class="modal-overlay hidden" id="leaveModal" role="dialog" aria-modal="true" aria-labelledby="leaveModalTitle">
   <div class="modal-box">
     <div class="modal-title" id="leaveModalTitle">Leave the fixed post?</div>
-    <p class="modal-desc">Your edits will be lost. This cannot be undone.</p>
+    <p class="modal-desc" id="leaveModalDesc">Any edits you made to the fixed post will be lost.</p>
     <div class="modal-actions">
-      <button class="modal-stay" onclick="stayOnFixed()">Stay</button>
-      <button class="modal-leave" onclick="leaveFixed()">Leave</button>
+      <button class="modal-stay" onclick="stayOnFixed()">Stay here</button>
+      <button class="modal-leave" onclick="leaveFixed()">Yes, go back</button>
     </div>
   </div>
 </div>
@@ -1470,6 +1481,9 @@ function getMarkClass(issueId) {
 function switchPanel(key) {
   if (editorCard.classList.contains('applied') && (key === 'analyse' || key === 'issues')) {
     pendingPanel = key;
+    document.getElementById('leaveModalTitle').textContent = 'Leave the fixed post?';
+    document.getElementById('leaveModalDesc').textContent = 'Any edits you made to the fixed post will be lost. Your original post stays in the editor.';
+    document.querySelector('.modal-leave').textContent = 'Yes, go back';
     document.getElementById('leaveModal').classList.remove('hidden');
     return;
   }
@@ -1502,9 +1516,29 @@ function stayOnFixed() {
 }
 
 function leaveFixed() {
+  const dest = pendingPanel || 'analyse';
   document.getElementById('leaveModal').classList.add('hidden');
   pendingPanel = null;
-  clearPost();
+  if (dest === 'new') {
+    clearPost();
+  } else {
+    // Reset editor but keep the original post text for re-checking
+    resetEditor();
+    document.getElementById('nav-ready').classList.add('locked');
+    switchPanel(dest);
+  }
+}
+
+function checkAnother() {
+  if (document.getElementById('editorCard').classList.contains('applied')) {
+    pendingPanel = 'new';
+    document.getElementById('leaveModalTitle').textContent = 'Check another post?';
+    document.getElementById('leaveModalDesc').textContent = 'This will clear your current post. You\'ll need to paste a new one to check.';
+    document.querySelector('.modal-leave').textContent = 'Yes, clear it';
+    document.getElementById('leaveModal').classList.remove('hidden');
+  } else {
+    clearPost();
+  }
 }
 
 // ─── LISTEN (Web Speech) ────────────────────────────────────────────────────
