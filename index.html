@@ -476,7 +476,7 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
         <label class="field-label" id="fieldLabel" for="postInput">Your post</label>
         <div style="display:flex;align-items:center;gap:8px">
           <span class="char-counter" id="charCounter">0 / 3,000</span>
-          <button class="clear-btn hidden" id="clearBtn" onclick="clearPost()" aria-label="Clear post">Clear</button>
+          <button class="clear-btn hidden" id="clearBtn" onclick="clearBtnClick()" aria-label="Clear post">Clear</button>
         </div>
       </div>
       <p class="field-hint" id="fieldHint">Include emojis, hashtags, links, and line breaks.</p>
@@ -1834,8 +1834,9 @@ function editFixed() {
   postInput.dispatchEvent(new Event('input'));
 }
 
+// Called by the Clear button — requires two-click confirmation
 let clearConfirmTimer = null;
-function clearPost() {
+function clearBtnClick() {
   const btn = document.getElementById('clearBtn');
   if (btn && !btn.classList.contains('confirming')) {
     btn.textContent = 'Sure?';
@@ -1845,6 +1846,14 @@ function clearPost() {
     }, 2000);
     return;
   }
+  clearTimeout(clearConfirmTimer);
+  if (btn) { btn.textContent = 'Clear'; btn.classList.remove('confirming'); }
+  clearPost();
+}
+
+// Actual clear — called programmatically (no confirmation needed)
+function clearPost() {
+  const btn = document.getElementById('clearBtn');
   clearTimeout(clearConfirmTimer);
   if (btn) { btn.textContent = 'Clear'; btn.classList.remove('confirming'); }
 
