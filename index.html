@@ -252,6 +252,7 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
 .issue-card{border:2px solid var(--border);border-radius:10px;padding:12px 13px;margin-bottom:8px;cursor:pointer;transition:all .1s;animation:fadeUp .2s ease both;box-shadow:var(--shadow-btn-sm);background:#fff}
 .issue-card:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--border)}
 .issue-card.expanded{border-color:var(--blue);background:var(--blue-bg);box-shadow:3px 3px 0 var(--blue);transform:translate(-1px,-1px)}
+.issue-card.active-hl{border-color:var(--blue)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 .card-header{display:flex;align-items:flex-start;gap:8px}
@@ -349,14 +350,67 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
 .feedback-btn-blue{display:block;text-align:center;padding:10px;background:var(--blue);color:#fff;border:2px solid var(--border);border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:all .1s;box-shadow:var(--shadow-btn)}
 .feedback-btn-blue:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--border)}
 
+/* Step number in nav */
+.nav-step{font-size:9.5px;font-weight:700;opacity:.55;margin-right:2px;letter-spacing:.01em}
+.nav-item.active .nav-step{opacity:.8}
+
+/* Score quality label */
+.score-quality{font-size:10px;font-weight:700;border-radius:4px;padding:1px 5px;margin-left:5px;vertical-align:middle}
+.score-quality.green{background:#e6f4ea;color:#15803d}
+.score-quality.amber{background:#fef3c7;color:#b45309}
+.score-quality.red{background:#fee2e2;color:#991b1b}
+
+/* Voice banner above fixed post */
+.voice-banner{background:#fffbeb;border:2px solid #f0c040;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12.5px;color:#7a5c00;display:flex;gap:8px;align-items:flex-start;flex-shrink:0;line-height:1.5}
+.voice-banner svg{width:15px;height:15px;flex-shrink:0;color:#d97706;margin-top:1px}
+
+/* Card expand chevron */
+.card-expand-btn{background:none;border:1.5px solid var(--border-sub);border-radius:6px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .12s;color:var(--text4);margin-left:4px}
+.card-expand-btn:hover{background:var(--bg-sec);border-color:var(--border);color:var(--text1);transform:translate(-1px,-1px);box-shadow:2px 2px 0 var(--border)}
+.card-expand-btn svg{width:11px;height:11px;transition:transform .15s}
+.issue-card.expanded .card-expand-btn svg{transform:rotate(180deg)}
+
+/* Nav secondary footer links */
+.right-panel-footer{flex-shrink:0;padding:8px 12px;border-top:2px solid var(--border-sub);background:var(--bg-sec);display:flex;gap:6px;align-items:center}
+.panel-footer-btn{font-size:11.5px;color:var(--text5);cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .1s;font-weight:600;background:none;border:none;font-family:inherit}
+.panel-footer-btn:hover{color:var(--text1);background:var(--border-soft)}
+.panel-footer-btn.active{color:var(--blue)}
+
+/* Char counter */
+.char-counter{font-size:12px;font-weight:600;color:var(--text5);display:block}
+.char-counter.warn{color:var(--warn)}
+.char-counter.error{color:var(--error)}
+
+/* Apply btn context sub-line */
+.apply-btn-sub{text-align:center;font-size:11px;color:var(--text4);margin-top:5px;min-height:16px}
+
+/* Editor flash animation for visual connection */
+@keyframes editorPulse{0%{box-shadow:var(--shadow-card)}40%{box-shadow:0 0 0 3px var(--blue),4px 4px 0 #1a1a1a}100%{box-shadow:var(--shadow-card)}}
+.editor-card.flash{animation:editorPulse .4s ease}
+
+/* Toast notification */
+.copy-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;z-index:2000;box-shadow:4px 4px 0 rgba(0,0,0,.25);opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.copy-toast.show{opacity:1}
+
+/* Why-matters intro */
+.why-matters{margin-top:14px;padding:11px 13px;background:var(--bg-sec);border:2px solid var(--border-sub);border-radius:10px}
+.why-matters-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;margin-bottom:8px}
+.why-matters-stat{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px;color:var(--text3);line-height:1.4}
+.why-matters-stat::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0}
+
+/* Cmd+Enter hint */
+.kbd-hint{font-size:11px;color:var(--text5);font-weight:500;white-space:nowrap}
+kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);border-radius:4px;font-size:10px;font-family:inherit;background:#fff;color:var(--text4);font-weight:700;box-shadow:0 1px 0 var(--border-sub)}
+
 /* Responsive */
 @media(max-width:900px){
   html,body{height:auto;overflow-y:auto}
   .app-shell{height:auto;min-height:100vh;overflow:visible}
   .app-header{position:sticky;top:0;z-index:100;height:auto;flex-wrap:wrap;padding:10px 16px 0;gap:0;background:#fff}
   .brand{border-right:none;padding:8px 0;height:auto}
-  .header-nav{width:100%;height:44px;padding:8px 4px;border-top:2px solid var(--border-sub);order:1;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .header-nav{width:100%;height:44px;padding:8px 4px;border-top:2px solid var(--border-sub);order:1;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:relative}
   .header-nav::-webkit-scrollbar{display:none}
+  .header-nav::after{content:'';position:absolute;right:0;top:0;bottom:0;width:28px;background:linear-gradient(to right,transparent,#fff);pointer-events:none;z-index:1}
   .nav-item{padding:4px 12px;font-size:12.5px;white-space:nowrap;flex-shrink:0}
   .header-actions{display:none}
   .main-content{flex-direction:column;overflow:visible;flex:none}
@@ -372,6 +426,7 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
   .score-section{padding:12px 0}
   .issue-card{margin-bottom:8px}
   .modal-box{width:calc(100vw - 40px);max-width:340px}
+  .right-panel-footer{display:flex}
 }
 </style>
 </head>
@@ -390,12 +445,9 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
     <div class="brand-name">LinkedIn<br>Accessibility Checker</div>
   </a>
   <nav class="header-nav" aria-label="Main navigation">
-    <div class="nav-item active" id="nav-analyse" role="button" tabindex="0" onclick="switchPanel('analyse')">Analyse</div>
-    <div class="nav-item locked" id="nav-issues" role="button" tabindex="0" onclick="switchPanel('issues')">What to fix <span class="issue-badge" id="issueBadge" aria-live="polite">0</span></div>
-    <div class="nav-item locked" id="nav-ready" role="button" tabindex="0" onclick="switchPanel('ready')">Fixed post</div>
-    <div style="flex:1"></div>
-    <div class="nav-item" id="nav-coming" role="button" tabindex="0" onclick="switchPanel('coming')">Coming soon</div>
-    <div class="nav-item" id="nav-contributors" role="button" tabindex="0" onclick="switchPanel('contributors')">Contributors</div>
+    <div class="nav-item active" id="nav-analyse" role="button" tabindex="0" onclick="switchPanel('analyse')"><span class="nav-step">1 ·</span> Analyse</div>
+    <div class="nav-item locked" id="nav-issues" role="button" tabindex="0" onclick="switchPanel('issues')"><span class="nav-step">2 ·</span> What to fix <span class="issue-badge" id="issueBadge" aria-live="polite">0</span></div>
+    <div class="nav-item locked" id="nav-ready" role="button" tabindex="0" onclick="switchPanel('ready')"><span class="nav-step">3 ·</span> Fixed post</div>
     <span id="navIssuesSub" class="visually-hidden" aria-live="polite">Run check first</span>
   </nav>
   <div class="header-actions">
@@ -411,8 +463,11 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
   <div class="editor-scroll">
     <div class="editor-card" id="editorCard">
       <div class="editor-card-header">
-        <label class="field-label" id="fieldLabel" for="postInput">LinkedIn post content</label>
-        <button class="clear-btn hidden" id="clearBtn" onclick="clearPost()" aria-label="Clear post">Clear</button>
+        <label class="field-label" id="fieldLabel" for="postInput">Your post</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="char-counter" id="charCounter">0 / 3,000</span>
+          <button class="clear-btn hidden" id="clearBtn" onclick="clearPost()" aria-label="Clear post">Clear</button>
+        </div>
       </div>
       <p class="field-hint" id="fieldHint">Include emojis, hashtags, links, and line breaks.</p>
       <div class="post-input-wrapper" id="postWrapper" onclick="document.getElementById('postInput').focus()">
@@ -423,6 +478,7 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
       <div class="editor-footer">
         <div class="hl-legend" id="hlLegend" aria-hidden="true" role="presentation"></div>
         <div class="editor-footer-right">
+          <span class="kbd-hint" id="cmdHint"><kbd>⌘</kbd><kbd>↵</kbd> to check</span>
           <button class="listen-inline-btn hidden" id="listenBtn" onclick="toggleListen()" aria-label="Listen with screen reader">
             <span class="listen-label">Listen with screen reader</span>
             <span class="listen-bars" aria-hidden="true"><b></b><b></b><b></b></span>
@@ -430,6 +486,10 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
         </div>
       </div>
       <div class="diff-applied-view" id="diffAppliedView">
+        <div class="voice-banner" id="voiceBanner" style="display:none">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2L14 13H2L8 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6v3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r=".7" fill="currentColor"/></svg>
+          <span id="voiceBannerText">Highlighted words need your personal touch — only you know the right simpler word for your context.</span>
+        </div>
         <div class="fixed-post-edit" id="fixedPostEdit" contenteditable="true" role="textbox" aria-label="Fixed post, editable" aria-multiline="true" spellcheck="true"></div>
       </div>
       <div class="diff-view-footer" id="diffViewFooter"></div>
@@ -474,6 +534,14 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
         </div>
       </details>
 
+      <div class="why-matters">
+        <div class="why-matters-title">Why it matters</div>
+        <div class="why-matters-stat">1 in 6 people worldwide has a disability</div>
+        <div class="why-matters-stat">Screen readers read emojis, hashtags and symbols aloud</div>
+        <div class="why-matters-stat">Posts written clearly reach more people — including ESL readers</div>
+        <div class="why-matters-stat">Cognitive accessibility helps everyone, not just disabled readers</div>
+      </div>
+
     </div>
   </div>
 
@@ -490,7 +558,8 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
       </div>
     </div>
     <div class="panel-footer" id="issuesFooter" style="display:none">
-      <button class="apply-btn" onclick="applyFixes()" aria-label="Apply all fixes">Apply all fixes</button>
+      <button class="apply-btn" id="applyBtn" onclick="applyFixes()" aria-label="Apply all fixes">Apply all fixes</button>
+      <div class="apply-btn-sub" id="applyBtnSub"></div>
     </div>
   </div>
 
@@ -569,9 +638,17 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
     </div>
   </div>
 
+  <div class="right-panel-footer">
+    <button class="panel-footer-btn" id="nav-coming" onclick="switchPanel('coming')">Coming soon</button>
+    <button class="panel-footer-btn" id="nav-contributors" onclick="switchPanel('contributors')">Contributors</button>
+  </div>
+
 </aside>
 </div><!-- end main-content -->
 </div><!-- end app-shell -->
+
+<!-- Toast notification -->
+<div class="copy-toast" id="copyToast" aria-live="assertive" role="status"></div>
 
 <!-- Leave warning modal -->
 <div class="modal-overlay hidden" id="leaveModal" role="dialog" aria-modal="true" aria-labelledby="leaveModalTitle">
@@ -752,7 +829,7 @@ const postInput    = document.getElementById('postInput');
 const postMirror   = document.getElementById('postMirror');
 const postRendered = document.getElementById('postRendered');
 const postWrapper  = document.getElementById('postWrapper');
-const charCounter  = document.getElementById('charCounter') || { textContent:'', className:'' };
+const charCounter  = document.getElementById('charCounter') || { textContent:'0 / 3,000', className:'' };
 const hlLegend     = document.getElementById('hlLegend');
 const runBtn       = document.getElementById('runBtn');
 const issuesBody   = document.getElementById('issuesBody');
@@ -1263,6 +1340,22 @@ function buildResults(issues) {
   });
 
   issuesFooter.style.display = 'block';
+
+  // Update apply button to show exactly what it does
+  const autoCount = issues.filter(i => i.fixType === 'auto').reduce((n,i) => n + i.segs.length, 0);
+  const voiceCount = issues.filter(i => i.fixType === 'voice').length;
+  const applyBtn = document.getElementById('applyBtn');
+  const applyBtnSub = document.getElementById('applyBtnSub');
+  if (applyBtn) {
+    if (autoCount > 0) {
+      applyBtn.textContent = `Apply ${autoCount} auto-fix${autoCount !== 1 ? 'es' : ''}`;
+      if (applyBtnSub) applyBtnSub.textContent = voiceCount > 0 ? `+ ${voiceCount} item${voiceCount !== 1 ? 's' : ''} highlighted for you to rewrite` : '';
+    } else {
+      applyBtn.textContent = 'See what to fix manually';
+      if (applyBtnSub) applyBtnSub.textContent = `${voiceCount} item${voiceCount !== 1 ? 's' : ''} highlighted in your voice`;
+    }
+  }
+
   updateProgress();
 
   // Populate legend with only the issues found
@@ -1278,7 +1371,7 @@ function renderIssueCard(issue, idx) {
   const count = issue.segs ? issue.segs.length : 1;
   const countLabel = count === 1 ? '1 found' : `${count} found`;
 
-  return `<div class="issue-card" id="card-${issue.id}" data-id="${issue.id}" onclick="toggleIssue('${issue.id}')" role="button" tabindex="0" aria-expanded="false" aria-label="${escHtml(COPY.titles[issue.id])}">
+  return `<div class="issue-card" id="card-${issue.id}" data-id="${issue.id}" onclick="highlightIssue('${issue.id}')" role="button" tabindex="0" aria-label="${escHtml(COPY.titles[issue.id])}">
     <div class="card-header">
       <div class="severity-dot ${sev}" aria-label="Severity: ${sev}"></div>
       <div style="flex:1;min-width:0">
@@ -1289,6 +1382,9 @@ function renderIssueCard(issue, idx) {
           <span class="fix-pill ${isVoice ? 'voice' : 'auto'}">${isVoice ? '⚠ Fix manually' : '✓ Auto-fixable'}</span>
         </div>
       </div>
+      <button class="card-expand-btn" onclick="toggleCardExpand('${issue.id}', event)" aria-label="Show fix details" title="Show how to fix">
+        <svg viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M2 3.5l3.5 3.5 3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
     <div class="card-body">
       <div class="fix-label"><strong>How to fix it:</strong> ${escHtml(COPY.fixes[issue.id])}</div>
@@ -1323,7 +1419,8 @@ function switchPanel(key) {
   }
   currentPanel = key;
   document.querySelectorAll('.panel-state').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  // Clear active on both header nav items and footer buttons
+  document.querySelectorAll('.nav-item, .panel-footer-btn').forEach(n => n.classList.remove('active'));
   document.getElementById(`panel-${key}`).classList.add('active');
   const navEl = document.getElementById(`nav-${key}`);
   if (navEl) navEl.classList.add('active');
@@ -1337,6 +1434,10 @@ function switchPanel(key) {
   // Stats visible only on analyse, coming soon, contributors tabs
   document.getElementById('liveStats').style.display =
     (key === 'issues' || key === 'ready') ? 'none' : '';
+
+  // Hide Cmd+Enter hint after first check
+  const cmdHint = document.getElementById('cmdHint');
+  if (cmdHint && key !== 'analyse') cmdHint.style.display = 'none';
 }
 
 function stayOnFixed() {
@@ -1377,37 +1478,67 @@ function toggleListen() {
 }
 
 // ─── HIGHLIGHT SYSTEM ───────────────────────────────────────────────────────
-function toggleIssue(issueId) {
+
+// Click on card body = highlight in editor (with flash animation)
+function highlightIssue(issueId) {
+  const card = document.getElementById('card-' + issueId);
+  if (!card) return;
+
+  const wasActive = activeHighlight === issueId;
+
+  if (wasActive) {
+    clearHighlight();
+    return;
+  }
+
+  // Update card active state (no expand)
+  document.querySelectorAll('.issue-card').forEach(c => c.classList.remove('active-hl'));
+  card.classList.add('active-hl', 'expanded');
+
+  activeHighlight = issueId;
+  renderPost();
+
+  // Flash the editor to show the connection
+  const ec = document.getElementById('editorCard');
+  ec.classList.remove('flash');
+  requestAnimationFrame(() => { ec.classList.add('flash'); setTimeout(() => ec.classList.remove('flash'), 400); });
+
+  // Show legend
+  hlLegend.classList.add('visible');
+  hlLegend.setAttribute('aria-hidden','false');
+  updateProgress();
+}
+
+// Click on chevron = expand/collapse the how-to-fix details
+function toggleCardExpand(issueId, event) {
+  event.stopPropagation();
   const card = document.getElementById('card-' + issueId);
   if (!card) return;
 
   const wasExpanded = card.classList.contains('expanded');
-
   document.querySelectorAll('.issue-card.expanded').forEach(c => {
-    c.classList.remove('expanded');
-    c.setAttribute('aria-expanded','false');
+    if (c !== card) { c.classList.remove('expanded'); c.querySelector('.card-expand-btn')?.setAttribute('aria-expanded','false'); }
   });
 
   if (wasExpanded) {
-    clearHighlight();
+    card.classList.remove('expanded');
+    card.querySelector('.card-expand-btn')?.setAttribute('aria-expanded','false');
   } else {
     card.classList.add('expanded');
-    card.setAttribute('aria-expanded','true');
+    card.querySelector('.card-expand-btn')?.setAttribute('aria-expanded','true');
     expandedCards.add(issueId);
-    activeHighlight = issueId;
-    renderPost();
-    // Show legend
-    hlLegend.classList.add('visible');
-    hlLegend.setAttribute('aria-hidden','false');
   }
-  updateProgress();
 }
+
+// Legacy alias (in case called elsewhere)
+function toggleIssue(issueId) { highlightIssue(issueId); }
 
 function clearHighlight() {
   activeHighlight = null;
   renderPost();
   hlLegend.classList.remove('visible');
   hlLegend.setAttribute('aria-hidden','true');
+  document.querySelectorAll('.issue-card.active-hl').forEach(c => c.classList.remove('active-hl'));
 }
 
 function renderPost() {
@@ -1468,12 +1599,13 @@ function renderScoresHTML(issues, title) {
   return `<div class="score-section">${titleHTML}${rows.map(({ key, label, icon }) => {
     const pct = scores[key];
     const cls = pct >= 80 ? 'green' : pct >= 50 ? 'amber' : 'red';
+    const qualityLabel = pct >= 80 ? 'Good' : pct >= 50 ? 'Needs work' : 'Critical';
     return `<div class="score-row">
       <div class="score-icon" aria-hidden="true">${icon}</div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;justify-content:space-between">
           <span class="score-label">${label}</span>
-          <span class="score-pct ${cls}">${pct}%</span>
+          <span><span class="score-pct ${cls}">${pct}%</span><span class="score-quality ${cls}">${qualityLabel}</span></span>
         </div>
         <div class="score-bar-wrap"><div class="score-bar ${cls}" style="width:0" data-w="${pct}"></div></div>
       </div>
@@ -1513,9 +1645,21 @@ function applyFixes() {
   const fixedPostEdit = document.getElementById('fixedPostEdit');
   fixedPostEdit.innerHTML = fixedResult;
 
+  // Show voice banner if there are voice-type issues
+  const voiceBanner = document.getElementById('voiceBanner');
+  const voiceCount2 = checkResults.filter(i => i.fixType === 'voice').length;
+  if (voiceBanner) {
+    if (voiceCount2 > 0) {
+      voiceBanner.style.display = 'flex';
+      document.getElementById('voiceBannerText').textContent = `${voiceCount2} highlighted item${voiceCount2 !== 1 ? 's' : ''} still need your voice — only you know the right simpler word for your context.`;
+    } else {
+      voiceBanner.style.display = 'none';
+    }
+  }
+
   // Inject 3 CTAs into left panel footer
   const footer = document.getElementById('diffViewFooter');
-  footer.innerHTML = `<button class="copy-btn" onclick="editFixed()">Edit post</button><button class="copy-btn" id="copyBtn" onclick="copyFixed()">Copy post</button><a href="https://www.linkedin.com/feed/" target="_blank" rel="noopener noreferrer" class="post-linkedin-btn">Post to LinkedIn</a>`;
+  footer.innerHTML = `<button class="copy-btn" onclick="editFixed()">Edit post</button><button class="copy-btn" id="copyBtn" onclick="copyFixed()">Copy post</button><button class="post-linkedin-btn" onclick="postToLinkedIn()">Copy &amp; open LinkedIn</button>`;
   issueBadge.classList.remove('visible');
 
   // Build fix summary for right panel
@@ -1585,9 +1729,11 @@ function applyFixes() {
 
 function resetEditor() {
   editorCard.classList.remove('applied');
-  fieldLabel.textContent = 'LinkedIn post content';
+  fieldLabel.textContent = 'Your post';
   document.getElementById('fixedPostEdit').innerText = '';
   document.getElementById('diffViewFooter').innerHTML = '';
+  const vb = document.getElementById('voiceBanner');
+  if (vb) vb.style.display = 'none';
 }
 
 function editFixed() {
@@ -1598,11 +1744,24 @@ function editFixed() {
   postInput.dispatchEvent(new Event('input'));
 }
 
+let clearConfirmTimer = null;
 function clearPost() {
+  const btn = document.getElementById('clearBtn');
+  if (btn && !btn.classList.contains('confirming')) {
+    btn.textContent = 'Sure?';
+    btn.classList.add('confirming');
+    clearConfirmTimer = setTimeout(() => {
+      if (btn) { btn.textContent = 'Clear'; btn.classList.remove('confirming'); }
+    }, 2000);
+    return;
+  }
+  clearTimeout(clearConfirmTimer);
+  if (btn) { btn.textContent = 'Clear'; btn.classList.remove('confirming'); }
+
   postInput.value = '';
   postMirror.textContent = '​';
   postRendered.textContent = '';
-  charCounter.textContent = '0 / 3000';
+  charCounter.textContent = '0 / 3,000';
   charCounter.className = 'char-counter';
   clearBtn.classList.add('hidden');
   resetEditor();
@@ -1625,6 +1784,30 @@ function clearPost() {
   switchPanel('analyse');
 }
 
+// ─── TOAST ──────────────────────────────────────────────────────────────────
+let _toastTimer = null;
+function showToast(msg, duration = 2800) {
+  const toast = document.getElementById('copyToast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
+}
+
+// ─── POST TO LINKEDIN ────────────────────────────────────────────────────────
+function postToLinkedIn() {
+  const fixedPostEdit = document.getElementById('fixedPostEdit');
+  const text = fixedPostEdit ? fixedPostEdit.innerText : fixedText;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Post copied! Just paste it on LinkedIn.');
+  }).catch(() => {
+    showToast('Opening LinkedIn — copy your post from above.');
+  });
+  window.open('https://www.linkedin.com/feed/', '_blank', 'noopener,noreferrer');
+}
+
 // ─── COPY FIXED TEXT ────────────────────────────────────────────────────────
 function copyFixed() {
   const fixedPostEdit = document.getElementById('fixedPostEdit');
@@ -1632,12 +1815,8 @@ function copyFixed() {
   if (!text) return;
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('copyBtn');
-    btn.textContent = 'Copied!';
-    btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = 'Copy';
-      btn.classList.remove('copied');
-    }, 2000);
+    if (btn) { btn.textContent = 'Copied!'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = 'Copy post'; btn.classList.remove('copied'); }, 2000); }
+    showToast('Post copied to clipboard!');
   }).catch(() => {
     const ta = document.createElement('textarea');
     ta.value = text;
@@ -1718,7 +1897,7 @@ postInput.addEventListener('scroll', () => {
 
 postInput.addEventListener('input', () => {
   const len = postInput.value.length;
-  charCounter.textContent = `${len.toLocaleString()} / 3000`;
+  charCounter.textContent = `${len.toLocaleString()} / 3,000`;
   charCounter.className = 'char-counter' + (len >= 3000 ? ' error' : len >= 2700 ? ' warn' : '');
   clearBtn.classList.toggle('hidden', len === 0);
 
@@ -1726,6 +1905,21 @@ postInput.addEventListener('input', () => {
   if (activeHighlight) renderPost();
   else postRendered.textContent = postInput.value;
 });
+
+// Cmd+Enter / Ctrl+Enter to run check
+postInput.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    e.preventDefault();
+    runCheck();
+  }
+});
+
+// Hide Cmd+Enter hint once user types
+postInput.addEventListener('input', () => {
+  const cmdHint = document.getElementById('cmdHint');
+  if (cmdHint && postInput.value.length > 0) cmdHint.style.opacity = '1';
+  else if (cmdHint) cmdHint.style.opacity = '0.4';
+}, { once: false });
 
 // Keyboard accessibility for nav items
 document.querySelectorAll('.nav-item[role="button"]').forEach(el => {
