@@ -692,6 +692,30 @@ const JARGON_PHRASES = [
   'touch base','going forward','paradigm shift'
 ];
 
+// Explicit corporate/LinkedIn jargon to always flag (even if only 3 syllables)
+const JARGON_WORDS = new Set([
+  'utilize','utilise','utilizes','utilises','utilizing','utilising','utilized','utilised',
+  'leverage','leverages','leveraging','leveraged',
+  'paradigm','paradigms',
+  'synergy','synergies','synergistic',
+  'facilitate','facilitates','facilitated','facilitating',
+  'optimize','optimise','optimizes','optimising','optimizing','optimized','optimised',
+  'optimization','optimisation',
+  'scalability','scalable',
+  'actionable',
+  'holistic',
+  'proactive',
+  'transformative',
+  'ideate','ideation',
+  'iterate','iteration','iterating',
+  'granular','granularity',
+  'overarching',
+  'streamline','streamlines','streamlined','streamlining',
+  'disruptive','disruption',
+  'ecosystem',
+  'strategize','strategise','strategizing',
+]);
+
 // Common words with 3+ syllables that are Grade 8 or below — don't flag these
 const GRADE8_WORDS = new Set([
   'absolutely','accommodate','accommodation','actually','already',
@@ -831,7 +855,37 @@ const GRADE8_WORDS = new Set([
   'fortunately','unfortunately','hopefully','thankfully','honestly',
   'recently','currently','previously','eventually','immediately',
   'gradually','suddenly','frequently','constantly','repeatedly',
+
+  // Accessibility & inclusion domain — never flag these
+  'accessibility','accessible','inaccessible','accessibly',
+  'disability','disabilities','disabled',
+  'inclusion','inclusive','inclusivity','inclusively',
+  'awareness',
+
+  // Very common words the syllable counter overcounts or that are clearly everyday
+  'everyday','everybody','everyone','everything','everywhere',
+  'equally','equality','equalities',
+  'ability','abilities',
+  'developers','developer',
+  'participation','participant','participants','participate','participated','participating',
+
+  // Common 4-syllable capability/quality words
+  'availability','capability','capabilities',
+  'probability','possibility','possibilities',
+  'reliability','flexibility','sensitivity','visibility',
+  'sustainability','accountability','vulnerability',
+  'majority','minority','minorities',
+  'authority','authorities',
+  'qualification','qualifications',
+  'modification','satisfaction','clarification','verification','justification',
+  'simultaneously','automatically','temporarily',
+  'alternatively','alternative','alternatives',
+  'originally','originality','vocabulary',
+  'consequently','consequence','consequences',
+  'diversity','curiosity','generosity',
+  'nationality','mentality','mentalities',
 ]);
+
 
 function countSyllables(word) {
   word = word.toLowerCase().replace(/[^a-z]/g, '');
@@ -1296,9 +1350,8 @@ function analyse(text) {
       const start = wm.index, end = wm.index + word.length;
       // Skip words that are part of a hashtag (#WebDesign → skip "WebDesign")
       if (start > 0 && text[start - 1] === '#') continue;
-      if (!GRADE8_WORDS.has(lower) &&
-          !usedRanges.some(([s,e]) => start < e && end > s) &&
-          countSyllables(lower) >= 3) {
+      if ((JARGON_WORDS.has(lower) || (!GRADE8_WORDS.has(lower) && countSyllables(lower) >= 4)) &&
+          !usedRanges.some(([s,e]) => start < e && end > s)) {
         segs.push({ start, end, orig: word, repl: null });
         usedRanges.push([start, end]);
       }
