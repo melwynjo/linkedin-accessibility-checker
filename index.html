@@ -270,6 +270,7 @@ mark.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 .fix-pill{display:inline-flex;align-items:center;gap:4px;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;border:1.5px solid}
 .fix-pill.auto{background:#e6f4ea;color:#15803d;border-color:#86d4a0}
 .fix-pill.voice{background:#fff4e0;color:#b45300;border-color:#f0c040}
+.fix-pill.grammar-auto{background:#ede9fe;color:#5b21b6;border-color:#a78bfa}
 
 .card-body{margin-top:10px;padding-top:10px;border-top:2px solid var(--blue-border);display:none}
 .issue-card.expanded .card-body{display:block}
@@ -310,6 +311,7 @@ mark.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 .diff-del{background:#f8d7da;color:#721c24;text-decoration:line-through;border-radius:3px;padding:0 2px}
 .diff-add{background:#d4edda;color:#155724;font-style:italic;border-radius:3px;padding:0 2px}
 .diff-review{background:#fff8e1;color:#5d4a00;outline:2px solid #f0c040;border-radius:3px;padding:0 2px}
+.diff-grammar{background:#ede9fe;color:#5b21b6;outline:2px solid #a78bfa;border-radius:3px;padding:0 2px}
 .diff-hint{display:block;font-size:11px;color:#7a5c00;background:#fffbeb;border:1.5px solid #f0c040;border-radius:5px;padding:5px 8px;margin-top:3px;font-style:italic}
 
 /* Action row */
@@ -1063,6 +1065,7 @@ const COPY = {
 
 // ─── STATE ──────────────────────────────────────────────────────────────────
 let checkResults  = null;
+let lastCheckedText = '';
 let fixedHTML     = '';
 let fixedResult   = '';
 let fixedText     = '';
@@ -1456,7 +1459,18 @@ function buildFixed(text, issues) {
     const origText = seg.orig || text.slice(seg.start, seg.end);
 
     if (seg.fixType === 'auto') {
-      if (origText === '') {
+      // Grammar fixes: apply silently, highlight in purple for review
+      if (seg.issueId === 'grammar') {
+        if (seg.repl !== null) {
+          html   += `<span class="diff-grammar">${escHtml(seg.repl)}</span>`;
+          result += `<span class="diff-grammar">${escHtml(seg.repl)}</span>`;
+          plain  += seg.repl;
+        } else {
+          html   += `<span class="diff-review">${escHtml(origText)}</span>`;
+          result += `<span class="diff-review">${escHtml(origText)}</span>`;
+          plain  += origText;
+        }
+      } else if (origText === '') {
         html   += `<span class="diff-add">${escHtml(seg.repl)}</span>`;
         result += `<span class="diff-add">${escHtml(seg.repl)}</span>`;
         plain  += seg.repl;
@@ -1514,9 +1528,10 @@ async function runCheck() {
 
   await new Promise(r => setTimeout(r, 30)); // allow UI to update
 
-  checkResults  = analyse(text);
-  expandedCards = new Set();
-  hasRunCheck   = true;
+  checkResults    = analyse(text);
+  lastCheckedText = text;
+  expandedCards   = new Set();
+  hasRunCheck     = true;
   activeHighlight = null;
 
   // Reset diff view if re-running
@@ -1620,8 +1635,11 @@ function buildResults(issues) {
 function renderIssueCard(issue, idx) {
   const sev = issue.severity;
   const isVoice = issue.fixType === 'voice';
+  const isGrammar = issue.id === 'grammar';
   const count = issue.segs ? issue.segs.length : 1;
   const countLabel = count === 1 ? '1 found' : `${count} found`;
+  const pillClass = isGrammar ? 'grammar-auto' : (isVoice ? 'voice' : 'auto');
+  const pillText  = isGrammar ? '✓ Auto-fixed · please review' : (isVoice ? '⚠ Fix manually' : '✓ Auto-fixable');
 
   return `<div class="issue-card" id="card-${issue.id}" data-id="${issue.id}" onclick="highlightIssue('${issue.id}')" role="button" tabindex="0" aria-label="${escHtml(COPY.titles[issue.id])}">
     <div class="card-header">
@@ -1631,7 +1649,7 @@ function renderIssueCard(issue, idx) {
         <div class="card-desc">${escHtml(COPY.descs[issue.id])}</div>
         <div class="card-meta">
           <span class="count-badge">${countLabel}</span>
-          <span class="fix-pill ${isVoice ? 'voice' : 'auto'}">${isVoice ? '⚠ Fix manually' : '✓ Auto-fixable'}</span>
+          <span class="fix-pill ${pillClass}">${pillText}</span>
         </div>
       </div>
       <button class="card-expand-btn" onclick="toggleCardExpand('${issue.id}', event)" aria-label="Show fix details" title="Show how to fix">
@@ -1731,8 +1749,13 @@ async function startGrammarCheck(text) {
     hint:  m.message
   }));
 
-  const issue = { id:'grammar', cat:'cog', severity:'warn', fixType:'voice', segs, excerpts: segs.slice(0,3).map(s=>s.orig) };
+  const issue = { id:'grammar', cat:'cog', severity:'warn', fixType:'auto', segs, excerpts: segs.slice(0,3).map(s=>s.orig) };
   checkResults.push(issue);
+
+  // Rebuild the fixed text to include grammar fixes (only if not already applied)
+  if (!editorCard.classList.contains('applied')) {
+    buildFixed(lastCheckedText, checkResults);
+  }
 
   // Insert card
   issuesBody.insertAdjacentHTML('beforeend', `<div id="grammarSection">${renderIssueCard(issue, 99)}</div>`);
@@ -1742,6 +1765,18 @@ async function startGrammarCheck(text) {
   navIssuesSub.textContent = `${n} issue${n!==1?'s':''} found`;
   issueBadge.textContent = n;
   issueBadge.classList.add('visible');
+
+  // Update apply button count to include grammar fixes
+  const applyBtn = document.getElementById('applyBtn');
+  const applyBtnSub = document.getElementById('applyBtnSub');
+  if (applyBtn && !editorCard.classList.contains('applied')) {
+    const autoCount  = checkResults.filter(i => i.fixType === 'auto').reduce((sum,i) => sum + i.segs.length, 0);
+    const voiceCount = checkResults.filter(i => i.fixType === 'voice').length;
+    if (autoCount > 0) {
+      applyBtn.textContent = `Apply ${autoCount} auto-fix${autoCount !== 1 ? 'es' : ''}`;
+      if (applyBtnSub) applyBtnSub.textContent = voiceCount > 0 ? `+ ${voiceCount} item${voiceCount !== 1 ? 's' : ''} highlighted for you to rewrite` : '';
+    }
+  }
 
   // Update legend
   const cls = getMarkClass('grammar');
@@ -2024,13 +2059,18 @@ function applyFixes() {
   const fixedPostEdit = document.getElementById('fixedPostEdit');
   fixedPostEdit.innerHTML = fixedResult;
 
-  // Show voice banner if there are voice-type issues
+  // Show voice banner — covers both voice items and grammar review
   const voiceBanner = document.getElementById('voiceBanner');
-  const voiceCount2 = checkResults.filter(i => i.fixType === 'voice').length;
+  const voiceCount2  = checkResults.filter(i => i.fixType === 'voice').length;
+  const grammarIssue = checkResults.find(i => i.id === 'grammar');
+  const grammarCount = grammarIssue ? grammarIssue.segs.filter(s => s.repl !== null).length : 0;
   if (voiceBanner) {
-    if (voiceCount2 > 0) {
+    if (voiceCount2 > 0 || grammarCount > 0) {
       voiceBanner.style.display = 'flex';
-      document.getElementById('voiceBannerText').textContent = `${voiceCount2} highlighted item${voiceCount2 !== 1 ? 's' : ''} still need your voice — only you know the right simpler word for your context.`;
+      const parts = [];
+      if (grammarCount > 0) parts.push(`${grammarCount} spelling/grammar fix${grammarCount !== 1 ? 'es are' : ' is'} highlighted in purple — they may not always be right, please check each one.`);
+      if (voiceCount2 > 0) parts.push(`${voiceCount2} item${voiceCount2 !== 1 ? 's' : ''} highlighted in amber still need your rewrite.`);
+      document.getElementById('voiceBannerText').textContent = parts.join(' ');
     } else {
       voiceBanner.style.display = 'none';
     }
