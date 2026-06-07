@@ -25,7 +25,8 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%230a66c2'/><circle cx='90' cy='42' r='20' fill='white'/><path d='M28 80h124M90 62v62M62 174l28-50 28 50' stroke='white' stroke-width='17' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"></noscript>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -678,7 +679,6 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
 </div>
 
 <script>
-// ─── CONSTANTS ──────────────────────────────────────────────────────────────
 const FEEDBACK_URL = 'https://tally.so/r/WOKdbv';
 const VOTE_URL     = 'https://tally.so/r/KYWyrV';
 
@@ -1057,7 +1057,6 @@ const COPY = {
   }
 };
 
-// ─── STATE ──────────────────────────────────────────────────────────────────
 let checkResults  = null;
 let lastCheckedText = '';
 let fixedHTML     = '';
@@ -1070,7 +1069,6 @@ let isSpeaking    = false;
 let pendingPanel  = null;
 let currentPanel  = 'analyse';
 
-// ─── DOM ────────────────────────────────────────────────────────────────────
 const postInput    = document.getElementById('postInput');
 const postMirror   = document.getElementById('postMirror');
 const postRendered = document.getElementById('postRendered');
@@ -1086,7 +1084,6 @@ const fixedPostBox = document.getElementById('fixedPostBox');
 const issueBadge   = document.getElementById('issueBadge');
 const navIssuesSub = document.getElementById('navIssuesSub');
 
-// ─── UTILS ──────────────────────────────────────────────────────────────────
 function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -1122,7 +1119,6 @@ function toCamelCase(hashtag) {
   return '#' + tag.charAt(0).toUpperCase() + tag.slice(1);
 }
 
-// ─── ANALYSIS ───────────────────────────────────────────────────────────────
 function analyse(text) {
   const issues = [];
   const lines  = text.split('\n');
@@ -1138,7 +1134,6 @@ function analyse(text) {
     const trimmed   = line.trimStart();
     const leadingWs = line.length - trimmed.length;
 
-    // ── Check 1: emoji/symbol bullet ────────────────────────────────────────
     // A line whose first character(s) are emoji(s) or a deco symbol, followed
     // by a space and non-sentence content.
     // Uses getLengthOfLeadingEmojis so ZWJ (👨‍💻) and skin-tone (🙏🏽) variants
@@ -1171,7 +1166,6 @@ function analyse(text) {
       }
     }
 
-    // ── Check 2: emoji in wrong position ─────────────────────────────────────
     // Any emoji has real non-emoji text after it on the same line.
     // Skip lines flagged as emoji bullets (covered above).
     //
@@ -1224,7 +1218,6 @@ function analyse(text) {
       }
     }
 
-    // ── Check 4: missing punctuation ─────────────────────────────────────────
     // Bugs fixed vs original:
     //   1. lastCharPos used stripped2.length (pointed at the bracket char, not the
     //      last text char) — now uses stripped3.length so the fix inserts correctly.
@@ -1449,7 +1442,6 @@ function analyse(text) {
   return issues;
 }
 
-// ─── FIXED POST GENERATION ──────────────────────────────────────────────────
 function autoSplitSentence(orig) {
   const words = orig.trim().split(/\s+/);
   const fromIdx = Math.floor(words.length * 0.4);
@@ -1558,7 +1550,6 @@ function buildFixed(text, issues) {
   fixedText   = plain;
 }
 
-// ─── RUN CHECK ──────────────────────────────────────────────────────────────
 async function runCheck() {
   const text = postInput.value.trim();
   if (!text) {
@@ -1608,7 +1599,6 @@ async function runCheck() {
   startGrammarCheck(text);
 }
 
-// ─── BUILD RESULTS UI ───────────────────────────────────────────────────────
 function buildResults(issues) {
   // Clear old (including any grammar card from previous run)
   issuesBody.querySelectorAll('.issue-group-wrapper, .score-section, .score-divider, #grammarSection, #grammarLoadingCard').forEach(el=>el.remove());
@@ -1846,7 +1836,6 @@ function getMarkClass(issueId) {
   return map[issueId] || 'hl-no-punct';
 }
 
-// ─── PANEL SWITCHING ────────────────────────────────────────────────────────
 function switchPanel(key) {
   if (editorCard.classList.contains('applied') && (key === 'analyse' || key === 'issues')) {
     pendingPanel = key;
@@ -1910,7 +1899,6 @@ function checkAnother() {
   }
 }
 
-// ─── LISTEN (Web Speech) ────────────────────────────────────────────────────
 function setListenState(playing) {
   isSpeaking = playing;
   listenBtn.classList.toggle('playing', playing);
@@ -1936,7 +1924,6 @@ function toggleListen() {
   setListenState(true);
 }
 
-// ─── HIGHLIGHT SYSTEM ───────────────────────────────────────────────────────
 
 // Click on card body = highlight in editor (with flash animation)
 function highlightIssue(issueId) {
@@ -2032,7 +2019,6 @@ function renderPost() {
   postRendered.innerHTML = html;
 }
 
-// ─── ACCESSIBILITY SCORES ───────────────────────────────────────────────────
 function calcScores(issues) {
   const PENALTY = { error: 25, warn: 15, info: 8 };
   const groups = {
@@ -2078,11 +2064,9 @@ function animateBars() {
   }));
 }
 
-// ─── PROGRESS TRACKING ──────────────────────────────────────────────────────
 function updateProgress() {}
 
 
-// ─── APPLY FIXES / RESET ────────────────────────────────────────────────────
 const editorCard        = document.getElementById('editorCard');
 const fieldLabel        = document.getElementById('fieldLabel');
 const clearBtn          = document.getElementById('clearBtn');
@@ -2257,7 +2241,6 @@ function clearPost() {
   switchPanel('analyse');
 }
 
-// ─── TOAST ──────────────────────────────────────────────────────────────────
 let _toastTimer = null;
 function showToast(msg, duration = 2800) {
   const toast = document.getElementById('copyToast');
@@ -2268,7 +2251,6 @@ function showToast(msg, duration = 2800) {
   _toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
 }
 
-// ─── POST TO LINKEDIN ────────────────────────────────────────────────────────
 function postToLinkedIn() {
   const fixedPostEdit = document.getElementById('fixedPostEdit');
   const text = fixedPostEdit ? fixedPostEdit.innerText : fixedText;
@@ -2281,7 +2263,6 @@ function postToLinkedIn() {
   window.open('https://www.linkedin.com/feed/', '_blank', 'noopener,noreferrer');
 }
 
-// ─── COPY FIXED TEXT ────────────────────────────────────────────────────────
 function copyFixed() {
   const fixedPostEdit = document.getElementById('fixedPostEdit');
   const text = fixedPostEdit ? fixedPostEdit.innerText : fixedText;
@@ -2302,7 +2283,6 @@ function copyFixed() {
   });
 }
 
-// ─── STATS ──────────────────────────────────────────────────────────────────
 function initStats() { fetchStats(); }
 
 const UPSTASH_URL   = 'https://famous-flounder-130690.upstash.io';
@@ -2337,7 +2317,6 @@ async function fetchStats() {
   } catch(e) {}
 }
 
-// ─── CONTRIBUTORS ────────────────────────────────────────────────────────────
 const AVATAR_PALETTES = [
   {bg:'#dbeafe',color:'#1e40af'},{bg:'#fde8f4',color:'#9d174d'},
   {bg:'#e6f4ea',color:'#14532d'},{bg:'#fff4e0',color:'#92400e'}
@@ -2363,7 +2342,6 @@ function renderContributors() {
   }).join('');
 }
 
-// ─── CHAR COUNTER & INPUT SYNC ───────────────────────────────────────────────
 postInput.addEventListener('scroll', () => {
   postRendered.scrollTop = postInput.scrollTop;
 });
@@ -2401,7 +2379,6 @@ document.querySelectorAll('.nav-item[role="button"]').forEach(el => {
   });
 });
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
 function init() {
   initStats();
   renderContributors();
