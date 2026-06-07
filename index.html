@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Free LinkedIn Post Accessibility Checker Tool</title>
-<meta name="description" content="Check if your LinkedIn post works for screen readers and all users. Free tool with 12 accessibility checks — emoji placement, hashtags, jargon, long sentences, and more. Auto-fix included. No sign-up.">
+<meta name="description" content="Check if your LinkedIn post works for screen readers and all users. Free tool with 11 accessibility checks — emoji placement, hashtags, long sentences, inclusive language, spelling and more. Auto-fix included. No sign-up.">
 <link rel="canonical" href="https://www.linkedinaccessibilitychecker.com/">
 <meta property="og:title" content="Is My LinkedIn Post Accessible?">
 <meta property="og:description" content="11 accessibility checks for LinkedIn posts. Screen reader compatibility, cognitive load, inclusive language, and more. Free tool, no sign-up.">
@@ -19,7 +19,7 @@
 <meta name="keywords" content="LinkedIn accessibility checker, LinkedIn post accessibility, screen reader LinkedIn, accessible LinkedIn post, LinkedIn accessibility tool">
 <meta name="author" content="linkedinaccessibilitychecker.com">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"LinkedIn Accessibility Checker","url":"https://www.linkedinaccessibilitychecker.com","description":"A free tool to check LinkedIn posts for accessibility issues across 11 rules including screen reader compatibility, cognitive load, and inclusive language.","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":["Screen reader compatibility check","Emoji placement analysis","Hashtag CamelCase checker","Grade 8 vocabulary checker","Inclusive language checker","Long sentence detector","Bare link checker","Auto-fix suggestions","Fixed post generator"]}
+{"@context":"https://schema.org","@type":"WebApplication","name":"LinkedIn Accessibility Checker","url":"https://www.linkedinaccessibilitychecker.com","description":"A free tool to check LinkedIn posts for accessibility issues across 11 rules including screen reader compatibility, cognitive load, and inclusive language.","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":["Screen reader compatibility check","Emoji placement analysis","Hashtag CamelCase checker","Inclusive language checker","Long sentence detector","Bare link checker","Spelling and grammar checker","Auto-fix suggestions","Fixed post generator"]}
 </script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230a66c2'/><circle cx='16' cy='7.5' r='3.5' fill='white'/><path d='M5 14h22M16 11v11M11 31l5-9 5 9' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%230a66c2'/><circle cx='90' cy='42' r='20' fill='white'/><path d='M28 80h124M90 62v62M62 174l28-50 28 50' stroke='white' stroke-width='17' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
@@ -123,7 +123,6 @@ mark.hl-deco-sym{background:#e2e8f0;outline:2px solid #64748b}
 mark.hl-unicode-bold{background:#fee2e2;outline:2px solid #ef4444}
 mark.hl-hashtag-case{background:#ccfbf1;outline:2px solid #0d9488}
 mark.hl-long-sent{background:#dcfce7;outline:2px solid #16a34a}
-mark.hl-jarg{background:#e0f2fe;outline:2px solid #38bdf8}
 mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
 mark.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 
@@ -144,7 +143,6 @@ mark.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 .hl-swatch.hl-unicode-bold{background:#fee2e2;outline:2px solid #ef4444}
 .hl-swatch.hl-hashtag-case{background:#ccfbf1;outline:2px solid #0d9488}
 .hl-swatch.hl-long-sent{background:#dcfce7;outline:2px solid #16a34a}
-.hl-swatch.hl-jarg{background:#e0f2fe;outline:2px solid #38bdf8}
 .hl-swatch.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
 .hl-swatch.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 
@@ -518,7 +516,7 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
   <div class="panel-state active" id="panel-analyse" role="region" aria-label="Analyse">
     <div class="panel-header">
       <div class="panel-title">Analyse your post</div>
-      <div class="panel-sub">12 checks. Takes a few seconds.</div>
+      <div class="panel-sub">11 checks. Takes a few seconds.</div>
     </div>
     <div class="panel-body">
       <button class="run-btn" id="runBtn" onclick="runCheck()" aria-label="Check accessibility">
@@ -528,7 +526,7 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
       </button>
 
       <details class="what-we-check" id="whatWeCheck">
-        <summary>What we check (12 rules)</summary>
+        <summary>What we check (11 rules)</summary>
         <div class="check-section">
           <div class="check-section-title">Visual accessibility</div>
           <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🔤</div><div class="check-item-text"><strong>Emoji used as bullet</strong><span>Emoji name read before content</span></div></div>
@@ -543,7 +541,6 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
           <div class="check-section-title">Cognitive accessibility</div>
           <div class="check-item"><div class="check-item-icon green" aria-hidden="true">¶</div><div class="check-item-text"><strong>Long sentences</strong><span>Hard to process</span></div></div>
           <div class="check-item"><div class="check-item-icon green" aria-hidden="true">#</div><div class="check-item-text"><strong>Lowercase hashtag</strong><span>Read as one unbroken word</span></div></div>
-          <div class="check-item"><div class="check-item-icon teal" aria-hidden="true">💼</div><div class="check-item-text"><strong>Idioms that may confuse</strong><span>Business idioms non-native speakers may not understand</span></div></div>
           <div class="check-item"><div class="check-item-icon pink" aria-hidden="true">🤝</div><div class="check-item-text"><strong>Inclusive language</strong><span>May unintentionally exclude</span></div></div>
           <div class="check-item"><div class="check-item-icon purple" aria-hidden="true">✓</div><div class="check-item-text"><strong>Spelling & grammar</strong><span>Typos and grammar errors</span></div></div>
         </div>
@@ -683,227 +680,6 @@ const FEEDBACK_URL = 'https://tally.so/r/WOKdbv';
 const VOTE_URL     = 'https://tally.so/r/KYWyrV';
 
 // Multi-word LinkedIn clichés (phrases can't be caught by syllable counting)
-// Business idioms that are confusing for non-native English speakers
-// (phrases where the meaning is NOT obvious from the words themselves)
-const JARGON_PHRASES = [
-  // Idioms with non-obvious meanings
-  'hit the ground running','circle back','move the needle',
-  'boil the ocean','low-hanging fruit','low hanging fruit',
-  'push the envelope','skin in the game','all hands on deck',
-  'touch base','in the weeds','throw under the bus','threw under the bus',
-  'wear many hats','wearing many hats','think outside the box',
-  'ahead of the curve','behind the curve','raise the bar','set the bar',
-  'drop the ball','get the ball rolling','bite the bullet',
-  'go back to the drawing board','under the radar','up to speed',
-  'blue sky thinking','move the goalposts','moved the goalposts',
-  'ballpark figure','in the ballpark','take this offline','take that offline',
-  'elephant in the room','out of left field','slam dunk',
-  'hit a home run','hit it out of the park','pass the buck',
-  'par for the course','on the same page','break the ice',
-  'weather the storm','at the end of the day',
-  'bleeding edge','deep dive','deep-dive','paradigm shift',
-];
-
-// Genuinely obscure single words — very short list, only words
-// a competent non-native English speaker would likely not know
-const JARGON_WORDS = new Set([
-  'ideate','ideation',
-  'operationalize','operationalise','operationalizing','operationalising',
-  'synergize','synergise',
-  'learnings',
-  'bespoke',
-]);
-
-// Common words with 3+ syllables that are Grade 8 or below — don't flag these
-const GRADE8_WORDS = new Set([
-  'absolutely','accommodate','accommodation','actually','already',
-  'amazing','another','anyone','anything','anywhere','appreciate',
-  'appropriate','approximately','article','association','attention',
-  'audience','available','average','beautiful','beginning',
-  'capable','carefully','category','celebrate','celebration',
-  'certainly','character','citizen','collection','comfortable',
-  'committee','communicate','communication','community','company',
-  'competition','completely','computer','confident','congratulations',
-  'connection','consider','continue','contribute','creative',
-  'currently','customer','decision','definitely','deliver',
-  'development','different','differently','digital','direction',
-  'discover','economy','education','effectively','electricity',
-  'element','emotion','employee','encourage','encouraging',
-  'environment','eventually','everything','excellent','exciting',
-  'exercise','example','examination','experience','family',
-  'favorite','favourite','finally','following','forever',
-  'foundation','general','government','happening','history',
-  'holiday','honestly','hospital','however','identify',
-  'immediately','important','independently','individual',
-  'industry','information','inspiring','interesting','internet',
-  'interview','investigation','investor','leadership',
-  'library','literally','management','marketing','medical',
-  'memory','mentoring','national','natural','naturally',
-  'necessary','negative','networking','objective','offering',
-  'ordinary','organization','overcome','particular','passionate',
-  'personal','popular','positive','possible','powerful',
-  'president','primary','priority','probably','professional',
-  'program','property','quality','recently','recognize',
-  'recommend','regular','relationship','relative','religion',
-  'remember','represent','research','responsibility',
-  'revenue','security','serious','similar','society',
-  'strategy','talented','technical','technology','television',
-  'tomorrow','totally','training','typically','understand',
-  'understanding','university','usually','valuable','variety',
-  'various','vehicle','volunteer','whatever','whenever',
-  'wherever','wonderful','yesterday','yourself',
-  // Common words that the syllable counter overcounts or that are Grade 8 standard
-  'every','sometimes','together','exactly','entire','forward','toward',
-  'outside','inside','nothing','nowhere','somehow','someone','somewhere',
-  'design','designed','designer','designing',
-  'created','creates','creator','creating','creative',
-  'festival','international','creativity',
-  'social','visual','mental','physical','medical','logical','critical',
-  'global','local','annual','final','total','vital','major','minor',
-  'benefit','content','moment','simple','single','special','central',
-  'business','service','product','project','process','system',
-  'platform','program','partner','client','market','brand',
-  'media','event','award','story','vision','impact','focus',
-  'using','moving','trying','getting','helping','sharing',
-  'growing','leading','starting','thinking','speaking',
-  'looking','working','coming','going','seeing','being',
-  'doing','having','running','talking','writing','reading',
-  'building','turning','changing','opening','closing',
-  'choosing','becoming','following',
-  'truly','fully','daily','weekly','quickly','simply',
-  'direct','connect','collect','reflect','protect','detect',
-  'achieve','believe','receive','perceive','relieve',
-  'grateful','thankful','helpful','useful','powerful', // already has powerful
-  'outcome','overcome','input','output','update','upgrade',
-  'network','teamwork','framework','feedback','mindset',
-  'insight','outlook','overview','breakdown','setup',
-  'engage','engaged','engaging','engagement',
-  'inspired','inspires','inspiring','inspiration',
-  'dedicated','dedication','committed','commitment',
-  'achieved','achieving','achievement',
-  'announced','announcing','announcement',
-  'introduced','introducing','introduction',
-  'recognized','recognizing','recognition',
-  'appreciated','appreciating','appreciation',
-  'supported','supporting','support',
-  'connected','connecting','connection', // already has connection
-  'mentioned','mentioning','mention',
-  'discussed','discussing','discussion',
-  'contributed','contributing','contribution',
-  'developed','developing','developer',
-  'delivered','delivering','delivery',
-  'established','establishing',
-  'celebrated','celebrating',
-  'collaborated','collaborating','collaboration',
-  'opportunities','opportunity',
-  'solution','solutions',
-  'partnership','partnerships',
-  'expertise','experienced',
-
-  // Common adjectives
-  'successful','exceptional','consistent','professional','additional',
-  'traditional','conventional','emotional','promotional','educational',
-  'operational','functional','national','rational','regional','optional',
-  'essential','potential','initial','official','special','natural',
-  'original','personal','general','central','cultural','political',
-  'financial','practical','physical','logical','critical','typical',
-  'musical','medical','chemical','technical','classical','historical',
-  'electrical','mechanical','numerical','identical','identical',
-  'meaningful','powerful','beautiful','wonderful','grateful','helpful',
-  'useful','careful','hopeful','colorful','colourful','peaceful',
-  'successful','effective','attractive','productive','constructive',
-  'positive','negative','relative','sensitive','creative','competitive',
-  'impressive','progressive','aggressive','extensive','expensive',
-  'exclusive','inclusive','conclusive','decisive','persuasive',
-  'incredible','possible','available','valuable','reliable','suitable',
-  'comfortable','reasonable','responsible','considerable','memorable',
-  'remarkable','favorable','favourable','enjoyable','acceptable',
-
-  // Common nouns
-  'businesses','relationships','formula','formulas','circumstances',
-  'opportunities','experiences','achievements','connections',
-  'interactions','contributions','responsibilities','communities',
-  'industries','categories','strategies','technologies','priorities',
-  'abilities','qualities','activities','possibilities','realities',
-  'personalities','similarities','differences','conclusions',
-  'introductions','productions','solutions','positions','conditions',
-  'suggestions','questions','directions','connections','collections',
-  'situations','conversations','considerations','celebrations',
-  'presentations','organizations','applications','illustrations',
-  'combinations','recommendations','implementations',
-
-  // Common adverbs — these get flagged a lot
-  'anyway','anyway','consistently','instinctively','directionally',
-  'occasionally','necessarily','particularly','immediately','eventually',
-  'previously','approximately','effectively','significantly','specifically',
-  'generally','usually','typically','naturally','obviously','regularly',
-  'personally','currently','recently','actually','basically','finally',
-  'initially','essentially','potentially','officially','emotionally',
-  'financially','physically','logically','critically','practically',
-  'technically','historically','politically','culturally','nationally',
-  'originally','traditionally','conventionally','professionally',
-  'additionally','ultimately','fundamentally','substantially',
-  'continuously','successfully','independently','collectively',
-  'consistently','increasingly','directly','quickly','simply',
-  'truly','fully','daily','weekly','monthly','annually','totally',
-  'mostly','mainly','highly','deeply','widely','closely','clearly',
-  'easily','freely','openly','honestly','proudly','quietly','safely',
-  'already','exactly','entirely','completely','absolutely','definitely',
-  'certainly','probably','possibly','literally','seriously','obviously',
-  'fortunately','unfortunately','hopefully','thankfully','honestly',
-  'recently','currently','previously','eventually','immediately',
-  'gradually','suddenly','frequently','constantly','repeatedly',
-
-  // Accessibility & inclusion domain — never flag these
-  'accessibility','accessible','inaccessible','accessibly',
-  'disability','disabilities','disabled',
-  'inclusion','inclusive','inclusivity','inclusively',
-  'awareness',
-
-  // Very common words the syllable counter overcounts or that are clearly everyday
-  'everyday','everybody','everyone','everything','everywhere',
-  'equally','equality','equalities',
-  'ability','abilities',
-  'developers','developer',
-  'participation','participant','participants','participate','participated','participating',
-
-  // Common 4-syllable capability/quality words
-  'availability','capability','capabilities',
-  'probability','possibility','possibilities',
-  'reliability','flexibility','sensitivity','visibility',
-  'sustainability','accountability','vulnerability',
-  'majority','minority','minorities',
-  'authority','authorities',
-  'qualification','qualifications',
-  'modification','satisfaction','clarification','verification','justification',
-  'simultaneously','automatically','temporarily',
-  'alternatively','alternative','alternatives',
-  'originally','originality','vocabulary',
-  'consequently','consequence','consequences',
-  'diversity','curiosity','generosity',
-  'nationality','mentality','mentalities',
-]);
-
-
-function countSyllables(word) {
-  word = word.toLowerCase().replace(/[^a-z]/g, '');
-  if (!word) return 0;
-  if (word.length <= 3) return 1;
-  const vowels = 'aeiouy';
-  let count = 0, prev = false;
-  for (const ch of word) {
-    const v = vowels.includes(ch);
-    if (v && !prev) count++;
-    prev = v;
-  }
-  // Subtract for silent e (e.g. "make", "like") — but not before consonant+le
-  if (word.endsWith('e') && word.length > 1 && !vowels.includes(word[word.length - 2])) count--;
-  // Add back for consonant+le ending (e.g. "table", "possible", "article")
-  if (word.length > 2 && word.endsWith('le') && !vowels.includes(word[word.length - 3])) count++;
-  // Subtract for silent e before consonant+ed (e.g. "designed"→de-signed, "aligned", "assigned")
-  if (/[^aeiou][^aeiou]ed$/.test(word) && !/[td]ed$/.test(word)) count--;
-  return Math.max(1, count);
-}
 
 const INCLUSIVE = [
   'crazy','insane','blind spot','blind spots','tone deaf','tone-deaf',
@@ -939,64 +715,6 @@ const INCLUSIVE_FIXES = {
   'nutcase':'person under pressure','nut case':'person under pressure'
 };
 
-// Simpler word suggestions for common LinkedIn jargon
-const SIMPLE_WORDS = {
-  'utilize':'use','utilise':'use','utilizes':'uses','utilising':'using','utilizing':'using',
-  'implement':'build','implements':'builds','implemented':'built','implementing':'building',
-  'facilitate':'help','facilitates':'helps','facilitated':'helped','facilitating':'helping',
-  'commence':'start','commences':'starts','commenced':'started','commencing':'starting',
-  'endeavour':'try','endeavor':'try','endeavours':'tries','endeavors':'tries',
-  'cognizant':'aware','cognisant':'aware',
-  'synergy':'teamwork','synergies':'teamwork','synergistic':'team-based',
-  'paradigm':'model','paradigms':'models','paradigmatic':'model-based',
-  'optimize':'improve','optimise':'improve','optimizes':'improves','optimising':'improving','optimizing':'improving','optimized':'improved','optimised':'improved','optimization':'improvement','optimisation':'improvement',
-  'scalability':'growth','scalable':'flexible',
-  'actionable':'useful','actionability':'usefulness',
-  'transformative':'game-changing','transformation':'change','transforming':'changing',
-  'accelerate':'speed up','accelerates':'speeds up','accelerating':'speeding up','accelerated':'sped up',
-  'amplify':'boost','amplifies':'boosts','amplifying':'boosting','amplified':'boosted',
-  'navigate':'handle','navigates':'handles','navigating':'handling','navigated':'handled',
-  'collaborate':'work together','collaboration':'teamwork','collaborating':'working together','collaborated':'worked together',
-  'communicate':'share','communication':'sharing','communicating':'sharing',
-  'prioritize':'focus on','prioritise':'focus on','prioritizing':'focusing on','prioritised':'focused on','prioritized':'focused on',
-  'demonstrate':'show','demonstrates':'shows','demonstrating':'showing','demonstrated':'showed',
-  'opportunity':'chance','opportunities':'chances',
-  'initiative':'project','initiatives':'projects',
-  'empower':'help','empowers':'helps','empowering':'helping','empowered':'helped',
-  'innovative':'new','innovation':'new idea','innovations':'new ideas',
-  'transparency':'openness','transparent':'open',
-  'authenticity':'realness','authentic':'real',
-  'productivity':'output','productive':'useful',
-  'fundamental':'basic','fundamentally':'basically',
-  'comprehensive':'complete','comprehensively':'fully',
-  'significant':'big','significantly':'a lot','significance':'importance',
-  'considerable':'large','considerably':'a lot',
-  'exceptional':'great','exceptionally':'really',
-  'remarkable':'great','remarkably':'very',
-  'individual':'person','individuals':'people',
-  'additionally':'also',
-  'approximately':'about',
-  'necessary':'needed','unnecessary':'not needed',
-  'sufficient':'enough',
-  'establish':'set up','establishes':'sets up','establishing':'setting up','established':'set up',
-  'visibility':'reach',
-  'trajectory':'path',
-  'narrative':'story',
-  'momentum':'pace',
-  'strategic':'planned','strategy':'plan','strategies':'plans',
-  'solution':'answer','solutions':'answers',
-  'challenge':'problem','challenges':'problems','challenging':'hard',
-  'environment':'setting','environments':'settings',
-  'community':'group','communities':'groups',
-  'organization':'company','organisations':'companies','organizations':'companies','organisation':'company',
-  'professional':'expert','professionals':'experts',
-  'responsibility':'duty','responsibilities':'duties',
-  'perspective':'view','perspectives':'views',
-  'engagement':'interaction','engaging':'interesting',
-  'consistently':'always','consistency':'steadiness',
-  'effectively':'well','effectiveness':'how well it works',
-  'efficiently':'quickly','efficiency':'speed',
-};
 
 const CONTRIBUTORS = [
   // { name: 'Name Here', role: 'Feedback & testing', linkedin: 'https://linkedin.com/in/placeholder' }
@@ -1012,7 +730,6 @@ const COPY = {
     'deco-sym':'Decorative symbol inside a sentence',
     'long-sent':'Some sentences are quite long',
     'hashtag-case':'Hashtag written in all lowercase',
-    'jargon':'Idioms or phrases that may confuse',
     'inclusive':'Words that may unintentionally exclude',
     'unicode-bold':'Bold or italic text made from Unicode symbols',
     'grammar':'Spelling & grammar'
@@ -1026,7 +743,6 @@ const COPY = {
     'deco-sym':'Symbol names may be read aloud mid-sentence. Some screen readers may get it right, some may not.',
     'long-sent':'Long sentences are harder to process for people with cognitive disabilities.',
     'hashtag-case':'All-lowercase hashtags are read as one unbroken word.',
-    'jargon':'These expressions have non-obvious meanings — someone reading in a second language may not understand them.',
     'inclusive':'Some terms may unintentionally exclude or offend.',
     'unicode-bold':'These are not real bold or italic. They are different Unicode characters. Some screen readers may handle them correctly; others skip them or spell out each symbol name individually.',
     'grammar':'Possible spelling mistakes or grammar errors that could make your post harder to read.'
@@ -1040,7 +756,6 @@ const COPY = {
     'deco-sym':"Replace decorative symbols with a plain word, like 'then' instead of an arrow, or remove them.",
     'long-sent':'Find the longest sentence and split it into two. Just find a natural pause point, end the sentence there, and start a new one.',
     'hashtag-case':'#contentmarketing becomes #ContentMarketing. It takes a second and makes your hashtags clearer for everyone.',
-    'jargon':"Replace with plain language. 'Follow up' instead of 'circle back'. 'An easy win' instead of 'low-hanging fruit'. If the meaning isn't obvious from the words, your global audience will miss it.",
     'inclusive':"Small swaps keep the meaning exactly the same. Try 'incredible' instead of 'crazy,' 'everyone' instead of 'guys.' Your message reaches more people warmly.",
     'unicode-bold':'Retype the styled text using plain characters.',
     'grammar':'Review each highlighted word or phrase — expand the card to see specific suggestions for each one.'
@@ -1369,49 +1084,7 @@ function analyse(text) {
     if (hashtagSegs.length > 0) issues.push({ id:'hashtag-case', cat:'cog', severity:'warn', fixType:'auto', segs:hashtagSegs, excerpts:hashtagSegs.slice(0,4).map(s=>s.orig) });
   }
 
-  // Check 11: complex vocabulary (Grade 8+) and multi-word LinkedIn clichés
-  {
-    const segs = [];
-    const usedRanges = [];
-
-    // Multi-word phrases first (longest first to avoid partial overlaps)
-    const sortedPhrases = [...JARGON_PHRASES].sort((a,b) => b.length - a.length);
-    for (const phrase of sortedPhrases) {
-      const rx = new RegExp(`\\b${escRx(phrase)}\\b`, 'gi');
-      let m;
-      while ((m = rx.exec(text)) !== null) {
-        const start = m.index, end = m.index + m[0].length;
-        if (!usedRanges.some(([s,e]) => start < e && end > s)) {
-          segs.push({ start, end, orig: m[0], repl: null });
-          usedRanges.push([start, end]);
-        }
-      }
-    }
-
-    // Single-word LinkedIn buzzwords — only flag words explicitly in JARGON_WORDS
-    const wordRx = /\b[a-zA-Z]{3,}\b/g;
-    let wm;
-    while ((wm = wordRx.exec(text)) !== null) {
-      const word = wm[0], lower = word.toLowerCase();
-      const start = wm.index, end = wm.index + word.length;
-      if (start > 0 && text[start - 1] === '#') continue;
-      if (JARGON_WORDS.has(lower) &&
-          !usedRanges.some(([s,e]) => start < e && end > s)) {
-        segs.push({ start, end, orig: word, repl: null });
-        usedRanges.push([start, end]);
-      }
-    }
-
-    segs.sort((a,b) => a.start - b.start);
-
-    if (segs.length > 0) {
-      const excerpts = segs.slice(0,4).map(s=>s.orig);
-      if (segs.length > 4) excerpts.push('…');
-      issues.push({ id:'jargon', cat:'cog', severity:'info', fixType:'voice', segs, excerpts });
-    }
-  }
-
-  // Check 12: inclusive language
+  // Check 11: inclusive language
   {
     const sorted = [...INCLUSIVE].sort((a,b)=>b.length-a.length);
     const segs = [];
@@ -1693,36 +1366,12 @@ function renderIssueCard(issue, idx) {
     </div>
     <div class="card-body">
       <div class="fix-label"><strong>How to fix it:</strong> ${escHtml(COPY.fixes[issue.id])}</div>
-      ${issue.id === 'jargon' ? renderJargonSuggestions(issue.segs) : ''}
       ${issue.id === 'grammar' ? renderGrammarDetails(issue.segs) : ''}
       ${['deco-sym','unicode-bold'].includes(issue.id) ? `<div class="fix-label" style="margin-top:8px;padding:7px 9px;background:#f0f7ff;border:1px solid #c4dcf5;border-radius:6px;font-size:12px;color:#004182;">👂 <strong>Tip:</strong> Use the <em>Listen with screen reader</em> feature to hear exactly how this reads. It may or may not be a problem for your audience.</div>` : ''}
     </div>
   </div>`;
 }
 
-function renderJargonSuggestions(segs) {
-  if (!segs || !segs.length) return '';
-  const seen = new Set();
-  const pairs = [];
-  for (const seg of segs) {
-    const lower = seg.orig.toLowerCase();
-    if (seen.has(lower)) continue;
-    seen.add(lower);
-    const simpler = SIMPLE_WORDS[lower];
-    if (simpler) pairs.push({ orig: seg.orig, simpler });
-  }
-  if (!pairs.length) return '';
-  return `<div style="margin-top:10px;padding:9px 11px;background:#f8f3ec;border:1.5px solid var(--border-sub);border-radius:8px">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);margin-bottom:7px">Quick swaps</div>
-    <div style="display:flex;flex-wrap:wrap;gap:6px">${pairs.map(p =>
-      `<span style="display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid var(--border-sub);border-radius:6px;padding:3px 8px;font-size:12px">
-        <span style="color:var(--text2);font-weight:600">${escHtml(p.orig)}</span>
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 5h6M6 3l2 2-2 2" stroke="#888" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span style="color:var(--success);font-weight:600">${escHtml(p.simpler)}</span>
-      </span>`
-    ).join('')}</div>
-  </div>`;
-}
 
 function renderGrammarDetails(segs) {
   if (!segs || !segs.length) return '';
@@ -1829,7 +1478,6 @@ function getMarkClass(issueId) {
     'unicode-bold': 'hl-unicode-bold',
     'hashtag-case': 'hl-hashtag-case',
     'long-sent':    'hl-long-sent',
-    'jargon':       'hl-jarg',
     'inclusive':    'hl-incl',
     'grammar':      'hl-grammar',
   };
@@ -2023,7 +1671,7 @@ function calcScores(issues) {
   const PENALTY = { error: 25, warn: 15, info: 8 };
   const groups = {
     visual:    ['deco-struct','emoji-mid','emoji-multi','no-punct','deco-sym','unicode-bold','hashtag-case','link-context'],
-    cognitive: ['long-sent','jargon','inclusive','hashtag-case']
+    cognitive: ['long-sent','inclusive','hashtag-case']
   };
   return Object.fromEntries(Object.entries(groups).map(([key, ids]) => {
     const deduction = issues.filter(i => ids.includes(i.id))
