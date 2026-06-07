@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Free LinkedIn Post Accessibility Checker Tool</title>
-<meta name="description" content="Check if your LinkedIn post works for screen readers and all users. Free tool with 11 accessibility checks — emoji placement, hashtags, long sentences, inclusive language, spelling and more. Auto-fix included. No sign-up.">
+<meta name="description" content="Check if your LinkedIn post works for screen readers and all users. Free tool with 12 accessibility checks — emoji placement, hashtags, business idioms, long sentences, inclusive language, spelling and more. Auto-fix included. No sign-up.">
 <link rel="canonical" href="https://www.linkedinaccessibilitychecker.com/">
 <meta property="og:title" content="Is My LinkedIn Post Accessible?">
 <meta property="og:description" content="11 accessibility checks for LinkedIn posts. Screen reader compatibility, cognitive load, inclusive language, and more. Free tool, no sign-up.">
@@ -19,7 +19,7 @@
 <meta name="keywords" content="LinkedIn accessibility checker, LinkedIn post accessibility, screen reader LinkedIn, accessible LinkedIn post, LinkedIn accessibility tool">
 <meta name="author" content="linkedinaccessibilitychecker.com">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"LinkedIn Accessibility Checker","url":"https://www.linkedinaccessibilitychecker.com","description":"A free tool to check LinkedIn posts for accessibility issues across 11 rules including screen reader compatibility, cognitive load, and inclusive language.","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":["Screen reader compatibility check","Emoji placement analysis","Hashtag CamelCase checker","Inclusive language checker","Long sentence detector","Bare link checker","Spelling and grammar checker","Auto-fix suggestions","Fixed post generator"]}
+{"@context":"https://schema.org","@type":"WebApplication","name":"LinkedIn Accessibility Checker","url":"https://www.linkedinaccessibilitychecker.com","description":"A free tool to check LinkedIn posts for accessibility issues across 11 rules including screen reader compatibility, cognitive load, and inclusive language.","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":["Screen reader compatibility check","Emoji placement analysis","Hashtag CamelCase checker","Business idiom detector","Inclusive language checker","Long sentence detector","Bare link checker","Spelling and grammar checker","Auto-fix suggestions","Fixed post generator"]}
 </script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230a66c2'/><circle cx='16' cy='7.5' r='3.5' fill='white'/><path d='M5 14h22M16 11v11M11 31l5-9 5 9' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%230a66c2'/><circle cx='90' cy='42' r='20' fill='white'/><path d='M28 80h124M90 62v62M62 174l28-50 28 50' stroke='white' stroke-width='17' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
@@ -123,6 +123,7 @@ mark.hl-deco-sym{background:#e2e8f0;outline:2px solid #64748b}
 mark.hl-unicode-bold{background:#fee2e2;outline:2px solid #ef4444}
 mark.hl-hashtag-case{background:#ccfbf1;outline:2px solid #0d9488}
 mark.hl-long-sent{background:#dcfce7;outline:2px solid #16a34a}
+mark.hl-jarg{background:#e0f2fe;outline:2px solid #38bdf8}
 mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
 mark.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 
@@ -143,6 +144,7 @@ mark.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 .hl-swatch.hl-unicode-bold{background:#fee2e2;outline:2px solid #ef4444}
 .hl-swatch.hl-hashtag-case{background:#ccfbf1;outline:2px solid #0d9488}
 .hl-swatch.hl-long-sent{background:#dcfce7;outline:2px solid #16a34a}
+.hl-swatch.hl-jarg{background:#e0f2fe;outline:2px solid #38bdf8}
 .hl-swatch.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
 .hl-swatch.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 
@@ -516,7 +518,7 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
   <div class="panel-state active" id="panel-analyse" role="region" aria-label="Analyse">
     <div class="panel-header">
       <div class="panel-title">Analyse your post</div>
-      <div class="panel-sub">11 checks. Takes a few seconds.</div>
+      <div class="panel-sub">12 checks. Takes a few seconds.</div>
     </div>
     <div class="panel-body">
       <button class="run-btn" id="runBtn" onclick="runCheck()" aria-label="Check accessibility">
@@ -526,7 +528,7 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
       </button>
 
       <details class="what-we-check" id="whatWeCheck">
-        <summary>What we check (11 rules)</summary>
+        <summary>What we check (12 rules)</summary>
         <div class="check-section">
           <div class="check-section-title">Visual accessibility</div>
           <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🔤</div><div class="check-item-text"><strong>Emoji used as bullet</strong><span>Emoji name read before content</span></div></div>
@@ -541,6 +543,7 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
           <div class="check-section-title">Cognitive accessibility</div>
           <div class="check-item"><div class="check-item-icon green" aria-hidden="true">¶</div><div class="check-item-text"><strong>Long sentences</strong><span>Hard to process</span></div></div>
           <div class="check-item"><div class="check-item-icon green" aria-hidden="true">#</div><div class="check-item-text"><strong>Lowercase hashtag</strong><span>Read as one unbroken word</span></div></div>
+          <div class="check-item"><div class="check-item-icon teal" aria-hidden="true">💼</div><div class="check-item-text"><strong>Business idioms</strong><span>May confuse non-native English speakers</span></div></div>
           <div class="check-item"><div class="check-item-icon pink" aria-hidden="true">🤝</div><div class="check-item-text"><strong>Inclusive language</strong><span>May unintentionally exclude</span></div></div>
           <div class="check-item"><div class="check-item-icon purple" aria-hidden="true">✓</div><div class="check-item-text"><strong>Spelling & grammar</strong><span>Typos and grammar errors</span></div></div>
         </div>
@@ -681,6 +684,24 @@ const VOTE_URL     = 'https://tally.so/r/KYWyrV';
 
 // Multi-word LinkedIn clichés (phrases can't be caught by syllable counting)
 
+const JARGON_PHRASES = [
+  'hit the ground running','circle back','move the needle',
+  'boil the ocean','low-hanging fruit','low hanging fruit',
+  'push the envelope','skin in the game','all hands on deck',
+  'touch base','in the weeds','throw under the bus','threw under the bus',
+  'wear many hats','wearing many hats','think outside the box',
+  'ahead of the curve','behind the curve','raise the bar','set the bar',
+  'drop the ball','get the ball rolling','bite the bullet',
+  'go back to the drawing board','under the radar','up to speed',
+  'blue sky thinking','move the goalposts','moved the goalposts',
+  'ballpark figure','in the ballpark','take this offline','take that offline',
+  'elephant in the room','out of left field','slam dunk',
+  'hit a home run','hit it out of the park','pass the buck',
+  'par for the course','on the same page','break the ice',
+  'weather the storm','at the end of the day',
+  'bleeding edge','deep dive','deep-dive','paradigm shift',
+];
+
 const INCLUSIVE = [
   'crazy','insane','blind spot','blind spots','tone deaf','tone-deaf',
   'lame','dumb','guys','mankind','manpower','man-hours','man-hour','man hours',
@@ -730,6 +751,7 @@ const COPY = {
     'deco-sym':'Decorative symbol inside a sentence',
     'long-sent':'Some sentences are quite long',
     'hashtag-case':'Hashtag written in all lowercase',
+    'jargon':'Business idioms that may confuse',
     'inclusive':'Words that may unintentionally exclude',
     'unicode-bold':'Bold or italic text made from Unicode symbols',
     'grammar':'Spelling & grammar'
@@ -743,6 +765,7 @@ const COPY = {
     'deco-sym':'Symbol names may be read aloud mid-sentence. Some screen readers may get it right, some may not.',
     'long-sent':'Long sentences are harder to process for people with cognitive disabilities.',
     'hashtag-case':'All-lowercase hashtags are read as one unbroken word.',
+    'jargon':'These expressions have non-obvious meanings — someone reading in a second language may not understand them.',
     'inclusive':'Some terms may unintentionally exclude or offend.',
     'unicode-bold':'These are not real bold or italic. They are different Unicode characters. Some screen readers may handle them correctly; others skip them or spell out each symbol name individually.',
     'grammar':'Possible spelling mistakes or grammar errors that could make your post harder to read.'
@@ -756,6 +779,7 @@ const COPY = {
     'deco-sym':"Replace decorative symbols with a plain word, like 'then' instead of an arrow, or remove them.",
     'long-sent':'Find the longest sentence and split it into two. Just find a natural pause point, end the sentence there, and start a new one.',
     'hashtag-case':'#contentmarketing becomes #ContentMarketing. It takes a second and makes your hashtags clearer for everyone.',
+    'jargon':"Replace with plain language. 'Follow up' instead of 'circle back'. 'An easy win' instead of 'low-hanging fruit'. If the meaning isn't obvious from the words, your global audience will miss it.",
     'inclusive':"Small swaps keep the meaning exactly the same. Try 'incredible' instead of 'crazy,' 'everyone' instead of 'guys.' Your message reaches more people warmly.",
     'unicode-bold':'Retype the styled text using plain characters.',
     'grammar':'Review each highlighted word or phrase — expand the card to see specific suggestions for each one.'
@@ -1084,7 +1108,30 @@ function analyse(text) {
     if (hashtagSegs.length > 0) issues.push({ id:'hashtag-case', cat:'cog', severity:'warn', fixType:'auto', segs:hashtagSegs, excerpts:hashtagSegs.slice(0,4).map(s=>s.orig) });
   }
 
-  // Check 11: inclusive language
+  // Check 11: business idioms
+  {
+    const segs = [];
+    const usedRanges = [];
+    const sortedPhrases = [...JARGON_PHRASES].sort((a,b) => b.length - a.length);
+    for (const phrase of sortedPhrases) {
+      const rx = new RegExp(`\\b${escRx(phrase)}\\b`, 'gi');
+      let m;
+      while ((m = rx.exec(text)) !== null) {
+        const start = m.index, end = m.index + m[0].length;
+        if (!usedRanges.some(([s,e]) => start < e && end > s)) {
+          segs.push({ start, end, orig: m[0], repl: null });
+          usedRanges.push([start, end]);
+        }
+      }
+    }
+    if (segs.length > 0) {
+      const excerpts = segs.slice(0,4).map(s=>s.orig);
+      if (segs.length > 4) excerpts.push('…');
+      issues.push({ id:'jargon', cat:'cog', severity:'info', fixType:'voice', segs, excerpts });
+    }
+  }
+
+  // Check 12: inclusive language
   {
     const sorted = [...INCLUSIVE].sort((a,b)=>b.length-a.length);
     const segs = [];
@@ -1478,6 +1525,7 @@ function getMarkClass(issueId) {
     'unicode-bold': 'hl-unicode-bold',
     'hashtag-case': 'hl-hashtag-case',
     'long-sent':    'hl-long-sent',
+    'jargon':       'hl-jarg',
     'inclusive':    'hl-incl',
     'grammar':      'hl-grammar',
   };
@@ -1671,7 +1719,7 @@ function calcScores(issues) {
   const PENALTY = { error: 25, warn: 15, info: 8 };
   const groups = {
     visual:    ['deco-struct','emoji-mid','emoji-multi','no-punct','deco-sym','unicode-bold','hashtag-case','link-context'],
-    cognitive: ['long-sent','inclusive','hashtag-case']
+    cognitive: ['long-sent','jargon','inclusive','hashtag-case']
   };
   return Object.fromEntries(Object.entries(groups).map(([key, ids]) => {
     const deduction = issues.filter(i => ids.includes(i.id))
