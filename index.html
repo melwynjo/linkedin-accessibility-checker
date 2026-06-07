@@ -527,9 +527,9 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
         <summary>What we check (12 rules)</summary>
         <div class="check-section">
           <div class="check-section-title">Visual accessibility</div>
-          <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🔤</div><div class="check-item-text"><strong>Emoji as bullet</strong><span>Symbol name read before content</span></div></div>
-          <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">😊</div><div class="check-item-text"><strong>Emoji mid-sentence</strong><span>Emoji name interrupts the read</span></div></div>
-          <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🔁</div><div class="check-item-text"><strong>Multiple emojis</strong><span>Names read in sequence</span></div></div>
+          <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🔤</div><div class="check-item-text"><strong>Emoji used as bullet</strong><span>Emoji name read before content</span></div></div>
+          <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">😊</div><div class="check-item-text"><strong>Emoji in wrong position</strong><span>Emoji name interrupts reading flow</span></div></div>
+          <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🔁</div><div class="check-item-text"><strong>Multiple consecutive emojis</strong><span>All names read back-to-back</span></div></div>
           <div class="check-item"><div class="check-item-icon blue" aria-hidden="true">·</div><div class="check-item-text"><strong>Missing punctuation</strong><span>Sentences merge without pause</span></div></div>
           <div class="check-item"><div class="check-item-icon blue" aria-hidden="true">🔗</div><div class="check-item-text"><strong>Link with no context</strong><span>Reader can't tell where the link goes</span></div></div>
           <div class="check-item"><div class="check-item-icon grey" aria-hidden="true">→</div><div class="check-item-text"><strong>Decorative symbol</strong><span>May affect screen reader flow</span></div></div>
@@ -882,9 +882,9 @@ const CONTRIBUTORS = [
 
 const COPY = {
   titles:{
-    'deco-struct':'Emoji or symbol used as a bullet point',
-    'emoji-mid':'Emoji before or inside a sentence',
-    'emoji-multi':'Multiple emojis in a row',
+    'deco-struct':'Emoji used as a bullet point',
+    'emoji-mid':'Emoji in wrong position',
+    'emoji-multi':'Multiple consecutive emojis',
     'no-punct':'Sentence ends without punctuation',
     'link-context':'Link with no context around it',
     'deco-sym':'Decorative symbol inside a sentence',
@@ -895,9 +895,9 @@ const COPY = {
     'unicode-bold':'Bold or italic text made from Unicode symbols'
   },
   descs:{
-    'deco-struct':'Screen readers announce the symbol name instead of reading it as a bullet.',
-    'emoji-mid':'When an emoji appears before or within a sentence, screen readers announce its name mid-flow, breaking the reading experience.',
-    'emoji-multi':'Multiple emoji names read in sequence create noise, not emphasis.',
+    'deco-struct':'Screen readers announce the emoji name before the line content, turning your bullet into noise.',
+    'emoji-mid':'Emojis should sit at the end of a sentence. When one appears before or within text, screen readers announce its name mid-flow, breaking the reading experience.',
+    'emoji-multi':'Multiple emoji names read back-to-back create noise instead of emphasis.',
     'no-punct':'Without punctuation, screen readers merge sentences with no pause.',
     'link-context':'The surrounding text does not tell the reader where this link goes before they click.',
     'deco-sym':'Symbol names may be read aloud mid-sentence. Some screen readers may get it right, some may not.',
@@ -908,9 +908,9 @@ const COPY = {
     'unicode-bold':'These are not real bold or italic. They are different Unicode characters. Some screen readers may handle them correctly; others skip them or spell out each symbol name individually.'
   },
   fixes:{
-    'deco-struct':'Swap emoji or symbol bullets for a plain dash. Your post will look just as structured and read cleanly out loud.',
-    'emoji-mid':'Move emojis to the end of the sentence. They still add personality without interrupting the flow.',
-    'emoji-multi':'Keep to one emoji per sentence. A single one lands with more impact anyway.',
+    'deco-struct':'Replace the leading emoji with a plain dash (–). Your post stays structured and reads cleanly out loud.',
+    'emoji-mid':'Move the emoji to the end of the sentence. It still adds personality without interrupting the flow.',
+    'emoji-multi':'Keep one emoji per sentence — the first one is enough. A single emoji lands with more impact anyway.',
     'no-punct':'Add a full stop, question mark, or exclamation mark to close each sentence. One character makes a real difference for listeners.',
     'link-context':"Add a short phrase before the link that describes what it leads to: 'Read our accessibility guide here' tells the reader what to expect before they click.",
     'deco-sym':"Replace decorative symbols with a plain word, like 'then' instead of an arrow, or remove them.",
@@ -972,9 +972,20 @@ const DECO_SYM_SET = /[→►▶◆★✦✧▸‣⁃]/;
 
 function isEmoji(ch) { return EMOJI_RX.test(ch); }
 
+// Returns the JS code-unit length of the leading emoji cluster sequence.
+// Handles skin-tone variants (🙏🏽), ZWJ sequences (👨‍💻), and variation selectors.
+function getLengthOfLeadingEmojis(str) {
+  const m = str.match(/^[\p{Emoji_Presentation}\p{Extended_Pictographic}‍️\u{1F3FB}-\u{1F3FF}]+/u);
+  return m ? m[0].length : 0;
+}
+
 function stripTrailingEmoji(line) {
   const chars = [...line];
-  while (chars.length && isEmoji(chars[chars.length-1])) chars.pop();
+  // Also strip ZWJ (U+200D) and variation selector (U+FE0F) so ZWJ sequences
+  // like 👨‍💻 at end of a line don't leave a dangling joiner.
+  while (chars.length && (isEmoji(chars[chars.length-1]) || chars[chars.length-1] === '‍' || chars[chars.length-1] === '️')) {
+    chars.pop();
+  }
   return chars.join('').trimEnd();
 }
 
@@ -995,63 +1006,89 @@ function analyse(text) {
   const decoStructSegs = [], emojiMidSegs = [], noPunctSegs = [];
 
   for (let i = 0; i < lines.length; i++) {
-    const line     = lines[i];
+    const line      = lines[i];
     const lineStart = offset;
     const lineEnd   = offset + line.length;
-    const trimmed  = line.trimStart();
-    const chars    = [...trimmed];
+    const trimmed   = line.trimStart();
+    const leadingWs = line.length - trimmed.length;
 
-    // Check 1: emoji/symbol bullet
-    if (chars.length > 0 && chars[1] === ' ') {
-      const first = chars[0];
-      if (isEmoji(first) || DECO_SYM_SET.test(first)) {
-        // If the content after the emoji looks like a full sentence (5+ words, ends with
-        // sentence punctuation), leave it for the emoji-mid check — it's a sentence-start
-        // emoji, not a structural bullet. e.g. "🚀 We launched today!" ≠ bullet.
-        const contentAfter = trimmed.slice(first.length + 1).trimEnd();
-        const looksLikeSentence = countWords(contentAfter) > 4 && /[.!?]$/.test(stripTrailingEmoji(contentAfter));
-        if (!looksLikeSentence) {
-          const origLen = first.length; // code unit length
-          decoStructSegs.push({
-            start: lineStart + (line.length - trimmed.length),
-            end:   lineStart + (line.length - trimmed.length) + origLen,
-            orig: first,
-            repl: '–'
-          });
+    // ── Check 1: emoji/symbol bullet ────────────────────────────────────────
+    // A line whose first character(s) are emoji(s) or a deco symbol, followed
+    // by a space and non-sentence content.
+    // Uses getLengthOfLeadingEmojis so ZWJ (👨‍💻) and skin-tone (🙏🏽) variants
+    // are treated as a single cluster.
+    if (trimmed.length > 0) {
+      const leadingEmojiLen = getLengthOfLeadingEmojis(trimmed);
+      const isLeadingEmoji  = leadingEmojiLen > 0;
+      const isLeadingSymbol = !isLeadingEmoji && DECO_SYM_SET.test(trimmed[0]);
+
+      if (isLeadingEmoji || isLeadingSymbol) {
+        const symbolLen   = isLeadingSymbol ? 1 : leadingEmojiLen;
+        const afterSymbol = trimmed.slice(symbolLen);
+
+        if (afterSymbol.length > 0 && /^\s/.test(afterSymbol)) {
+          const content     = afterSymbol.trimStart();
+          // Must have real text words after the emoji, not just more emojis
+          const contentText = content.replace(EMOJI_RX_G, '').trim();
+          if (contentText.length > 0) {
+            const looksLikeSentence = countWords(content) > 4 && /[.!?]$/.test(stripTrailingEmoji(content));
+            if (!looksLikeSentence) {
+              decoStructSegs.push({
+                start: lineStart + leadingWs,
+                end:   lineStart + leadingWs + symbolLen,
+                orig:  trimmed.slice(0, symbolLen),
+                repl:  '–'
+              });
+            }
+          }
         }
       }
     }
 
-    // Check 2: emoji mid-sentence (emoji has real non-emoji text after it, and doesn't follow sentence punctuation)
-    if (line.trim().length > 0) {
-      let hasMid = false;
-      const lineEmojis = [...line.matchAll(EMOJI_RX_G)];
-      for (const em of lineEmojis) {
-        // Strip emojis from the text before this emoji to check for preceding sentence punctuation
-        const beforeClean = line.slice(0, em.index).replace(EMOJI_RX_G, '').trimEnd();
-        if (/[.!?]$/.test(beforeClean)) continue; // emoji appears after end-of-sentence punct — OK
-        // Only flag if there is actual non-emoji, non-whitespace text after this emoji
-        const afterClean = line.slice(em.index + em[0].length).replace(EMOJI_RX_G, '').trimEnd().replace(/^[\s)\].,!?;:…]+$/, '');
-        if (afterClean.length > 0) {
-          hasMid = true;
-          break;
+    // ── Check 2: emoji in wrong position ─────────────────────────────────────
+    // Any emoji has real non-emoji text after it on the same line.
+    // Skip lines flagged as emoji bullets (covered above).
+    //
+    // Uses Intl.Segmenter (when available) to treat ZWJ sequences (👨‍💻) as a
+    // single cluster, preventing false positives from their internal components.
+    // In both paths, ZWJ/FE0F characters are stripped when testing afterText so
+    // a trailing ZWJ sequence doesn't look like "real text" after the emoji.
+    const isDecoLine = decoStructSegs.some(s => s.start >= lineStart && s.start < lineEnd);
+    if (!isDecoLine && trimmed.length > 0) {
+      let hasTextAfterEmoji = false;
+      let emojiClusters = null;
+
+      if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+        const gseg = new Intl.Segmenter('en', { granularity: 'grapheme' });
+        const gsegs = [...gseg.segment(line)];
+        for (let j = 0; j < gsegs.length; j++) {
+          if (!EMOJI_RX.test(gsegs[j].segment)) continue;
+          const afterText = gsegs.slice(j + 1)
+            .filter(s => !EMOJI_RX.test(s.segment))
+            .map(s => s.segment)
+            .join('')
+            .trim();
+          if (afterText.length > 0) { hasTextAfterEmoji = true; break; }
+        }
+        if (hasTextAfterEmoji) {
+          emojiClusters = gsegs.filter(s => EMOJI_RX.test(s.segment)).map(s => s.segment);
+        }
+      } else {
+        const lineEmojis = [...line.matchAll(EMOJI_RX_G)];
+        for (const em of lineEmojis) {
+          const afterText = line.slice(em.index + em[0].length)
+            .replace(EMOJI_RX_G, '').replace(/[‍️]/g, '').trim();
+          if (afterText.length > 0) { hasTextAfterEmoji = true; break; }
+        }
+        if (hasTextAfterEmoji) {
+          emojiClusters = lineEmojis.map(m => m[0]);
         }
       }
-      if (hasMid && !(decoStructSegs.find(s => s.start >= lineStart && s.start < lineEnd))) {
-        // Fix: move all emojis in this line to end
-        let fixed = line;
-        const ems = [...line.matchAll(EMOJI_RX_G)].map(m=>m[0]);
-        const unique = [...new Set(ems)];
-        // remove all emojis from line
-        let withoutEmoji = line;
-        for (const e of unique) {
-          withoutEmoji = withoutEmoji.split(e).join('');
-        }
-        withoutEmoji = withoutEmoji.trim();
-        // find punctuation at end
-        const hasPunct = /[.!?]$/.test(withoutEmoji);
-        const emojiStr = ems.join(' ');
-        fixed = hasPunct ? `${withoutEmoji} ${emojiStr}` : `${withoutEmoji} ${emojiStr}`;
+
+      if (hasTextAfterEmoji && emojiClusters) {
+        // Strip emoji code points AND dangling ZWJ/FE0F joiners, then append clusters at end
+        const cleaned = line.replace(EMOJI_RX_G, '').replace(/[‍️]/g, '').replace(/[ \t]{2,}/g, ' ').trim();
+        const fixed   = cleaned + ' ' + emojiClusters.join('');
         emojiMidSegs.push({
           start: lineStart,
           end:   lineEnd,
@@ -1061,16 +1098,24 @@ function analyse(text) {
       }
     }
 
-    // Check 4: missing punctuation
+    // ── Check 4: missing punctuation ─────────────────────────────────────────
+    // Bugs fixed vs original:
+    //   1. lastCharPos used stripped2.length (pointed at the bracket char, not the
+    //      last text char) — now uses stripped3.length so the fix inserts correctly.
+    //   2. Unicode ellipsis (…) was not in the "OK" set — now included.
+    //   3. Lines ending with a bare URL are skipped — adding "." after a URL looks wrong.
     if (line.length > 10) {
       const stripped2 = stripTrailingEmoji(line.trimEnd());
-      // Strip trailing closing brackets/parens to find the real last punctuation
+      // Strip trailing closing brackets/quotes to reveal the last real punctuation
       const stripped3 = stripped2.replace(/[)\]"""''»›]+$/, '').trimEnd();
       const lastChar  = stripped3.slice(-1);
       const firstChar = line.trimStart()[0];
-      if (firstChar !== '#' && firstChar !== '@' && !/^https?:\/\//i.test(line.trim())) {
-        if (stripped3.length > 3 && !/[.!?:"""»]$/.test(lastChar) && !/^\s*$/.test(stripped3)) {
-          const lastCharPos = lineStart + stripped2.length - 1;
+      const lineEndsWithUrl = /https?:\/\/\S+$/.test(stripped3);
+      if (firstChar !== '#' && firstChar !== '@' && !lineEndsWithUrl && !/^https?:\/\//i.test(line.trim())) {
+        if (stripped3.length > 3 && !/[.!?:"""»…]$/.test(lastChar) && !/^\s*$/.test(stripped3)) {
+          // Use stripped3.length so the fix position lands on the last text char,
+          // not on a bracket/quote that was stripped from stripped3.
+          const lastCharPos = lineStart + stripped3.length - 1;
           noPunctSegs.push({
             start: lastCharPos,
             end:   lastCharPos + 1,
@@ -1088,18 +1133,24 @@ function analyse(text) {
   if (emojiMidSegs.length > 0)  issues.push({ id:'emoji-mid',   cat:'vis', severity:'error', fixType:'auto', segs:emojiMidSegs,  excerpts: emojiMidSegs.slice(0,2).map(s=>s.orig.slice(0,40)) });
   if (noPunctSegs.length > 0)   issues.push({ id:'no-punct',    cat:'vis', severity:'info',  fixType:'auto', segs:noPunctSegs,   excerpts:[] });
 
-  // Check 3: multiple emojis in a row
+  // Check 3: multiple consecutive emojis
   const multiEmojiSegs = [];
   {
     const rx = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})([^\S\n]*(\p{Emoji_Presentation}|\p{Extended_Pictographic}))+/gu;
+    // Use Intl.Segmenter to count real grapheme clusters so that skin-tone
+    // variants (🙏🏽) and ZWJ sequences (👨‍💻) are not falsely flagged.
+    const segmenter = typeof Intl !== 'undefined' && Intl.Segmenter
+      ? new Intl.Segmenter('en', { granularity: 'grapheme' }) : null;
     let m;
     while ((m = rx.exec(text)) !== null) {
-      const firstEmoji = [...m[0]][0];
+      const clusters = segmenter ? [...segmenter.segment(m[0])] : null;
+      if (clusters && clusters.length < 2) continue; // single cluster — skip
+      const firstCluster = clusters ? clusters[0].segment : [...m[0]][0];
       multiEmojiSegs.push({
         start: m.index,
         end:   m.index + m[0].length,
         orig:  m[0],
-        repl:  firstEmoji
+        repl:  firstCluster
       });
     }
     if (multiEmojiSegs.length > 0) issues.push({ id:'emoji-multi', cat:'vis', severity:'warn', fixType:'auto', segs:multiEmojiSegs, excerpts:[...multiEmojiSegs[0].orig].slice(0,4).join('') });
