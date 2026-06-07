@@ -123,6 +123,7 @@ mark.hl-deco-sym{background:#e2e8f0;outline:2px solid #64748b}
 mark.hl-unicode-bold{background:#fee2e2;outline:2px solid #ef4444}
 mark.hl-hashtag-case{background:#ccfbf1;outline:2px solid #0d9488}
 mark.hl-long-sent{background:#dcfce7;outline:2px solid #16a34a}
+mark.hl-speaking{background:#fef08a;outline:2px solid #ca8a04;border-radius:2px;color:inherit}
 mark.hl-jarg{background:#e0f2fe;outline:2px solid #38bdf8}
 mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
 mark.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
@@ -805,6 +806,7 @@ let hasRunCheck   = false;
 let activeHighlight = null;
 let expandedCards = new Set();
 let isSpeaking    = false;
+let speakingRange = null;
 let pendingPanel  = null;
 let currentPanel  = 'analyse';
 
@@ -1603,19 +1605,35 @@ function setListenState(playing) {
 
 function toggleListen() {
   if (!window.speechSynthesis) { alert('Your browser does not support text-to-speech.'); return; }
-  if (isSpeaking) { window.speechSynthesis.cancel(); setListenState(false); return; }
+  if (isSpeaking) {
+    window.speechSynthesis.cancel();
+    speakingRange = null;
+    setListenState(false);
+    renderPost();
+    return;
+  }
   const text = postInput.value;
   if (!text.trim()) return;
   const utt = new SpeechSynthesisUtterance(text);
-  utt.rate = 1.0; // NVDA medium pace
-  // Prefer a synthetic voice that approximates NVDA's default eSpeak output
+  utt.rate = 1.0;
   const voices = window.speechSynthesis.getVoices();
   const voice = voices.find(v => /microsoft.*david|microsoft.*zira|espeak/i.test(v.name))
     || voices.find(v => /microsoft/i.test(v.name) && v.lang.startsWith('en'))
     || voices.find(v => v.lang.startsWith('en'))
     || null;
   if (voice) utt.voice = voice;
-  utt.onend = () => setListenState(false);
+  utt.onboundary = (e) => {
+    if (e.name !== 'word') return;
+    const start = e.charIndex;
+    const end = start + (e.charLength || (text.slice(start).match(/^\S+/) || [''])[0].length);
+    speakingRange = { start, end };
+    renderPost();
+  };
+  utt.onend = () => {
+    speakingRange = null;
+    setListenState(false);
+    renderPost();
+  };
   window.speechSynthesis.speak(utt);
   setListenState(true);
 }
@@ -1687,29 +1705,35 @@ function renderPost() {
   const text = postInput.value;
   postMirror.textContent = text + '​';
 
-  if (!activeHighlight || !checkResults) {
+  const marks = [];
+
+  if (activeHighlight && checkResults) {
+    const issue = checkResults.find(i => i.id === activeHighlight);
+    if (issue && issue.segs) {
+      const cls = getMarkClass(issue.id);
+      for (const seg of issue.segs) {
+        if (seg.start < seg.end) marks.push({ start: seg.start, end: seg.end, cls });
+      }
+    }
+  }
+
+  if (speakingRange) {
+    marks.push({ start: speakingRange.start, end: speakingRange.end, cls: 'hl-speaking' });
+  }
+
+  if (marks.length === 0) {
     postRendered.textContent = text;
     return;
   }
 
-  const issue = checkResults.find(i => i.id === activeHighlight);
-  if (!issue || !issue.segs || issue.segs.length === 0) {
-    postRendered.textContent = text;
-    return;
-  }
-
-  const markClass = getMarkClass(issue.id);
-  const segs = [...issue.segs].sort((a,b) => a.start - b.start);
+  marks.sort((a, b) => a.start - b.start || b.cls.includes('speaking') - a.cls.includes('speaking'));
 
   let html = '', pos = 0;
-  for (const seg of segs) {
-    if (seg.start < pos) continue;
-    html += escHtml(text.slice(pos, seg.start));
-    const segText = seg.orig || text.slice(seg.start, seg.end);
-    if (seg.start !== seg.end) {
-      html += `<mark class="${markClass}">${escHtml(segText)}</mark>`;
-    }
-    pos = seg.end;
+  for (const m of marks) {
+    if (m.start < pos) continue;
+    html += escHtml(text.slice(pos, m.start));
+    html += `<mark class="${m.cls}">${escHtml(text.slice(m.start, m.end))}</mark>`;
+    pos = m.end;
   }
   html += escHtml(text.slice(pos));
   postRendered.innerHTML = html;
@@ -1927,7 +1951,7 @@ function clearPost() {
   fixedResult = '';
   fixedText   = '';
   issueBadge.classList.remove('visible');
-  if (isSpeaking) window.speechSynthesis.cancel();
+  if (isSpeaking) { window.speechSynthesis.cancel(); speakingRange = null; renderPost(); }
   listenBtn.classList.add('hidden');
   setListenState(false);
   document.getElementById('nav-issues').classList.add('locked');
