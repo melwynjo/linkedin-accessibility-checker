@@ -61,9 +61,9 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:1
 .issue-badge.visible{display:inline-block}
 
 .header-actions{padding:0 18px;height:100%;display:flex;align-items:center;gap:8px;border-left:2px solid var(--border);flex-shrink:0;width:420px;justify-content:flex-start}
-.resource-label{font-size:13px;font-weight:600;color:var(--text3);white-space:nowrap}
-.accessible-link{font-size:13px;font-weight:700;color:var(--text1);text-decoration:none;white-space:nowrap}
-.accessible-link:hover{color:var(--blue);text-decoration:underline}
+.resource-label{font-size:13px;font-weight:400;color:var(--text4);white-space:nowrap}
+.accessible-link{font-size:13px;font-weight:700;color:var(--text2);text-decoration:none;white-space:nowrap;border-bottom:2px solid var(--border-soft)}
+.accessible-link:hover{color:var(--blue);border-bottom-color:var(--blue)}
 .feedback-pill{padding:6px 12px;border:2px solid var(--border);border-radius:8px;font-size:11.5px;font-weight:600;color:var(--text2);text-decoration:none;transition:all .1s;white-space:nowrap;box-shadow:var(--shadow-btn-sm)}
 .feedback-pill:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--border)}
 
@@ -124,6 +124,7 @@ mark.hl-hashtag-case{background:#ccfbf1;outline:2px solid #0d9488}
 mark.hl-long-sent{background:#dcfce7;outline:2px solid #16a34a}
 mark.hl-jarg{background:#e0f2fe;outline:2px solid #38bdf8}
 mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
+mark.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 
 .editor-footer{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;margin-top:8px;gap:8px;min-height:26px}
 .editor-footer-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
@@ -144,6 +145,7 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
 .hl-swatch.hl-long-sent{background:#dcfce7;outline:2px solid #16a34a}
 .hl-swatch.hl-jarg{background:#e0f2fe;outline:2px solid #38bdf8}
 .hl-swatch.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
+.hl-swatch.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 
 /* Listen inline button */
 @keyframes listenIdle{0%{box-shadow:2px 2px 0 var(--border),0 0 0 0 rgba(10,102,194,.45)}70%{box-shadow:2px 2px 0 var(--border),0 0 0 8px rgba(10,102,194,0)}100%{box-shadow:2px 2px 0 var(--border),0 0 0 0 rgba(10,102,194,0)}}
@@ -268,6 +270,7 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
 .fix-pill{display:inline-flex;align-items:center;gap:4px;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;border:1.5px solid}
 .fix-pill.auto{background:#e6f4ea;color:#15803d;border-color:#86d4a0}
 .fix-pill.voice{background:#fff4e0;color:#b45300;border-color:#f0c040}
+.fix-pill.grammar-auto{background:#ede9fe;color:#5b21b6;border-color:#a78bfa}
 
 .card-body{margin-top:10px;padding-top:10px;border-top:2px solid var(--blue-border);display:none}
 .issue-card.expanded .card-body{display:block}
@@ -308,6 +311,7 @@ mark.hl-incl{background:#fce7f3;outline:2px solid #f472b6}
 .diff-del{background:#f8d7da;color:#721c24;text-decoration:line-through;border-radius:3px;padding:0 2px}
 .diff-add{background:#d4edda;color:#155724;font-style:italic;border-radius:3px;padding:0 2px}
 .diff-review{background:#fff8e1;color:#5d4a00;outline:2px solid #f0c040;border-radius:3px;padding:0 2px}
+.diff-grammar{background:#ede9fe;color:#5b21b6;outline:2px solid #a78bfa;border-radius:3px;padding:0 2px}
 .diff-hint{display:block;font-size:11px;color:#7a5c00;background:#fffbeb;border:1.5px solid #f0c040;border-radius:5px;padding:5px 8px;margin-top:3px;font-style:italic}
 
 /* Action row */
@@ -460,7 +464,7 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
     <span id="navIssuesSub" class="visually-hidden" aria-live="polite">Run check first</span>
   </nav>
   <div class="header-actions">
-    <span class="resource-label">Resource: <a href="https://www.accessible-social.com/" target="_blank" rel="noopener noreferrer" class="accessible-link">Accessible Social by Alexa Heinrich ↗</a></span>
+    <span class="resource-label">Related resource:</span> <a href="https://www.accessible-social.com/" target="_blank" rel="noopener noreferrer" class="accessible-link">Accessible Social by Alexa Heinrich ↗</a>
   </div>
 </header>
 
@@ -538,8 +542,9 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
           <div class="check-section-title">Cognitive accessibility</div>
           <div class="check-item"><div class="check-item-icon green" aria-hidden="true">¶</div><div class="check-item-text"><strong>Long sentences</strong><span>Hard to process</span></div></div>
           <div class="check-item"><div class="check-item-icon green" aria-hidden="true">#</div><div class="check-item-text"><strong>Lowercase hashtag</strong><span>Read as one unbroken word</span></div></div>
-          <div class="check-item"><div class="check-item-icon teal" aria-hidden="true">💼</div><div class="check-item-text"><strong>Words above Grade 8</strong><span>Complex vocabulary check</span></div></div>
+          <div class="check-item"><div class="check-item-icon teal" aria-hidden="true">💼</div><div class="check-item-text"><strong>Idioms that may confuse</strong><span>Business idioms non-native speakers may not understand</span></div></div>
           <div class="check-item"><div class="check-item-icon pink" aria-hidden="true">🤝</div><div class="check-item-text"><strong>Inclusive language</strong><span>May unintentionally exclude</span></div></div>
+          <div class="check-item"><div class="check-item-icon purple" aria-hidden="true">✓</div><div class="check-item-text"><strong>Spelling & grammar</strong><span>Typos and grammar errors</span></div></div>
         </div>
       </details>
 
@@ -607,12 +612,6 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
         <p>Flags posts that rely on text inside images, which screen readers cannot read. Reminds you to add alt text descriptions so your visual content is accessible to everyone.</p>
         <a href="https://tally.so/r/KYWyrV" target="_blank" rel="noopener noreferrer" class="vote-btn teal">Vote for this first</a>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon purple" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h7M3 12h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="13" cy="11" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M15 13l1.5 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
-        <h3>Grammar & Spell Check</h3>
-        <p>Catches typos, grammar errors, and unclear phrasing before you post. Because accessibility and quality go hand in hand.</p>
-        <a href="https://tally.so/r/KYWyrV" target="_blank" rel="noopener noreferrer" class="vote-btn purple">Vote for this first</a>
-      </div>
     </div>
   </div>
 
@@ -638,8 +637,8 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
   </div>
 
   <div class="live-stats" id="liveStats" aria-live="polite">
-    <div class="live-stats-heading">We're making a difference</div>
-    <div class="live-stats-sub">Posts checked and issues fixed since launch</div>
+    <div class="live-stats-heading">Helping posts reach more people</div>
+    <div class="live-stats-sub">Since launch</div>
     <div class="live-stats-numbers">
       <div class="live-stats-item">
         <span class="live-stats-num" id="statPosts">—</span>
@@ -684,13 +683,36 @@ const FEEDBACK_URL = 'https://tally.so/r/WOKdbv';
 const VOTE_URL     = 'https://tally.so/r/KYWyrV';
 
 // Multi-word LinkedIn clichés (phrases can't be caught by syllable counting)
+// Business idioms that are confusing for non-native English speakers
+// (phrases where the meaning is NOT obvious from the words themselves)
 const JARGON_PHRASES = [
-  'deep dive','deep-dive','circle back','move the needle',
-  'low-hanging fruit','low hanging fruit','boil the ocean',
-  'best practice','best practices','thought leader','thought leadership',
-  'value add','value-add','game changer','game-changer',
-  'touch base','going forward','paradigm shift'
+  // Idioms with non-obvious meanings
+  'hit the ground running','circle back','move the needle',
+  'boil the ocean','low-hanging fruit','low hanging fruit',
+  'push the envelope','skin in the game','all hands on deck',
+  'touch base','in the weeds','throw under the bus','threw under the bus',
+  'wear many hats','wearing many hats','think outside the box',
+  'ahead of the curve','behind the curve','raise the bar','set the bar',
+  'drop the ball','get the ball rolling','bite the bullet',
+  'go back to the drawing board','under the radar','up to speed',
+  'blue sky thinking','move the goalposts','moved the goalposts',
+  'ballpark figure','in the ballpark','take this offline','take that offline',
+  'elephant in the room','out of left field','slam dunk',
+  'hit a home run','hit it out of the park','pass the buck',
+  'par for the course','on the same page','break the ice',
+  'weather the storm','at the end of the day',
+  'bleeding edge','deep dive','deep-dive','paradigm shift',
 ];
+
+// Genuinely obscure single words — very short list, only words
+// a competent non-native English speaker would likely not know
+const JARGON_WORDS = new Set([
+  'ideate','ideation',
+  'operationalize','operationalise','operationalizing','operationalising',
+  'synergize','synergise',
+  'learnings',
+  'bespoke',
+]);
 
 // Common words with 3+ syllables that are Grade 8 or below — don't flag these
 const GRADE8_WORDS = new Set([
@@ -831,7 +853,37 @@ const GRADE8_WORDS = new Set([
   'fortunately','unfortunately','hopefully','thankfully','honestly',
   'recently','currently','previously','eventually','immediately',
   'gradually','suddenly','frequently','constantly','repeatedly',
+
+  // Accessibility & inclusion domain — never flag these
+  'accessibility','accessible','inaccessible','accessibly',
+  'disability','disabilities','disabled',
+  'inclusion','inclusive','inclusivity','inclusively',
+  'awareness',
+
+  // Very common words the syllable counter overcounts or that are clearly everyday
+  'everyday','everybody','everyone','everything','everywhere',
+  'equally','equality','equalities',
+  'ability','abilities',
+  'developers','developer',
+  'participation','participant','participants','participate','participated','participating',
+
+  // Common 4-syllable capability/quality words
+  'availability','capability','capabilities',
+  'probability','possibility','possibilities',
+  'reliability','flexibility','sensitivity','visibility',
+  'sustainability','accountability','vulnerability',
+  'majority','minority','minorities',
+  'authority','authorities',
+  'qualification','qualifications',
+  'modification','satisfaction','clarification','verification','justification',
+  'simultaneously','automatically','temporarily',
+  'alternatively','alternative','alternatives',
+  'originally','originality','vocabulary',
+  'consequently','consequence','consequences',
+  'diversity','curiosity','generosity',
+  'nationality','mentality','mentalities',
 ]);
+
 
 function countSyllables(word) {
   word = word.toLowerCase().replace(/[^a-z]/g, '');
@@ -858,7 +910,11 @@ const INCLUSIVE = [
   'lame','dumb','guys','mankind','manpower','man-hours','man-hour','man hours',
   'chairman','chairmen','manmade','man-made','blacklist','whitelist',
   'grandfathered','sanity check','sanity-check','cripple','crippling',
-  'psycho','retard','retarded'
+  'psycho','retard','retarded',
+  'dumbass','dumb ass','idiot','moron','stupid','imbecile','jackass','jack ass',
+  'asshole','ass hole','bastard','bitch','dipshit','dip shit','dimwit','dim wit',
+  'numbskull','numb skull','airhead','bonehead','halfwit','half wit',
+  'jerk','douche','loser','freak','weirdo','nutcase','nut case','nutjob','nut job'
 ];
 
 
@@ -872,7 +928,74 @@ const INCLUSIVE_FIXES = {
   'chairman':'chair','chairmen':'chairs',
   'blacklist':'blocklist','whitelist':'allowlist',
   'sanity check':'sense check','sanity-check':'sense check',
-  'cripple':'limit','crippling':'limiting'
+  'cripple':'limit','crippling':'limiting',
+  'idiot':'person who made a mistake','moron':'person who got it wrong',
+  'stupid':'misguided','imbecile':'person who missed the mark',
+  'dimwit':'person who overlooked something','halfwit':'person who missed the point',
+  'dumbass':'someone who got it wrong','dumb ass':'someone who got it wrong',
+  'airhead':'unfocused person','bonehead':'someone who slipped up',
+  'jerk':'difficult person','loser':'underperformer',
+  'freak':'unconventional person','weirdo':'unconventional person',
+  'nutcase':'person under pressure','nut case':'person under pressure'
+};
+
+// Simpler word suggestions for common LinkedIn jargon
+const SIMPLE_WORDS = {
+  'utilize':'use','utilise':'use','utilizes':'uses','utilising':'using','utilizing':'using',
+  'implement':'build','implements':'builds','implemented':'built','implementing':'building',
+  'facilitate':'help','facilitates':'helps','facilitated':'helped','facilitating':'helping',
+  'commence':'start','commences':'starts','commenced':'started','commencing':'starting',
+  'endeavour':'try','endeavor':'try','endeavours':'tries','endeavors':'tries',
+  'cognizant':'aware','cognisant':'aware',
+  'synergy':'teamwork','synergies':'teamwork','synergistic':'team-based',
+  'paradigm':'model','paradigms':'models','paradigmatic':'model-based',
+  'optimize':'improve','optimise':'improve','optimizes':'improves','optimising':'improving','optimizing':'improving','optimized':'improved','optimised':'improved','optimization':'improvement','optimisation':'improvement',
+  'scalability':'growth','scalable':'flexible',
+  'actionable':'useful','actionability':'usefulness',
+  'transformative':'game-changing','transformation':'change','transforming':'changing',
+  'accelerate':'speed up','accelerates':'speeds up','accelerating':'speeding up','accelerated':'sped up',
+  'amplify':'boost','amplifies':'boosts','amplifying':'boosting','amplified':'boosted',
+  'navigate':'handle','navigates':'handles','navigating':'handling','navigated':'handled',
+  'collaborate':'work together','collaboration':'teamwork','collaborating':'working together','collaborated':'worked together',
+  'communicate':'share','communication':'sharing','communicating':'sharing',
+  'prioritize':'focus on','prioritise':'focus on','prioritizing':'focusing on','prioritised':'focused on','prioritized':'focused on',
+  'demonstrate':'show','demonstrates':'shows','demonstrating':'showing','demonstrated':'showed',
+  'opportunity':'chance','opportunities':'chances',
+  'initiative':'project','initiatives':'projects',
+  'empower':'help','empowers':'helps','empowering':'helping','empowered':'helped',
+  'innovative':'new','innovation':'new idea','innovations':'new ideas',
+  'transparency':'openness','transparent':'open',
+  'authenticity':'realness','authentic':'real',
+  'productivity':'output','productive':'useful',
+  'fundamental':'basic','fundamentally':'basically',
+  'comprehensive':'complete','comprehensively':'fully',
+  'significant':'big','significantly':'a lot','significance':'importance',
+  'considerable':'large','considerably':'a lot',
+  'exceptional':'great','exceptionally':'really',
+  'remarkable':'great','remarkably':'very',
+  'individual':'person','individuals':'people',
+  'additionally':'also',
+  'approximately':'about',
+  'necessary':'needed','unnecessary':'not needed',
+  'sufficient':'enough',
+  'establish':'set up','establishes':'sets up','establishing':'setting up','established':'set up',
+  'visibility':'reach',
+  'trajectory':'path',
+  'narrative':'story',
+  'momentum':'pace',
+  'strategic':'planned','strategy':'plan','strategies':'plans',
+  'solution':'answer','solutions':'answers',
+  'challenge':'problem','challenges':'problems','challenging':'hard',
+  'environment':'setting','environments':'settings',
+  'community':'group','communities':'groups',
+  'organization':'company','organisations':'companies','organizations':'companies','organisation':'company',
+  'professional':'expert','professionals':'experts',
+  'responsibility':'duty','responsibilities':'duties',
+  'perspective':'view','perspectives':'views',
+  'engagement':'interaction','engaging':'interesting',
+  'consistently':'always','consistency':'steadiness',
+  'effectively':'well','effectiveness':'how well it works',
+  'efficiently':'quickly','efficiency':'speed',
 };
 
 const CONTRIBUTORS = [
@@ -889,9 +1012,10 @@ const COPY = {
     'deco-sym':'Decorative symbol inside a sentence',
     'long-sent':'Some sentences are quite long',
     'hashtag-case':'Hashtag written in all lowercase',
-    'jargon':'Words above Grade 8 reading level',
+    'jargon':'Idioms or phrases that may confuse',
     'inclusive':'Words that may unintentionally exclude',
-    'unicode-bold':'Bold or italic text made from Unicode symbols'
+    'unicode-bold':'Bold or italic text made from Unicode symbols',
+    'grammar':'Spelling & grammar'
   },
   descs:{
     'deco-struct':'Screen readers announce the emoji name before the line content, turning your bullet into noise.',
@@ -902,9 +1026,10 @@ const COPY = {
     'deco-sym':'Symbol names may be read aloud mid-sentence. Some screen readers may get it right, some may not.',
     'long-sent':'Long sentences are harder to process for people with cognitive disabilities.',
     'hashtag-case':'All-lowercase hashtags are read as one unbroken word.',
-    'jargon':'These words may be hard for readers with cognitive disabilities, or anyone reading in a second language.',
+    'jargon':'These expressions have non-obvious meanings — someone reading in a second language may not understand them.',
     'inclusive':'Some terms may unintentionally exclude or offend.',
-    'unicode-bold':'These are not real bold or italic. They are different Unicode characters. Some screen readers may handle them correctly; others skip them or spell out each symbol name individually.'
+    'unicode-bold':'These are not real bold or italic. They are different Unicode characters. Some screen readers may handle them correctly; others skip them or spell out each symbol name individually.',
+    'grammar':'Possible spelling mistakes or grammar errors that could make your post harder to read.'
   },
   fixes:{
     'deco-struct':'Replace the leading emoji with a plain dash (–). Your post stays structured and reads cleanly out loud.',
@@ -915,9 +1040,10 @@ const COPY = {
     'deco-sym':"Replace decorative symbols with a plain word, like 'then' instead of an arrow, or remove them.",
     'long-sent':'Find the longest sentence and split it into two. Just find a natural pause point, end the sentence there, and start a new one.',
     'hashtag-case':'#contentmarketing becomes #ContentMarketing. It takes a second and makes your hashtags clearer for everyone.',
-    'jargon':"These are highlighted, but only you know the right simpler word for your context. Aim for words a 13-year-old would know — shorter words almost always land harder anyway.",
+    'jargon':"Replace with plain language. 'Follow up' instead of 'circle back'. 'An easy win' instead of 'low-hanging fruit'. If the meaning isn't obvious from the words, your global audience will miss it.",
     'inclusive':"Small swaps keep the meaning exactly the same. Try 'incredible' instead of 'crazy,' 'everyone' instead of 'guys.' Your message reaches more people warmly.",
-    'unicode-bold':'Retype the styled text using plain characters.'
+    'unicode-bold':'Retype the styled text using plain characters.',
+    'grammar':'Review each highlighted word or phrase — expand the card to see specific suggestions for each one.'
   },
   srPreviews:{
     'deco-struct':'e.g. "black star Fast delivery", where the symbol name is read before the actual content.',
@@ -933,6 +1059,7 @@ const COPY = {
 
 // ─── STATE ──────────────────────────────────────────────────────────────────
 let checkResults  = null;
+let lastCheckedText = '';
 let fixedHTML     = '';
 let fixedResult   = '';
 let fixedText     = '';
@@ -1268,17 +1395,15 @@ function analyse(text) {
       }
     }
 
-    // Syllable-based: flag words with 3+ syllables not in the Grade 8 whitelist
-    const wordRx = /\b[a-zA-Z]{4,}\b/g;
+    // Single-word LinkedIn buzzwords — only flag words explicitly in JARGON_WORDS
+    const wordRx = /\b[a-zA-Z]{3,}\b/g;
     let wm;
     while ((wm = wordRx.exec(text)) !== null) {
       const word = wm[0], lower = word.toLowerCase();
       const start = wm.index, end = wm.index + word.length;
-      // Skip words that are part of a hashtag (#WebDesign → skip "WebDesign")
       if (start > 0 && text[start - 1] === '#') continue;
-      if (!GRADE8_WORDS.has(lower) &&
-          !usedRanges.some(([s,e]) => start < e && end > s) &&
-          countSyllables(lower) >= 3) {
+      if (JARGON_WORDS.has(lower) &&
+          !usedRanges.some(([s,e]) => start < e && end > s)) {
         segs.push({ start, end, orig: word, repl: null });
         usedRanges.push([start, end]);
       }
@@ -1379,7 +1504,18 @@ function buildFixed(text, issues) {
     const origText = seg.orig || text.slice(seg.start, seg.end);
 
     if (seg.fixType === 'auto') {
-      if (origText === '') {
+      // Grammar fixes: apply silently, highlight in purple for review
+      if (seg.issueId === 'grammar') {
+        if (seg.repl !== null) {
+          html   += `<span class="diff-grammar">${escHtml(seg.repl)}</span>`;
+          result += `<span class="diff-grammar">${escHtml(seg.repl)}</span>`;
+          plain  += seg.repl;
+        } else {
+          html   += `<span class="diff-review">${escHtml(origText)}</span>`;
+          result += `<span class="diff-review">${escHtml(origText)}</span>`;
+          plain  += origText;
+        }
+      } else if (origText === '') {
         html   += `<span class="diff-add">${escHtml(seg.repl)}</span>`;
         result += `<span class="diff-add">${escHtml(seg.repl)}</span>`;
         plain  += seg.repl;
@@ -1437,9 +1573,10 @@ async function runCheck() {
 
   await new Promise(r => setTimeout(r, 30)); // allow UI to update
 
-  checkResults  = analyse(text);
-  expandedCards = new Set();
-  hasRunCheck   = true;
+  checkResults    = analyse(text);
+  lastCheckedText = text;
+  expandedCards   = new Set();
+  hasRunCheck     = true;
   activeHighlight = null;
 
   // Reset diff view if re-running
@@ -1466,12 +1603,15 @@ async function runCheck() {
   listenBtn.classList.remove('hidden');
 
   switchPanel('issues');
+
+  // Grammar & spelling — async, non-blocking, appends to results when done
+  startGrammarCheck(text);
 }
 
 // ─── BUILD RESULTS UI ───────────────────────────────────────────────────────
 function buildResults(issues) {
-  // Clear old
-  issuesBody.querySelectorAll('.issue-group-wrapper, .score-section, .score-divider').forEach(el=>el.remove());
+  // Clear old (including any grammar card from previous run)
+  issuesBody.querySelectorAll('.issue-group-wrapper, .score-section, .score-divider, #grammarSection, #grammarLoadingCard').forEach(el=>el.remove());
 
   issuesEmpty.style.display = 'none';
 
@@ -1540,8 +1680,11 @@ function buildResults(issues) {
 function renderIssueCard(issue, idx) {
   const sev = issue.severity;
   const isVoice = issue.fixType === 'voice';
+  const isGrammar = issue.id === 'grammar';
   const count = issue.segs ? issue.segs.length : 1;
   const countLabel = count === 1 ? '1 found' : `${count} found`;
+  const pillClass = isVoice ? 'voice' : 'auto';
+  const pillText  = isVoice ? '⚠ Fix manually' : '✓ Auto-fixable';
 
   return `<div class="issue-card" id="card-${issue.id}" data-id="${issue.id}" onclick="highlightIssue('${issue.id}')" role="button" tabindex="0" aria-label="${escHtml(COPY.titles[issue.id])}">
     <div class="card-header">
@@ -1551,7 +1694,7 @@ function renderIssueCard(issue, idx) {
         <div class="card-desc">${escHtml(COPY.descs[issue.id])}</div>
         <div class="card-meta">
           <span class="count-badge">${countLabel}</span>
-          <span class="fix-pill ${isVoice ? 'voice' : 'auto'}">${isVoice ? '⚠ Fix manually' : '✓ Auto-fixable'}</span>
+          <span class="fix-pill ${pillClass}">${pillText}</span>
         </div>
       </div>
       <button class="card-expand-btn" onclick="toggleCardExpand('${issue.id}', event)" aria-label="Show fix details" title="Show how to fix">
@@ -1560,9 +1703,129 @@ function renderIssueCard(issue, idx) {
     </div>
     <div class="card-body">
       <div class="fix-label"><strong>How to fix it:</strong> ${escHtml(COPY.fixes[issue.id])}</div>
+      ${issue.id === 'jargon' ? renderJargonSuggestions(issue.segs) : ''}
+      ${issue.id === 'grammar' ? renderGrammarDetails(issue.segs) : ''}
       ${['deco-sym','unicode-bold'].includes(issue.id) ? `<div class="fix-label" style="margin-top:8px;padding:7px 9px;background:#f0f7ff;border:1px solid #c4dcf5;border-radius:6px;font-size:12px;color:#004182;">👂 <strong>Tip:</strong> Use the <em>Listen with screen reader</em> feature to hear exactly how this reads. It may or may not be a problem for your audience.</div>` : ''}
     </div>
   </div>`;
+}
+
+function renderJargonSuggestions(segs) {
+  if (!segs || !segs.length) return '';
+  const seen = new Set();
+  const pairs = [];
+  for (const seg of segs) {
+    const lower = seg.orig.toLowerCase();
+    if (seen.has(lower)) continue;
+    seen.add(lower);
+    const simpler = SIMPLE_WORDS[lower];
+    if (simpler) pairs.push({ orig: seg.orig, simpler });
+  }
+  if (!pairs.length) return '';
+  return `<div style="margin-top:10px;padding:9px 11px;background:#f8f3ec;border:1.5px solid var(--border-sub);border-radius:8px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);margin-bottom:7px">Quick swaps</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">${pairs.map(p =>
+      `<span style="display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid var(--border-sub);border-radius:6px;padding:3px 8px;font-size:12px">
+        <span style="color:var(--text2);font-weight:600">${escHtml(p.orig)}</span>
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 5h6M6 3l2 2-2 2" stroke="#888" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="color:var(--success);font-weight:600">${escHtml(p.simpler)}</span>
+      </span>`
+    ).join('')}</div>
+  </div>`;
+}
+
+function renderGrammarDetails(segs) {
+  if (!segs || !segs.length) return '';
+  return `<div style="margin-top:10px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);margin-bottom:7px">What was found</div>
+    <div style="display:flex;flex-direction:column;gap:5px">
+      ${segs.map(s => `
+        <div style="padding:7px 10px;background:#faf5ff;border:1.5px solid #ede9fe;border-radius:7px;font-size:12px;line-height:1.55">
+          <span style="font-weight:700;color:var(--text1)">"${escHtml(s.orig)}"</span>${s.repl ? ` <span style="color:var(--text4)">→</span> <span style="font-weight:700;color:#7c3aed">${escHtml(s.repl)}</span>` : ''}
+          <span style="display:block;color:var(--text4);margin-top:1px">${escHtml(s.hint)}</span>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text5)">Checked via <a href="https://languagetool.org" target="_blank" rel="noopener" style="color:var(--text4);text-decoration:underline">LanguageTool</a> — your post text is sent to their server for this check.</div>
+  </div>`;
+}
+
+// ─── GRAMMAR & SPELLING (LanguageTool API) ───────────────────────────────────
+const LT_DISABLED_RULES = [
+  'WHITESPACE_RULE','EN_QUOTES','COMMA_PARENTHESIS_WHITESPACE',
+  'UPPERCASE_SENTENCE_START','SENTENCE_WHITESPACE','DASH_RULE',
+  'EN_UNPAIRED_BRACKETS','WORD_CONTAINS_UNDERSCORE',
+  'UNLIKELY_OPENING_PUNCTUATION','TOO_LONG_SENTENCE',
+  'COMMA_COMPOUND_SENTENCE','AGREEMENT_SENT_START'
+].join(',');
+
+let grammarCheckId = 0;
+
+async function startGrammarCheck(text) {
+  const myId = ++grammarCheckId;
+
+  // Show loading card
+  const loadEl = document.createElement('div');
+  loadEl.id = 'grammarLoadingCard';
+  loadEl.className = 'issue-card';
+  loadEl.style.cssText = 'opacity:.55;pointer-events:none;display:flex;align-items:center;gap:10px;padding:12px 14px';
+  loadEl.innerHTML = `<div class="run-spinner" style="display:block;border-color:rgba(124,58,237,.25);border-top-color:#7c3aed"></div><div style="font-size:13px;font-weight:600;color:var(--text3)">Checking spelling & grammar…</div>`;
+  issuesBody.appendChild(loadEl);
+
+  let matches = null;
+  try {
+    const res = await fetch('https://api.languagetool.org/v2/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ text, language: 'en-US', disabledRules: LT_DISABLED_RULES, disabledCategories: 'STYLE,REDUNDANCY' })
+    });
+    if (res.ok) { const d = await res.json(); matches = d.matches || []; }
+  } catch {}
+
+  // If a newer check ran while we were waiting, bail
+  if (grammarCheckId !== myId) return;
+  document.getElementById('grammarLoadingCard')?.remove();
+  if (!matches || !matches.length) return;
+
+  const segs = matches.map(m => ({
+    start: m.offset,
+    end:   m.offset + m.length,
+    orig:  text.slice(m.offset, m.offset + m.length),
+    repl:  m.replacements?.[0]?.value || null,
+    hint:  m.message
+  }));
+
+  const issue = { id:'grammar', cat:'cog', severity:'warn', fixType:'auto', segs, excerpts: segs.slice(0,3).map(s=>s.orig) };
+  checkResults.push(issue);
+
+  // Rebuild the fixed text to include grammar fixes (only if not already applied)
+  if (!editorCard.classList.contains('applied')) {
+    buildFixed(lastCheckedText, checkResults);
+  }
+
+  // Insert card
+  issuesBody.insertAdjacentHTML('beforeend', `<div id="grammarSection">${renderIssueCard(issue, 99)}</div>`);
+
+  // Update badge
+  const n = checkResults.length;
+  navIssuesSub.textContent = `${n} issue${n!==1?'s':''} found`;
+  issueBadge.textContent = n;
+  issueBadge.classList.add('visible');
+
+  // Update apply button count to include grammar fixes
+  const applyBtn = document.getElementById('applyBtn');
+  const applyBtnSub = document.getElementById('applyBtnSub');
+  if (applyBtn && !editorCard.classList.contains('applied')) {
+    const autoCount  = checkResults.filter(i => i.fixType === 'auto').reduce((sum,i) => sum + i.segs.length, 0);
+    const voiceCount = checkResults.filter(i => i.fixType === 'voice').length;
+    if (autoCount > 0) {
+      applyBtn.textContent = `Apply ${autoCount} auto-fix${autoCount !== 1 ? 'es' : ''}`;
+      if (applyBtnSub) applyBtnSub.textContent = voiceCount > 0 ? `+ ${voiceCount} item${voiceCount !== 1 ? 's' : ''} highlighted for you to rewrite` : '';
+    }
+  }
+
+  // Update legend
+  const cls = getMarkClass('grammar');
+  hlLegend.insertAdjacentHTML('beforeend', `<div class="hl-chip"><span class="hl-swatch ${cls}" aria-hidden="true"></span>${escHtml(COPY.titles['grammar'])}</div>`);
 }
 
 function getMarkClass(issueId) {
@@ -1578,6 +1841,7 @@ function getMarkClass(issueId) {
     'long-sent':    'hl-long-sent',
     'jargon':       'hl-jarg',
     'inclusive':    'hl-incl',
+    'grammar':      'hl-grammar',
   };
   return map[issueId] || 'hl-no-punct';
 }
@@ -1840,13 +2104,18 @@ function applyFixes() {
   const fixedPostEdit = document.getElementById('fixedPostEdit');
   fixedPostEdit.innerHTML = fixedResult;
 
-  // Show voice banner if there are voice-type issues
+  // Show voice banner — covers both voice items and grammar review
   const voiceBanner = document.getElementById('voiceBanner');
-  const voiceCount2 = checkResults.filter(i => i.fixType === 'voice').length;
+  const voiceCount2  = checkResults.filter(i => i.fixType === 'voice').length;
+  const grammarIssue = checkResults.find(i => i.id === 'grammar');
+  const grammarCount = grammarIssue ? grammarIssue.segs.filter(s => s.repl !== null).length : 0;
   if (voiceBanner) {
-    if (voiceCount2 > 0) {
+    if (voiceCount2 > 0 || grammarCount > 0) {
       voiceBanner.style.display = 'flex';
-      document.getElementById('voiceBannerText').textContent = `${voiceCount2} highlighted item${voiceCount2 !== 1 ? 's' : ''} still need your voice — only you know the right simpler word for your context.`;
+      const parts = [];
+      if (grammarCount > 0) parts.push(`${grammarCount} spelling/grammar fix${grammarCount !== 1 ? 'es are' : ' is'} highlighted in purple — they may not always be right, please check each one.`);
+      if (voiceCount2 > 0) parts.push(`${voiceCount2} item${voiceCount2 !== 1 ? 's' : ''} highlighted in amber still need your rewrite.`);
+      document.getElementById('voiceBannerText').textContent = parts.join(' ');
     } else {
       voiceBanner.style.display = 'none';
     }
