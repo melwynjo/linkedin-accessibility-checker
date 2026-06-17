@@ -33,16 +33,22 @@ export default async function handler(req) {
 
   const prompt = `You are an accessibility expert helping someone write a LinkedIn post.
 
-Analyse this image and provide exactly two things:
+Analyse this image and provide exactly four things:
 
 1. ALT TEXT: A concise alt text (max 125 characters) that describes the image for screen reader users. Focus on the most important content and context. Do not start with "Image of" or "Photo of".
 
 2. IMAGE DESCRIPTION: A 1-3 sentence description suitable for pasting into the LinkedIn post itself, so people who can't see the image understand what it shows. Write it in plain, natural language as if describing it to a colleague.
 
-Respond in this exact JSON format:
+3. TOO MUCH TEXT: Assess whether there is too much text in the image. Dense text in images is a common accessibility issue — it is hard to read on mobile and inaccessible to screen readers. Set found to true if more than ~20% of the image is covered by text, or if the text is very small or dense.
+
+4. CONTRAST ISSUE: Assess whether text in the image has contrast issues — low contrast between text and background makes it hard to read for people with low vision. Set found to true if there are obvious contrast problems.
+
+Respond in this exact JSON format with no other fields:
 {
   "altText": "...",
-  "imageDescription": "..."
+  "imageDescription": "...",
+  "tooMuchText": { "found": true, "detail": "..." },
+  "contrastIssue": { "found": true, "detail": "..." }
 }`;
 
   const geminiRes = await fetch(
