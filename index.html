@@ -1371,15 +1371,14 @@ async function runCheck() {
   // Hide "what we check" accordion
   document.getElementById('whatWeCheck').style.display = 'none';
 
+  // Wait for grammar before revealing results so everything appears at once
+  await startGrammarCheck(text);
 
   runBtn.classList.remove('loading');
   runBtn.disabled = false;
   listenBtn.classList.remove('hidden');
 
   switchPanel('issues');
-
-  // Grammar & spelling — async, non-blocking, appends to results when done
-  startGrammarCheck(text);
 }
 
 function buildResults(issues) {
@@ -1512,14 +1511,6 @@ let grammarCheckId = 0;
 async function startGrammarCheck(text) {
   const myId = ++grammarCheckId;
 
-  // Show loading card
-  const loadEl = document.createElement('div');
-  loadEl.id = 'grammarLoadingCard';
-  loadEl.className = 'issue-card';
-  loadEl.style.cssText = 'opacity:.55;pointer-events:none;display:flex;align-items:center;gap:10px;padding:12px 14px';
-  loadEl.innerHTML = `<div class="run-spinner" style="display:block;border-color:rgba(124,58,237,.25);border-top-color:#7c3aed"></div><div style="font-size:13px;font-weight:600;color:var(--text3)">Checking spelling & grammar…</div>`;
-  issuesBody.appendChild(loadEl);
-
   let matches = null;
   try {
     const res = await fetch('https://api.languagetool.org/v2/check', {
@@ -1532,7 +1523,6 @@ async function startGrammarCheck(text) {
 
   // If a newer check ran while we were waiting, bail
   if (grammarCheckId !== myId) return;
-  document.getElementById('grammarLoadingCard')?.remove();
   if (!matches || !matches.length) return;
 
   const segs = matches.map(m => ({
