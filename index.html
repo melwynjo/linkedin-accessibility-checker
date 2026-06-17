@@ -72,9 +72,11 @@ body{font-family:'Atkinson Hyperlegible','Inclusive Sans',Verdana,sans-serif;fon
 
 /* ── Editor column ── */
 .editor-col{flex:1;overflow:hidden;background:var(--bg-page);display:flex;flex-direction:column}
-.editor-scroll{flex:1;overflow:hidden;padding:22px;display:flex;flex-direction:column}
+.editor-scroll{flex:1;overflow:hidden;padding:22px;display:flex;flex-direction:row;gap:14px}
 
-.editor-card{background:#fff;border:2px solid var(--border);border-radius:12px;padding:18px;flex:1;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-card)}
+.editor-card{background:#fff;border:2px solid var(--border);border-radius:12px;padding:18px;flex:7;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-card)}
+.img-card{background:#fff;border:2px solid var(--border);border-radius:12px;padding:18px;flex:3;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-card)}
+.editor-card.applied~.img-card{display:none}
 .editor-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
 .field-label{font-size:14px;font-weight:700;color:var(--text1)}
 .field-hint{font-size:13px;color:var(--text3);margin-bottom:12px}
@@ -87,7 +89,6 @@ body{font-family:'Atkinson Hyperlegible','Inclusive Sans',Verdana,sans-serif;fon
 .editor-card.applied .field-hint,
 .editor-card.applied .editor-footer,
 .editor-card.applied .clear-btn{display:none}
-.editor-card.applied .img-attach{display:none}
 .diff-applied-view{display:none;flex:1;flex-direction:column;min-height:0;overflow-y:auto}
 .editor-card.applied .diff-applied-view{display:flex}
 .diff-view-footer{display:none;align-items:center;gap:8px;flex-shrink:0;padding:14px 18px;border-top:2px solid var(--border-sub);margin:0 -18px -18px;background:#fff}
@@ -198,16 +199,17 @@ mark.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* Image check */
-.img-attach{margin-top:10px;flex-shrink:0}
-.img-attach-empty{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1.5px dashed var(--border-soft);border-radius:8px;cursor:pointer;color:var(--text4);font-size:12.5px;font-weight:600;transition:border-color .15s,background .15s;background:var(--bg-sec)}
+.img-attach{flex:1;display:flex;flex-direction:column;min-height:0}
+.img-attach-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1.5px dashed var(--border-soft);border-radius:8px;cursor:pointer;color:var(--text4);font-size:12.5px;font-weight:600;transition:border-color .15s,background .15s;background:var(--bg-sec);text-align:center;padding:16px;min-height:80px}
 .img-attach-empty:hover,.img-attach-empty.drag-over{border-color:var(--blue);background:var(--blue-bg);color:var(--blue)}
+.img-attach-empty svg{opacity:.4}
 .img-attach-opt{font-weight:400;color:var(--text5)}
-.img-attach-hint{font-size:11px;font-weight:400;color:var(--text5);margin-left:auto}
-.img-attach-filled{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1.5px solid var(--border-sub);border-radius:8px;background:#fff}
-.img-thumb{width:40px;height:40px;object-fit:cover;border-radius:5px;border:1.5px solid var(--border-sub);flex-shrink:0}
-.img-attach-meta{flex:1;min-width:0}
-.img-attach-name{display:block;font-size:12px;font-weight:700;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
-.img-attach-remove{background:none;border:none;cursor:pointer;color:var(--text5);font-size:11.5px;font-weight:700;text-decoration:underline;padding:0}
+.img-attach-hint{font-size:11px;font-weight:400;color:var(--text5)}
+.img-attach-filled{flex:1;display:flex;flex-direction:column;align-items:center;gap:10px;padding:4px 0}
+.img-thumb{width:100%;flex:1;min-height:0;object-fit:contain;border-radius:8px;border:1.5px solid var(--border-sub)}
+.img-attach-meta{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0}
+.img-attach-name{font-size:12px;font-weight:700;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.img-attach-remove{background:none;border:none;cursor:pointer;color:var(--text5);font-size:11.5px;font-weight:700;text-decoration:underline;padding:0;flex-shrink:0}
 .img-attach-remove:hover{color:var(--error)}
 .img-copy-btn{font-size:11.5px;font-weight:700;color:var(--blue);background:#fff;border:1.5px solid var(--blue-border);border-radius:5px;padding:3px 9px;cursor:pointer;transition:background .1s;margin-top:7px;display:inline-block}
 .img-copy-btn:hover{background:var(--blue-bg)}
@@ -446,8 +448,9 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
   .header-actions{display:none}
   .main-content{flex-direction:column;overflow:visible;flex:none}
   .editor-col{overflow:visible;flex:none}
-  .editor-scroll{overflow-y:visible;flex:none;padding:14px}
+  .editor-scroll{overflow-y:visible;flex:none;padding:14px;flex-direction:column}
   .editor-card{flex:none;min-height:260px}
+  .img-card{flex:none;min-height:180px}
   .diff-applied-view{overflow-y:visible;flex:none}
   .right-panel{width:100%;border-left:none;border-top:2px solid var(--border);flex:none;overflow:visible}
   .panel-state{height:auto;flex:none}
@@ -513,22 +516,6 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
           </button>
         </div>
       </div>
-      <!-- Image upload (left panel) -->
-      <div class="img-attach" id="imgAttach">
-        <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="imgSelected(event)">
-        <div class="img-attach-empty" id="imgAttachEmpty" role="button" tabindex="0" aria-label="Add post image" ondragover="imgDragOver(event)" ondragleave="imgDragLeave(event)" ondrop="imgDrop(event)" onclick="document.getElementById('imgFileInput').click()" onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('imgFileInput').click()">
-          <svg width="14" height="14" viewBox="0 0 22 22" fill="none" aria-hidden="true"><rect x="1" y="4" width="20" height="15" rx="2.5" stroke="currentColor" stroke-width="1.8"/><circle cx="7.5" cy="9.5" r="1.8" stroke="currentColor" stroke-width="1.5"/><path d="M1 16l5-4 4 3.5 3.5-4 7 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span>Add image <span class="img-attach-opt">(optional)</span></span>
-          <span class="img-attach-hint">Checks alt text, contrast &amp; text density</span>
-        </div>
-        <div class="img-attach-filled" id="imgAttachFilled" style="display:none">
-          <img class="img-thumb" id="imgPreview" src="" alt="">
-          <div class="img-attach-meta">
-            <span class="img-attach-name" id="imgPreviewName"></span>
-            <button class="img-attach-remove" onclick="imgRemove(event)" aria-label="Remove image">Remove</button>
-          </div>
-        </div>
-      </div>
       <div class="diff-applied-view" id="diffAppliedView">
         <div class="voice-banner" id="voiceBanner" style="display:none">
           <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2L14 13H2L8 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6v3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r=".7" fill="currentColor"/></svg>
@@ -539,6 +526,31 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
       <div class="diff-view-footer" id="diffViewFooter"></div>
     </div>
   </div>
+
+  <!-- Image card (30%) -->
+  <div class="img-card" id="imgCard">
+    <div class="editor-card-header">
+      <label class="field-label" for="imgFileInput">Post image</label>
+      <span style="font-size:12px;color:var(--text5);font-weight:400">optional</span>
+    </div>
+    <p class="field-hint">Checks contrast &amp; text density</p>
+    <div class="img-attach" id="imgAttach">
+      <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="imgSelected(event)">
+      <div class="img-attach-empty" id="imgAttachEmpty" role="button" tabindex="0" aria-label="Add post image" ondragover="imgDragOver(event)" ondragleave="imgDragLeave(event)" ondrop="imgDrop(event)" onclick="document.getElementById('imgFileInput').click()" onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('imgFileInput').click()">
+        <svg width="24" height="24" viewBox="0 0 22 22" fill="none" aria-hidden="true"><rect x="1" y="4" width="20" height="15" rx="2.5" stroke="currentColor" stroke-width="1.8"/><circle cx="7.5" cy="9.5" r="1.8" stroke="currentColor" stroke-width="1.5"/><path d="M1 16l5-4 4 3.5 3.5-4 7 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Drop image here<br><span class="img-attach-opt">or click to upload</span></span>
+        <span class="img-attach-hint">PNG, JPG, GIF…</span>
+      </div>
+      <div class="img-attach-filled" id="imgAttachFilled" style="display:none">
+        <img class="img-thumb" id="imgPreview" src="" alt="">
+        <div class="img-attach-meta">
+          <span class="img-attach-name" id="imgPreviewName"></span>
+          <button class="img-attach-remove" onclick="imgRemove(event)" aria-label="Remove image">Remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <!-- ── RIGHT PANEL ── -->
