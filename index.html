@@ -93,7 +93,7 @@ body{font-family:'Atkinson Hyperlegible','Inclusive Sans',Verdana,sans-serif;fon
 .editor-card.applied .diff-applied-view{display:flex}
 .diff-view-footer{display:none;align-items:center;gap:8px;flex-shrink:0;padding:14px 18px;border-top:2px solid var(--border-sub);margin:0 -18px -18px;background:#fff}
 .editor-card.applied .diff-view-footer{display:flex}
-.diff-view-footer .copy-btn,.diff-view-footer .post-linkedin-btn{flex:1;text-align:center}
+.diff-view-footer .copy-btn,.diff-view-footer .post-linkedin-btn,.diff-view-footer .listen-inline-btn{flex:1;justify-content:center;text-align:center}
 .diff-section-label,.fixed-edit-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);margin-bottom:8px;flex-shrink:0}
 .fixed-edit-label{margin-top:18px}
 .fixed-post-edit{font-family:'Atkinson Hyperlegible','Inclusive Sans',Verdana,sans-serif;font-size:15px;line-height:1.8;white-space:pre-wrap;word-break:break-word;color:var(--text1);border:2px solid var(--border-sub);border-radius:8px;padding:12px 14px;min-height:80px;outline:none;flex-shrink:0}
@@ -1751,6 +1751,51 @@ function toggleCardExpand(issueId, event) {
 // Legacy alias (in case called elsewhere)
 function toggleIssue(issueId) { highlightIssue(issueId); }
 
+let fixedListenSavedHTML = null;
+
+function toggleFixedListen() {
+  if (!window.speechSynthesis) { alert('Your browser does not support text-to-speech.'); return; }
+  const btn = document.getElementById('listenFixedBtn');
+  if (isSpeaking) {
+    window.speechSynthesis.cancel();
+    if (fixedListenSavedHTML !== null) { fixedPostEdit.innerHTML = fixedListenSavedHTML; fixedListenSavedHTML = null; }
+    isSpeaking = false;
+    if (btn) { btn.classList.remove('playing'); btn.setAttribute('aria-label','Listen with screen reader'); }
+    return;
+  }
+  const text = fixedPostEdit.textContent.trim();
+  if (!text) return;
+  fixedListenSavedHTML = fixedPostEdit.innerHTML;
+  isSpeaking = true;
+  if (btn) { btn.classList.add('playing'); btn.setAttribute('aria-label','Stop listening'); }
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.rate = 1.0;
+  const voices = window.speechSynthesis.getVoices();
+  const voice = voices.find(v => /microsoft.*david|microsoft.*zira|espeak/i.test(v.name))
+    || voices.find(v => /microsoft/i.test(v.name) && v.lang.startsWith('en'))
+    || voices.find(v => v.lang.startsWith('en')) || null;
+  if (voice) utt.voice = voice;
+  utt.onboundary = (e) => {
+    if (e.name !== 'word') return;
+    const start = e.charIndex;
+    const len = e.charLength || (text.slice(start).match(/^\S+/) || [''])[0].length;
+    const end = start + len;
+    fixedPostEdit.innerHTML = escHtml(text.slice(0, start))
+      + `<mark class="hl-speaking">${escHtml(text.slice(start, end))}</mark>`
+      + escHtml(text.slice(end));
+    fixedPostEdit.querySelector('mark')?.scrollIntoView({ block: 'nearest' });
+  };
+  const done = () => {
+    if (fixedListenSavedHTML !== null) { fixedPostEdit.innerHTML = fixedListenSavedHTML; fixedListenSavedHTML = null; }
+    isSpeaking = false;
+    const b = document.getElementById('listenFixedBtn');
+    if (b) { b.classList.remove('playing'); b.setAttribute('aria-label','Listen with screen reader'); }
+  };
+  utt.onend = done;
+  utt.onerror = done;
+  window.speechSynthesis.speak(utt);
+}
+
 function clearHighlight() {
   activeHighlight = null;
   renderPost();
@@ -1885,7 +1930,7 @@ function applyFixes() {
 
   // Inject 3 CTAs into left panel footer
   const footer = document.getElementById('diffViewFooter');
-  footer.innerHTML = `<button class="copy-btn" onclick="editFixed()">Edit post</button><button class="copy-btn" id="copyBtn" onclick="copyFixed()">Copy post</button><button class="post-linkedin-btn" onclick="postToLinkedIn()">Copy &amp; open LinkedIn</button>`;
+  footer.innerHTML = `<button class="copy-btn" onclick="editFixed()">Edit post</button><button class="post-linkedin-btn" onclick="postToLinkedIn()">Copy &amp; open LinkedIn</button><button class="listen-inline-btn" id="listenFixedBtn" onclick="toggleFixedListen()" aria-label="Listen with screen reader"><span class="listen-label">Listen with screen reader</span><span class="listen-bars" aria-hidden="true"><b></b><b></b><b></b></span></button>`;
   issueBadge.classList.remove('visible');
 
   // Build fix summary for right panel
@@ -2010,7 +2055,15 @@ function clearPost() {
   fixedResult = '';
   fixedText   = '';
   issueBadge.classList.remove('visible');
-  if (isSpeaking) { window.speechSynthesis.cancel(); speakingRange = null; renderPost(); }
+  if (isSpeaking) {
+    window.speechSynthesis.cancel();
+    speakingRange = null;
+    if (fixedListenSavedHTML !== null) { fixedPostEdit.innerHTML = fixedListenSavedHTML; fixedListenSavedHTML = null; }
+    const fb = document.getElementById('listenFixedBtn');
+    if (fb) { fb.classList.remove('playing'); fb.setAttribute('aria-label','Listen with screen reader'); }
+    isSpeaking = false;
+    renderPost();
+  }
   listenBtn.classList.add('hidden');
   setListenState(false);
   document.getElementById('nav-issues').classList.add('locked');
