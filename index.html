@@ -1391,7 +1391,7 @@ async function runCheck() {
 
 function buildResults(issues) {
   // Clear old (including any grammar card from previous run)
-  issuesBody.querySelectorAll('.issue-group-wrapper, .score-section, .score-divider, #grammarSection, #grammarLoadingCard, #imgAltCard').forEach(el=>el.remove());
+  issuesBody.querySelectorAll('.issue-group-wrapper, .score-section, .score-divider, #grammarSection, #grammarLoadingCard, #imgAltCard, #imgIssuesSection').forEach(el=>el.remove());
 
   issuesEmpty.style.display = 'none';
 
@@ -1456,27 +1456,6 @@ function buildResults(issues) {
     return `<div class="hl-chip"><span class="hl-swatch ${cls}" aria-hidden="true"></span>${escHtml(COPY.titles[issue.id])}</div>`;
   }).join('');
 
-  // Image alt text + description card
-  if (imgAnalysisResult?.altText) {
-    const altCard = document.createElement('div');
-    altCard.id = 'imgAltCard';
-    altCard.className = 'issue-card';
-    altCard.style.cssText = 'padding:12px 14px;border-color:var(--blue-border);background:var(--blue-bg)';
-    altCard.innerHTML = `
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--blue);margin-bottom:6px">Alt text <span style="font-weight:400;font-style:italic;text-transform:none;letter-spacing:0">— paste into the alt text field when uploading on LinkedIn</span></div>
-      <div style="font-size:13px;color:var(--text1);line-height:1.6;margin-bottom:6px" id="imgAltTextResult">${escHtml(imgAnalysisResult.altText)}</div>
-      <button class="img-copy-btn" onclick="imgCopy(document.getElementById('imgAltTextResult').textContent, this)">Copy alt text</button>
-      ${imgAnalysisResult.imageDescription ? `
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--blue);margin-top:12px;margin-bottom:6px">Image description <span style="font-weight:400;font-style:italic;text-transform:none;letter-spacing:0">— paste above your hashtags in the post</span></div>
-        <div style="font-size:13px;color:var(--text1);line-height:1.6;margin-bottom:6px" id="imgDescResult">${escHtml(imgAnalysisResult.imageDescription)}</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="img-copy-btn" onclick="imgCopy(document.getElementById('imgDescResult').textContent, this)">Copy description</button>
-          <button class="img-copy-btn" style="background:var(--blue);color:#fff;border-color:var(--blue)" onclick="insertImgDesc(this)">Insert above hashtags</button>
-        </div>
-      ` : ''}
-    `;
-    issuesBody.appendChild(altCard);
-  }
 }
 
 function renderIssueCard(issue, idx) {
@@ -2333,18 +2312,51 @@ async function startImageCheck() {
     if (data.error) return;
     imgAnalysisResult = data;
 
-    // Add image accessibility issues to checkResults
+    // Add image accessibility issues to checkResults and render their cards
+    const imgIssues = [];
     if (data.tooMuchText?.found) {
-      checkResults.push({
-        id: 'img-text-heavy', cat: 'vis', severity: 'warn', fixType: 'manual',
-        excerpts: [], imgDetail: data.tooMuchText.detail
-      });
+      const issue = { id: 'img-text-heavy', cat: 'vis', severity: 'warn', fixType: 'manual', excerpts: [], imgDetail: data.tooMuchText.detail };
+      checkResults.push(issue);
+      imgIssues.push(issue);
     }
     if (data.contrastIssue?.found) {
-      checkResults.push({
-        id: 'img-contrast', cat: 'vis', severity: 'error', fixType: 'manual',
-        excerpts: [], imgDetail: data.contrastIssue.detail
-      });
+      const issue = { id: 'img-contrast', cat: 'vis', severity: 'error', fixType: 'manual', excerpts: [], imgDetail: data.contrastIssue.detail };
+      checkResults.push(issue);
+      imgIssues.push(issue);
+    }
+    if (imgIssues.length) {
+      const sec = document.createElement('div');
+      sec.id = 'imgIssuesSection';
+      imgIssues.forEach((issue, i) => sec.insertAdjacentHTML('beforeend', renderIssueCard(issue, 90 + i)));
+      issuesBody.appendChild(sec);
+    }
+
+    // Update issues badge
+    const n = checkResults.length;
+    navIssuesSub.textContent = `${n} issue${n !== 1 ? 's' : ''} found`;
+    issueBadge.textContent = n;
+    if (n > 0) issueBadge.classList.add('visible');
+
+    // Add alt text + description card to issues panel
+    if (data.altText) {
+      const altCard = document.createElement('div');
+      altCard.id = 'imgAltCard';
+      altCard.className = 'issue-card';
+      altCard.style.cssText = 'padding:12px 14px;border-color:var(--blue-border);background:var(--blue-bg)';
+      altCard.innerHTML = `
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--blue);margin-bottom:6px">Alt text <span style="font-weight:400;font-style:italic;text-transform:none;letter-spacing:0">— paste into the alt text field when uploading on LinkedIn</span></div>
+        <div style="font-size:13px;color:var(--text1);line-height:1.6;margin-bottom:6px" id="imgAltTextResult">${escHtml(data.altText)}</div>
+        <button class="img-copy-btn" onclick="imgCopy(document.getElementById('imgAltTextResult').textContent, this)">Copy alt text</button>
+        ${data.imageDescription ? `
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--blue);margin-top:12px;margin-bottom:6px">Image description <span style="font-weight:400;font-style:italic;text-transform:none;letter-spacing:0">— will be added to your post above hashtags</span></div>
+          <div style="font-size:13px;color:var(--text1);line-height:1.6;margin-bottom:6px" id="imgDescResult">${escHtml(data.imageDescription)}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="img-copy-btn" onclick="imgCopy(document.getElementById('imgDescResult').textContent, this)">Copy description</button>
+            <button class="img-copy-btn" style="background:var(--blue);color:#fff;border-color:var(--blue)" onclick="insertImgDesc(this)">Insert above hashtags</button>
+          </div>
+        ` : ''}
+      `;
+      issuesBody.appendChild(altCard);
     }
   } catch {}
 }
