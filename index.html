@@ -196,6 +196,35 @@ mark.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 .run-spinner{display:none;width:16px;height:16px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* Image check */
+.img-upload-section{margin-top:14px;border:2px dashed var(--border-sub);border-radius:10px;padding:14px 16px;cursor:pointer;transition:border-color .15s,background .15s;background:var(--bg-sec);text-align:center}
+.img-upload-section:hover{border-color:var(--blue);background:var(--blue-bg)}
+.img-upload-section.has-image{border-style:solid;border-color:var(--border-sub);background:#fff;text-align:left;cursor:default}
+.img-upload-section.drag-over{border-color:var(--blue);background:var(--blue-bg)}
+.img-upload-label{font-size:13px;font-weight:600;color:var(--text4);display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;user-select:none}
+.img-upload-label svg{opacity:.5}
+.img-preview-wrap{display:flex;align-items:flex-start;gap:10px}
+.img-preview{width:56px;height:56px;object-fit:cover;border-radius:6px;border:1.5px solid var(--border-sub);flex-shrink:0}
+.img-preview-meta{flex:1;min-width:0}
+.img-preview-name{font-size:12px;font-weight:700;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.img-remove-btn{background:none;border:none;cursor:pointer;color:var(--text5);padding:0;font-size:11.5px;font-weight:700;text-decoration:underline;display:block}
+.img-remove-btn:hover{color:var(--error)}
+.img-analyse-btn{margin-top:10px;width:100%;padding:9px;background:#fff;border:2px solid var(--border);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-btn-sm);transition:all .1s;display:flex;align-items:center;justify-content:center;gap:7px;color:var(--text1)}
+.img-analyse-btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--border)}
+.img-analyse-btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--border)}
+.img-analyse-btn.loading{opacity:.6;pointer-events:none}
+.img-spinner{display:none;width:13px;height:13px;border:2px solid rgba(0,0,0,.15);border-top-color:var(--text1);border-radius:50%;animation:spin .7s linear infinite}
+.img-analyse-btn.loading .img-spinner{display:block}
+.img-analyse-btn.loading .img-analyse-label{display:none}
+.img-results{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.img-result-block{background:var(--bg-sec);border:1.5px solid var(--border-sub);border-radius:8px;padding:10px 12px}
+.img-result-heading{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);margin-bottom:5px}
+.img-result-text{font-size:13px;color:var(--text1);line-height:1.6;margin-bottom:7px}
+.img-copy-btn{font-size:11.5px;font-weight:700;color:var(--blue);background:#fff;border:1.5px solid var(--blue-border);border-radius:5px;padding:3px 9px;cursor:pointer;transition:background .1s}
+.img-copy-btn:hover{background:var(--blue-bg)}
+.img-copy-btn.copied{color:var(--success);border-color:#bbf7d0;background:#f0fdf4}
+.img-error{margin-top:10px;font-size:12.5px;color:var(--error);background:#fff0f0;border:1.5px solid #fca5a5;border-radius:7px;padding:8px 10px}
+
 .what-we-check{margin-top:14px;border:2px solid var(--border-sub);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-btn-sm)}
 .what-we-check summary{padding:9px 12px;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-sec)}
 .what-we-check summary::-webkit-details-marker{display:none}
@@ -523,6 +552,42 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
         <span class="run-label">Check accessibility</span>
         <span class="run-spinner" aria-hidden="true"></span>
       </button>
+
+      <!-- Image accessibility check -->
+      <div class="img-upload-section" id="imgUploadSection" onclick="document.getElementById('imgFileInput').click()" ondragover="imgDragOver(event)" ondragleave="imgDragLeave(event)" ondrop="imgDrop(event)">
+        <label class="img-upload-label" id="imgUploadLabel" for="imgFileInput">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><rect x="1" y="4" width="20" height="15" rx="2.5" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="9.5" r="1.8" stroke="currentColor" stroke-width="1.4"/><path d="M1 16l5-4 4 3.5 3.5-4 7 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Add post image <span style="font-weight:400;color:var(--text5)">(optional)</span></span>
+          <span style="font-size:11.5px;font-weight:400;color:var(--text5)">We'll generate alt text and a description</span>
+        </label>
+        <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="imgSelected(event)">
+        <div id="imgPreviewArea" style="display:none">
+          <div class="img-preview-wrap">
+            <img class="img-preview" id="imgPreview" src="" alt="">
+            <div class="img-preview-meta">
+              <div class="img-preview-name" id="imgPreviewName"></div>
+              <button class="img-remove-btn" onclick="imgRemove(event)">Remove image</button>
+            </div>
+          </div>
+          <button class="img-analyse-btn" id="imgAnalyseBtn" onclick="imgAnalyse(event)">
+            <span class="img-analyse-label">Generate alt text &amp; description</span>
+            <span class="img-spinner" aria-hidden="true"></span>
+          </button>
+          <div id="imgResults" class="img-results" style="display:none">
+            <div class="img-result-block">
+              <div class="img-result-heading">Alt text</div>
+              <div class="img-result-text" id="imgAltText"></div>
+              <button class="img-copy-btn" onclick="imgCopy('imgAltText', this)">Copy</button>
+            </div>
+            <div class="img-result-block">
+              <div class="img-result-heading">Image description for post</div>
+              <div class="img-result-text" id="imgDescription"></div>
+              <button class="img-copy-btn" onclick="imgCopy('imgDescription', this)">Copy</button>
+            </div>
+          </div>
+          <div id="imgError" class="img-error" style="display:none"></div>
+        </div>
+      </div>
 
       <details class="what-we-check" id="whatWeCheck">
         <summary>What we check (12 rules)</summary>
@@ -2103,6 +2168,96 @@ function init() {
 }
 
 init();
+
+// ── Image accessibility ──
+let imgFile = null;
+
+function imgDragOver(e) {
+  e.preventDefault();
+  document.getElementById('imgUploadSection').classList.add('drag-over');
+}
+function imgDragLeave() {
+  document.getElementById('imgUploadSection').classList.remove('drag-over');
+}
+function imgDrop(e) {
+  e.preventDefault();
+  imgDragLeave();
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) imgLoad(file);
+}
+function imgSelected(e) {
+  const file = e.target.files[0];
+  if (file) imgLoad(file);
+}
+function imgLoad(file) {
+  imgFile = file;
+  const section = document.getElementById('imgUploadSection');
+  section.classList.add('has-image');
+  section.onclick = null;
+  document.getElementById('imgUploadLabel').style.display = 'none';
+  document.getElementById('imgPreviewName').textContent = file.name;
+  document.getElementById('imgResults').style.display = 'none';
+  document.getElementById('imgError').style.display = 'none';
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('imgPreview').src = e.target.result;
+    document.getElementById('imgPreview').alt = file.name;
+  };
+  reader.readAsDataURL(file);
+  document.getElementById('imgPreviewArea').style.display = 'block';
+}
+function imgRemove(e) {
+  e.stopPropagation();
+  imgFile = null;
+  const section = document.getElementById('imgUploadSection');
+  section.classList.remove('has-image');
+  section.onclick = () => document.getElementById('imgFileInput').click();
+  document.getElementById('imgUploadLabel').style.display = '';
+  document.getElementById('imgPreviewArea').style.display = 'none';
+  document.getElementById('imgResults').style.display = 'none';
+  document.getElementById('imgError').style.display = 'none';
+  document.getElementById('imgFileInput').value = '';
+}
+async function imgAnalyse(e) {
+  e.stopPropagation();
+  if (!imgFile) return;
+  const btn = document.getElementById('imgAnalyseBtn');
+  btn.classList.add('loading');
+  document.getElementById('imgResults').style.display = 'none';
+  document.getElementById('imgError').style.display = 'none';
+  try {
+    const base64 = await new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.onload = ev => res(ev.target.result.split(',')[1]);
+      reader.onerror = rej;
+      reader.readAsDataURL(imgFile);
+    });
+    const resp = await fetch('/api/describe-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageData: base64, mimeType: imgFile.type }),
+    });
+    const data = await resp.json();
+    if (!resp.ok || data.error) throw new Error(data.error || 'Unknown error');
+    document.getElementById('imgAltText').textContent = data.altText;
+    document.getElementById('imgDescription').textContent = data.imageDescription;
+    document.getElementById('imgResults').style.display = 'flex';
+  } catch (err) {
+    const el = document.getElementById('imgError');
+    el.textContent = 'Could not analyse image. Please try again.';
+    el.style.display = 'block';
+  } finally {
+    btn.classList.remove('loading');
+  }
+}
+function imgCopy(id, btn) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
 </script>
 </body>
 </html>
