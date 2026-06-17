@@ -1074,7 +1074,16 @@ function analyse(text) {
       const before = text.slice(lineStart, m.index).trim().replace(/[:.,!?]+$/, '');
       const words = before.split(/\s+/).filter(w => w.length > 0);
       const meaningful = words.filter(w => !VAGUE.has(w.toLowerCase()) && w.length > 2);
-      if (meaningful.length < 3) {
+      let hasContext = meaningful.length >= 3;
+      if (!hasContext) {
+        // URL may be on its own line — check the previous line for context
+        const prevLineEnd = lineStart > 0 ? lineStart - 1 : 0;
+        const prevLineStart = prevLineEnd > 0 ? text.lastIndexOf('\n', prevLineEnd - 1) + 1 : 0;
+        const prevLine = text.slice(prevLineStart, prevLineEnd).trim().replace(/[:.,!?]+$/, '');
+        const prevMeaningful = prevLine.split(/\s+/).filter(w => w.length > 0).filter(w => !VAGUE.has(w.toLowerCase()) && w.length > 2);
+        if (prevMeaningful.length >= 2) hasContext = true;
+      }
+      if (!hasContext) {
         linkCtxSegs.push({ start: m.index, end: m.index + m[0].length, orig: m[0], repl: null, excerpt: m[0].slice(0, 50) });
       }
     }
