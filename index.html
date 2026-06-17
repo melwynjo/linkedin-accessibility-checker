@@ -853,6 +853,7 @@ let fixedHTML     = '';
 let fixedResult   = '';
 let fixedText     = '';
 let hasRunCheck   = false;
+let hasAppliedFix = false;
 let activeHighlight = null;
 let expandedCards = new Set();
 let isSpeaking    = false;
@@ -1337,6 +1338,12 @@ async function runCheck() {
     postWrapper.classList.add('error');
     setTimeout(() => postWrapper.classList.remove('error'), 1600);
     return;
+  }
+
+  // If running after a previous fix cycle, clear the uploaded image for a clean slate
+  if (hasAppliedFix) {
+    imgRemove();
+    hasAppliedFix = false;
   }
 
   // Loading state
@@ -2036,6 +2043,7 @@ function applyFixes() {
   // Count actual changes made as issues fixed
   const totalFixed = autoIssues.reduce((n, i) => n + i.segs.length, 0) + reviewIssues.length;
   incrementStats(totalFixed);
+  hasAppliedFix = true;
 
   switchPanel('ready');
 }
@@ -2092,6 +2100,7 @@ function clearPost() {
   // Reset check state
   checkResults = null;
   hasRunCheck = false;
+  hasAppliedFix = false;
   activeHighlight = null;
   expandedCards = new Set();
   fixedHTML   = '';
