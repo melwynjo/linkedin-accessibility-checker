@@ -23,7 +23,7 @@ export default async function handler(req) {
     });
   }
 
-  const { imageData, mimeType } = body;
+  const { imageData, mimeType, postText } = body;
   if (!imageData || !mimeType) {
     return new Response(JSON.stringify({ error: 'Missing imageData or mimeType' }), {
       status: 400,
@@ -31,15 +31,18 @@ export default async function handler(req) {
     });
   }
 
+  const postContext = postText
+    ? `\n\nThe LinkedIn post this image will accompany is:\n---\n${postText.slice(0, 2000)}\n---\n`
+    : '';
+
   const prompt = `You are an accessibility expert helping someone write a LinkedIn post.
 
 Analyse this image and provide exactly four things:
 
-1. ALT TEXT: A concise alt text (max 125 characters) that describes the image for screen reader users. Focus on the most important content and context. Do not start with "Image of" or "Photo of".
+1. ALT TEXT: One short phrase or sentence (max 125 characters) that literally describes what the image shows, for screen readers. Be factual and specific. Do not start with "Image of" or "Photo of".
 
-2. IMAGE DESCRIPTION: A 1-3 sentence description suitable for pasting into the LinkedIn post itself, so people who can't see the image understand what it shows. Write it in plain, natural language as if describing it to a colleague.
-
-3. TOO MUCH TEXT: Assess whether there is too much text in the image. Dense text in images is a common accessibility issue — it is hard to read on mobile and inaccessible to screen readers. Set found to true if more than ~20% of the image is covered by text, or if the text is very small or dense.
+2. IMAGE DESCRIPTION: 2-3 sentences that describe the image in detail and explain what it shows IN THE CONTEXT of the written post below. Write in plain, natural language as if describing it to a colleague who cannot see it. The description will be appended to the LinkedIn post with the prefix "Image description:" so it should flow naturally as post content.${postContext}
+3. TOO MUCH TEXT: Assess whether there is too much text in the image. Dense text in images is a common accessibility issue — hard to read on mobile and inaccessible to screen readers. Set found to true if more than ~20% of the image is covered by text, or if the text is very small or dense.
 
 4. CONTRAST ISSUE: Assess whether text in the image has contrast issues — low contrast between text and background makes it hard to read for people with low vision. Set found to true if there are obvious contrast problems.
 

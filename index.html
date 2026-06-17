@@ -214,6 +214,10 @@ mark.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 .img-copy-btn{font-size:11.5px;font-weight:700;color:var(--blue);background:#fff;border:1.5px solid var(--blue-border);border-radius:5px;padding:3px 9px;cursor:pointer;transition:background .1s;margin-top:7px;display:inline-block}
 .img-copy-btn:hover{background:var(--blue-bg)}
 .img-copy-btn.copied{color:var(--success);border-color:#bbf7d0;background:#f0fdf4}
+.img-alt-fixed{margin-top:12px;padding:10px 13px;border:1.5px solid var(--blue-border);border-radius:8px;background:var(--blue-bg);flex-shrink:0}
+.img-alt-fixed-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--blue);margin-bottom:5px}
+.img-alt-fixed-hint{font-weight:400;font-style:italic;text-transform:none;letter-spacing:0;color:#64748b}
+.img-alt-fixed-text{font-size:13px;color:var(--text1);line-height:1.6;margin-bottom:6px}
 
 .what-we-check{margin-top:14px;border:2px solid var(--border-sub);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-btn-sm)}
 .what-we-check summary{padding:9px 12px;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--bg-sec)}
@@ -1911,6 +1915,44 @@ function applyFixes() {
   const fixedPostEdit = document.getElementById('fixedPostEdit');
   fixedPostEdit.innerHTML = fixedResult;
 
+  // Insert image description into fixed post before first hashtag (or at end)
+  if (imgAnalysisResult?.imageDescription) {
+    const descText = 'Image description: ' + imgAnalysisResult.imageDescription;
+    const walker = document.createTreeWalker(fixedPostEdit, NodeFilter.SHOW_TEXT);
+    let inserted = false;
+    let node;
+    while ((node = walker.nextNode())) {
+      const idx = node.textContent.search(/#\S/);
+      if (idx !== -1) {
+        const before = node.textContent.slice(0, idx).replace(/\n+$/, '');
+        const after = node.textContent.slice(idx);
+        const insertNode = document.createTextNode(before + '\n\n' + descText + '\n\n');
+        const afterNode = document.createTextNode(after);
+        node.parentNode.replaceChild(afterNode, node);
+        node.parentNode.insertBefore(insertNode, afterNode);
+        inserted = true;
+        break;
+      }
+    }
+    if (!inserted) {
+      const trail = fixedPostEdit.textContent.match(/\n*$/)[0].length;
+      const sep = trail >= 2 ? '' : trail === 1 ? '\n' : '\n\n';
+      fixedPostEdit.appendChild(document.createTextNode(sep + descText));
+    }
+  }
+
+  // Show alt text field below fixed post
+  document.getElementById('imgAltTextFixed')?.remove();
+  if (imgAnalysisResult?.altText) {
+    const altDiv = document.createElement('div');
+    altDiv.id = 'imgAltTextFixed';
+    altDiv.className = 'img-alt-fixed';
+    altDiv.innerHTML = `<div class="img-alt-fixed-label">Alt text <span class="img-alt-fixed-hint">— paste into LinkedIn's alt text field when uploading</span></div>
+      <div class="img-alt-fixed-text" id="fixedAltTextContent">${escHtml(imgAnalysisResult.altText)}</div>
+      <button class="img-copy-btn" onclick="imgCopy(document.getElementById('fixedAltTextContent').textContent, this)">Copy alt text</button>`;
+    diffAppliedView.appendChild(altDiv);
+  }
+
   // Show voice banner — covers both voice items and grammar review
   const voiceBanner = document.getElementById('voiceBanner');
   const voiceCount2  = checkResults.filter(i => i.fixType === 'voice').length;
@@ -2003,6 +2045,7 @@ function resetEditor() {
   fieldLabel.textContent = 'Your post';
   document.getElementById('fixedPostEdit').innerText = '';
   document.getElementById('diffViewFooter').innerHTML = '';
+  document.getElementById('imgAltTextFixed')?.remove();
   const vb = document.getElementById('voiceBanner');
   if (vb) vb.style.display = 'none';
 }
@@ -2274,7 +2317,7 @@ async function startImageCheck() {
     const resp = await fetch('/api/describe-image', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageData: base64, mimeType: imgFile.type }),
+      body: JSON.stringify({ imageData: base64, mimeType: imgFile.type, postText: lastCheckedText || '' }),
     });
     if (!resp.ok) return;
     const data = await resp.json();
