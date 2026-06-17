@@ -1478,7 +1478,7 @@ function renderIssueCard(issue, idx) {
   const pillText  = isVoice ? '⚠ Fix manually' : '✓ Auto-fixable';
   const detailText = issue.imgDetail || '';
 
-  return `<div class="issue-card" id="card-${issue.id}" data-id="${issue.id}" onclick="highlightIssue('${issue.id}')" role="button" tabindex="0" aria-label="${escHtml(COPY.titles[issue.id])}">
+  return `<div class="issue-card" id="card-${issue.id}" data-id="${issue.id}" onclick="toggleCardExpand('${issue.id}', event)" role="button" tabindex="0" aria-label="${escHtml(COPY.titles[issue.id])}">
     <div class="card-header">
       <div class="severity-dot ${sev}" aria-label="Severity: ${sev}"></div>
       <div style="flex:1;min-width:0">
@@ -1490,7 +1490,7 @@ function renderIssueCard(issue, idx) {
           <span class="fix-pill ${pillClass}">${pillText}</span>
         </div>
       </div>
-      <button class="card-expand-btn" onclick="toggleCardExpand('${issue.id}', event)" aria-label="Show fix details" title="Show how to fix">
+      <button class="card-expand-btn" aria-label="Show fix details" title="Show how to fix">
         <svg viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M2 3.5l3.5 3.5 3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </div>
@@ -1715,50 +1715,36 @@ function toggleListen() {
 function highlightIssue(issueId) {
   const card = document.getElementById('card-' + issueId);
   if (!card) return;
-
-  const wasActive = activeHighlight === issueId;
-
-  if (wasActive) {
-    clearHighlight();
-    return;
-  }
-
-  // Update card active state (no expand)
   document.querySelectorAll('.issue-card').forEach(c => c.classList.remove('active-hl'));
-  card.classList.add('active-hl', 'expanded');
-
+  card.classList.add('active-hl');
   activeHighlight = issueId;
   renderPost();
-
-  // Flash the editor to show the connection
   const ec = document.getElementById('editorCard');
   ec.classList.remove('flash');
   requestAnimationFrame(() => { ec.classList.add('flash'); setTimeout(() => ec.classList.remove('flash'), 400); });
-
-  // Show legend
   hlLegend.classList.add('visible');
   hlLegend.setAttribute('aria-hidden','false');
   updateProgress();
 }
 
-// Click on chevron = expand/collapse the how-to-fix details
 function toggleCardExpand(issueId, event) {
-  event.stopPropagation();
   const card = document.getElementById('card-' + issueId);
   if (!card) return;
-
   const wasExpanded = card.classList.contains('expanded');
+
+  // Collapse all cards
   document.querySelectorAll('.issue-card.expanded').forEach(c => {
-    if (c !== card) { c.classList.remove('expanded'); c.querySelector('.card-expand-btn')?.setAttribute('aria-expanded','false'); }
+    c.classList.remove('expanded');
+    c.querySelector('.card-expand-btn')?.setAttribute('aria-expanded', 'false');
   });
 
   if (wasExpanded) {
-    card.classList.remove('expanded');
-    card.querySelector('.card-expand-btn')?.setAttribute('aria-expanded','false');
+    clearHighlight();
   } else {
     card.classList.add('expanded');
-    card.querySelector('.card-expand-btn')?.setAttribute('aria-expanded','true');
+    card.querySelector('.card-expand-btn')?.setAttribute('aria-expanded', 'true');
     expandedCards.add(issueId);
+    highlightIssue(issueId);
   }
 }
 
@@ -2013,6 +1999,7 @@ function clearPost() {
   charCounter.textContent = '0 / 3,000';
   charCounter.className = 'char-counter';
   clearBtn.classList.add('hidden');
+  imgRemove();
   resetEditor();
   // Reset check state
   checkResults = null;
