@@ -1425,20 +1425,23 @@ function buildResults(issues) {
     return `<div class="hl-chip"><span class="hl-swatch ${cls}" aria-hidden="true"></span>${escHtml(COPY.titles[issue.id])}</div>`;
   }).join('');
 
-  // Image alt text card
+  // Image alt text + description card
   if (imgAnalysisResult?.altText) {
     const altCard = document.createElement('div');
     altCard.id = 'imgAltCard';
     altCard.className = 'issue-card';
     altCard.style.cssText = 'padding:12px 14px;border-color:var(--blue-border);background:var(--blue-bg)';
     altCard.innerHTML = `
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--blue);margin-bottom:6px">Image alt text</div>
-      <div style="font-size:13px;color:var(--text1);line-height:1.6;margin-bottom:4px" id="imgAltTextResult">${escHtml(imgAnalysisResult.altText)}</div>
-      <button class="img-copy-btn" onclick="imgCopy(document.getElementById('imgAltTextResult').textContent, this)">Copy</button>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--blue);margin-bottom:6px">Alt text <span style="font-weight:400;font-style:italic;text-transform:none;letter-spacing:0">— paste into the alt text field when uploading on LinkedIn</span></div>
+      <div style="font-size:13px;color:var(--text1);line-height:1.6;margin-bottom:6px" id="imgAltTextResult">${escHtml(imgAnalysisResult.altText)}</div>
+      <button class="img-copy-btn" onclick="imgCopy(document.getElementById('imgAltTextResult').textContent, this)">Copy alt text</button>
       ${imgAnalysisResult.imageDescription ? `
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--blue);margin-top:10px;margin-bottom:6px">Image description for post</div>
-        <div style="font-size:13px;color:var(--text1);line-height:1.6;margin-bottom:4px" id="imgDescResult">${escHtml(imgAnalysisResult.imageDescription)}</div>
-        <button class="img-copy-btn" onclick="imgCopy(document.getElementById('imgDescResult').textContent, this)">Copy</button>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--blue);margin-top:12px;margin-bottom:6px">Image description <span style="font-weight:400;font-style:italic;text-transform:none;letter-spacing:0">— paste above your hashtags in the post</span></div>
+        <div style="font-size:13px;color:var(--text1);line-height:1.6;margin-bottom:6px" id="imgDescResult">${escHtml(imgAnalysisResult.imageDescription)}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="img-copy-btn" onclick="imgCopy(document.getElementById('imgDescResult').textContent, this)">Copy description</button>
+          <button class="img-copy-btn" style="background:var(--blue);color:#fff;border-color:var(--blue)" onclick="insertImgDesc(this)">Insert above hashtags</button>
+        </div>
       ` : ''}
     `;
     issuesBody.appendChild(altCard);
@@ -2222,25 +2225,49 @@ async function startImageCheck() {
     if (data.tooMuchText?.found) {
       checkResults.push({
         id: 'img-text-heavy', cat: 'vis', severity: 'warn', fixType: 'manual',
-        segs: [], excerpts: [],
-        imgDetail: data.tooMuchText.detail
+        excerpts: [], imgDetail: data.tooMuchText.detail
       });
     }
     if (data.contrastIssue?.found) {
       checkResults.push({
         id: 'img-contrast', cat: 'vis', severity: 'error', fixType: 'manual',
-        segs: [], excerpts: [],
-        imgDetail: data.contrastIssue.detail
+        excerpts: [], imgDetail: data.contrastIssue.detail
       });
     }
   } catch {}
 }
 function imgCopy(text, btn) {
   navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
     btn.textContent = 'Copied!';
     btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
   });
+}
+function insertImgDesc(btn) {
+  const desc = document.getElementById('imgDescResult')?.textContent;
+  if (!desc) return;
+  const ta = document.getElementById('postInput');
+  const text = ta.value;
+  const hashIdx = text.search(/#\S/);
+  let insert, newText;
+  if (hashIdx === -1) {
+    const trailingNewlines = text.match(/\n*$/)[0].length;
+    const sep = trailingNewlines >= 2 ? '' : trailingNewlines === 1 ? '\n' : '\n\n';
+    newText = text + sep + desc;
+    insert = newText.length;
+  } else {
+    const before = text.slice(0, hashIdx).replace(/\n+$/, '');
+    const after = text.slice(hashIdx);
+    newText = before + '\n\n' + desc + '\n\n' + after;
+    insert = (before + '\n\n' + desc).length;
+  }
+  ta.value = newText;
+  ta.dispatchEvent(new Event('input'));
+  ta.focus();
+  ta.setSelectionRange(insert, insert);
+  btn.textContent = 'Inserted!';
+  setTimeout(() => { btn.textContent = 'Insert above hashtags'; }, 2000);
 }
 </script>
 </body>
