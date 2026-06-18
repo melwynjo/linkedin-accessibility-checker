@@ -54,7 +54,7 @@ Respond in this exact JSON format with no other fields:
   "contrastIssue": { "found": true, "detail": "..." }
 }`;
 
-  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
   const geminiBody = JSON.stringify({
     contents: [{
       parts: [
