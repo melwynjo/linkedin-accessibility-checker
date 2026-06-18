@@ -1389,13 +1389,13 @@ async function runCheck() {
 
   // Surface image check outcome in the issues panel
   if (hadImg && !imgAnalysisResult) {
-    const msg = imgCheckError ? imgCheckError : 'try again or use a smaller image.';
+    const msg = imgCheckError || 'Try again or use a smaller image.';
     issuesBody.insertAdjacentHTML('beforeend',
-      `<div id="imgErrorCard" style="padding:10px 14px;border:1.5px solid #fca5a5;border-radius:8px;background:#fef2f2;font-size:12.5px;color:#b91c1c;margin-top:4px">⚠ Image check failed — ${msg}</div>`
+      `<div id="imgErrorCard" style="padding:10px 14px;border:1.5px solid #fca5a5;border-radius:8px;background:#fef2f2;font-size:12.5px;color:#b91c1c;margin-top:4px">Image check failed. ${msg}</div>`
     );
   } else if (!hadImg) {
     issuesBody.insertAdjacentHTML('beforeend',
-      '<div id="imgNoUploadHint" style="padding:10px 14px;border:1.5px dashed var(--border-soft);border-radius:8px;background:var(--bg-sec);font-size:12px;color:var(--text4);margin-top:4px">💡 No image uploaded — add one in the image panel before checking to also get contrast and text density results.</div>'
+      '<div id="imgNoUploadHint" style="padding:10px 14px;border:1.5px dashed var(--border-soft);border-radius:8px;background:var(--bg-sec);font-size:12px;color:var(--text4);margin-top:4px">No image uploaded. Add one in the image panel to also check contrast and text density.</div>'
     );
   }
 
@@ -2331,11 +2331,11 @@ async function startImageCheck() {
       try {
         const errJson = JSON.parse(errText);
         const s = errJson.status;
-        if (s === 401 || s === 403) imgCheckError = 'API key invalid or unauthorised.';
-        else if (s === 429) imgCheckError = 'Rate limit reached — try again in a moment.';
-        else if (errJson.detail?.includes('payload size')) imgCheckError = 'Image too large — try a smaller file.';
-        else imgCheckError = `Gemini error ${s || resp.status}.`;
-      } catch { imgCheckError = `HTTP ${resp.status}.`; }
+        if (s === 401 || s === 403) imgCheckError = 'API key issue. Contact the site owner.';
+        else if (s === 429) imgCheckError = 'Too many requests. Wait a few seconds and try again.';
+        else if (errJson.detail?.includes('payload size')) imgCheckError = 'Image is too large. Try a smaller file under 5 MB.';
+        else imgCheckError = `Something went wrong (${s || resp.status}). Try again.`;
+      } catch { imgCheckError = `Something went wrong (${resp.status}). Try again.`; }
       return;
     }
     const data = await resp.json();
