@@ -1381,6 +1381,7 @@ async function runCheck() {
 
   // Wait for grammar and image check before revealing results
   const hadImg = !!imgFile;
+  imgCheckError = null;
   await Promise.all([
     startGrammarCheck(text),
     startImageCheck(),
@@ -1388,8 +1389,9 @@ async function runCheck() {
 
   // Surface image check outcome in the issues panel
   if (hadImg && !imgAnalysisResult) {
+    const msg = imgCheckError ? imgCheckError : 'try again or use a smaller image.';
     issuesBody.insertAdjacentHTML('beforeend',
-      '<div id="imgErrorCard" style="padding:10px 14px;border:1.5px solid #fca5a5;border-radius:8px;background:#fef2f2;font-size:12.5px;color:#b91c1c;margin-top:4px">Image check failed — the image may be too large, or try again in a moment.</div>'
+      `<div id="imgErrorCard" style="padding:10px 14px;border:1.5px solid #fca5a5;border-radius:8px;background:#fef2f2;font-size:12.5px;color:#b91c1c;margin-top:4px">⚠ Image check failed — ${msg}</div>`
     );
   } else if (!hadImg) {
     issuesBody.insertAdjacentHTML('beforeend',
@@ -2269,6 +2271,7 @@ init();
 // ── Image accessibility ──
 let imgFile = null;
 let imgAnalysisResult = null;
+let imgCheckError = null;
 
 function imgDragOver(e) {
   e.preventDefault();
@@ -2322,9 +2325,25 @@ async function startImageCheck() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ imageData: base64, mimeType: imgFile.type, postText: lastCheckedText || '' }),
     });
-    if (!resp.ok) { console.error('Image check HTTP error', resp.status, await resp.text()); return; }
+    if (!resp.ok) {
+      const errText = await resp.text();
+      console.error('Image check HTTP error', resp.status, errText);
+      try {
+        const errJson = JSON.parse(errText);
+        const s = errJson.status;
+        if (s === 401 || s === 403) imgCheckError = 'API key invalid or unauthorised.';
+        else if (s === 429) imgCheckError = 'Rate limit reached — try again in a moment.';
+        else if (errJson.detail?.includes('payload size')) imgCheckError = 'Image too large — try a smaller file.';
+        else imgCheckError = `Gemini error ${s || resp.status}.`;
+      } catch { imgCheckError = `HTTP ${resp.status}.`; }
+      return;
+    }
     const data = await resp.json();
-    if (data.error) { console.error('Image check API error', data.error, data.detail); return; }
+    if (data.error) {
+      console.error('Image check API error', data.error, data.detail);
+      imgCheckError = data.error;
+      return;
+    }
     imgAnalysisResult = data;
 
     // Add image accessibility issues to checkResults and render their cards
