@@ -234,6 +234,7 @@ mark.hl-grammar{background:#ede9fe;outline:2px solid #a78bfa}
 .check-item-icon.grey{background:#f2f2f2;color:var(--text3)}
 .check-item-icon.green{background:#e6f4ea;color:#15803d}
 .check-item-icon.teal{background:#e0f5f4;color:#0d7377}
+.check-item-icon.red{background:#fef2f2;color:#dc2626}
 .check-item-icon.pink{background:#fde8f4;color:#be185d}
 .check-item-icon.purple{background:#f0ebff;color:#7c3aed}
 .live-stats{flex-shrink:0;padding:16px 20px;border-top:2px solid var(--border-sub);background:var(--bg-sec)}
@@ -573,7 +574,7 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
       </button>
 
       <details class="what-we-check" id="whatWeCheck">
-        <summary>What we check (12 rules)</summary>
+        <summary>What we check (14 rules)</summary>
         <div class="check-section">
           <div class="check-section-title">Visual accessibility</div>
           <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🔤</div><div class="check-item-text"><strong>Emoji used as bullet</strong><span>Emoji name read before content</span></div></div>
@@ -583,6 +584,8 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
           <div class="check-item"><div class="check-item-icon blue" aria-hidden="true">🔗</div><div class="check-item-text"><strong>Link with no context</strong><span>Reader can't tell where the link goes</span></div></div>
           <div class="check-item"><div class="check-item-icon grey" aria-hidden="true">→</div><div class="check-item-text"><strong>Decorative symbol</strong><span>May affect screen reader flow</span></div></div>
           <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">𝗕</div><div class="check-item-text"><strong>Unicode bold/italic</strong><span>Screen readers may skip or misread</span></div></div>
+          <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🖼</div><div class="check-item-text"><strong>Too much text in image</strong><span>Dense image text is inaccessible to screen readers</span></div></div>
+          <div class="check-item"><div class="check-item-icon red" aria-hidden="true">◐</div><div class="check-item-text"><strong>Low image contrast</strong><span>Hard to read for people with low vision</span></div></div>
         </div>
         <div class="check-section">
           <div class="check-section-title">Cognitive accessibility</div>
@@ -1376,11 +1379,23 @@ async function runCheck() {
   // Hide "what we check" accordion
   document.getElementById('whatWeCheck').style.display = 'none';
 
-  // Wait for grammar before revealing results so everything appears at once
+  // Wait for grammar and image check before revealing results
+  const hadImg = !!imgFile;
   await Promise.all([
     startGrammarCheck(text),
     startImageCheck(),
   ]);
+
+  // Surface image check outcome in the issues panel
+  if (hadImg && !imgAnalysisResult) {
+    issuesBody.insertAdjacentHTML('beforeend',
+      '<div id="imgErrorCard" style="padding:10px 14px;border:1.5px solid #fca5a5;border-radius:8px;background:#fef2f2;font-size:12.5px;color:#b91c1c;margin-top:4px">Image check failed — the image may be too large, or try again in a moment.</div>'
+    );
+  } else if (!hadImg) {
+    issuesBody.insertAdjacentHTML('beforeend',
+      '<div id="imgNoUploadHint" style="padding:10px 14px;border:1.5px dashed var(--border-soft);border-radius:8px;background:var(--bg-sec);font-size:12px;color:var(--text4);margin-top:4px">💡 No image uploaded — add one in the image panel before checking to also get contrast and text density results.</div>'
+    );
+  }
 
   runBtn.classList.remove('loading');
   runBtn.disabled = false;
@@ -1391,7 +1406,7 @@ async function runCheck() {
 
 function buildResults(issues) {
   // Clear old (including any grammar card from previous run)
-  issuesBody.querySelectorAll('.issue-group-wrapper, .score-section, .score-divider, #grammarSection, #grammarLoadingCard, #imgAltCard, #imgIssuesSection').forEach(el=>el.remove());
+  issuesBody.querySelectorAll('.issue-group-wrapper, .score-section, .score-divider, #grammarSection, #grammarLoadingCard, #imgAltCard, #imgIssuesSection, #imgErrorCard, #imgNoUploadHint').forEach(el=>el.remove());
 
   issuesEmpty.style.display = 'none';
 
@@ -2307,9 +2322,9 @@ async function startImageCheck() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ imageData: base64, mimeType: imgFile.type, postText: lastCheckedText || '' }),
     });
-    if (!resp.ok) return;
+    if (!resp.ok) { console.error('Image check HTTP error', resp.status, await resp.text()); return; }
     const data = await resp.json();
-    if (data.error) return;
+    if (data.error) { console.error('Image check API error', data.error, data.detail); return; }
     imgAnalysisResult = data;
 
     // Add image accessibility issues to checkResults and render their cards
