@@ -54,22 +54,32 @@ Respond in this exact JSON format with no other fields:
   "contrastIssue": { "found": true, "detail": "..." }
 }`;
 
-  const geminiRes = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-    {
+  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+  const geminiBody = JSON.stringify({
+    contents: [{
+      parts: [
+        { text: prompt },
+        { inline_data: { mime_type: mimeType, data: imageData } },
+      ],
+    }],
+    generationConfig: { responseMimeType: 'application/json' },
+  });
+
+  let geminiRes = await fetch(GEMINI_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: geminiBody,
+  });
+
+  // One retry after 2 s if rate-limited
+  if (geminiRes.status === 429) {
+    await new Promise(r => setTimeout(r, 2000));
+    geminiRes = await fetch(GEMINI_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [
-            { text: prompt },
-            { inline_data: { mime_type: mimeType, data: imageData } },
-          ],
-        }],
-        generationConfig: { responseMimeType: 'application/json' },
-      }),
-    }
-  );
+      body: geminiBody,
+    });
+  }
 
   if (!geminiRes.ok) {
     const err = await geminiRes.text();
