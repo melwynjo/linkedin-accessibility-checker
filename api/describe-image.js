@@ -73,7 +73,8 @@ Respond in this exact JSON format with no other fields:
 
   if (!geminiRes.ok) {
     const err = await geminiRes.text();
-    return new Response(JSON.stringify({ error: 'Gemini error', detail: err }), {
+    console.error(`Gemini API error: status=${geminiRes.status} body=${err.slice(0, 800)}`);
+    return new Response(JSON.stringify({ error: 'Gemini error', status: geminiRes.status, detail: err }), {
       status: 502,
       headers: { 'Content-Type': 'application/json' },
     });
