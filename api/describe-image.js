@@ -37,24 +37,19 @@ export default async function handler(req) {
 
   const prompt = `You are an accessibility expert helping someone write a LinkedIn post.
 
-Analyse this image and provide exactly four things:
+Analyse this image and provide exactly two things:
 
 1. ALT TEXT: One short phrase or sentence (max 125 characters) that literally describes what the image shows, for screen readers. Be factual and specific. Do not start with "Image of" or "Photo of".
 
 2. IMAGE DESCRIPTION: 2-3 sentences that describe the image in detail and explain what it shows IN THE CONTEXT of the written post below. Write in plain, natural language as if describing it to a colleague who cannot see it. The description will be appended to the LinkedIn post with the prefix "Image description:" so it should flow naturally as post content.${postContext}
-3. TOO MUCH TEXT: Assess whether there is too much text in the image. Dense text in images is a common accessibility issue — hard to read on mobile and inaccessible to screen readers. Set found to true if more than ~20% of the image is covered by text, or if the text is very small or dense.
-
-4. CONTRAST ISSUE: Assess whether text in the image has contrast issues — low contrast between text and background makes it hard to read for people with low vision. Set found to true if there are obvious contrast problems.
 
 Respond in this exact JSON format with no other fields:
 {
   "altText": "...",
-  "imageDescription": "...",
-  "tooMuchText": { "found": true, "detail": "..." },
-  "contrastIssue": { "found": true, "detail": "..." }
+  "imageDescription": "..."
 }`;
 
-  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`;
   const geminiBody = JSON.stringify({
     contents: [{
       parts: [
@@ -62,7 +57,6 @@ Respond in this exact JSON format with no other fields:
         { inline_data: { mime_type: mimeType, data: imageData } },
       ],
     }],
-    generationConfig: { responseMimeType: 'application/json' },
   });
 
   let geminiRes = await fetch(GEMINI_URL, {
@@ -95,7 +89,8 @@ Respond in this exact JSON format with no other fields:
 
   let parsed;
   try {
-    parsed = JSON.parse(text);
+    const clean = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+    parsed = JSON.parse(clean);
   } catch {
     return new Response(JSON.stringify({ error: 'Could not parse Gemini response', raw: text }), {
       status: 502,

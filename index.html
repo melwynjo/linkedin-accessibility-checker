@@ -74,8 +74,8 @@ body{font-family:'Atkinson Hyperlegible','Inclusive Sans',Verdana,sans-serif;fon
 .editor-col{flex:1;overflow:hidden;background:var(--bg-page);display:flex;flex-direction:column}
 .editor-scroll{flex:1;overflow:hidden;padding:22px;display:flex;flex-direction:row;gap:14px}
 
-.editor-card{background:#fff;border:2px solid var(--border);border-radius:12px;padding:18px;flex:7;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-card)}
-.img-card{background:#fff;border:2px solid var(--border);border-radius:12px;padding:18px;flex:3;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-card)}
+.editor-card{background:#fff;border:2px solid var(--border);border-radius:12px;padding:18px;flex:1;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-card)}
+.img-card{background:#fff;border:2px solid var(--border);border-radius:12px;padding:18px;flex:1;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-card)}
 .editor-card.applied~.img-card{display:none}
 .editor-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
 .field-label{font-size:14px;font-weight:700;color:var(--text1)}
@@ -535,9 +535,12 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
   <div class="img-card" id="imgCard">
     <div class="editor-card-header">
       <label class="field-label" for="imgFileInput">Post image</label>
-      <span style="font-size:12px;color:var(--text5);font-weight:400">optional</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="imgOptionalLabel" style="font-size:12px;color:var(--text5);font-weight:400">optional</span>
+        <button class="clear-btn hidden" id="imgRemoveBtn" onclick="imgRemove()" aria-label="Remove image">Remove</button>
+      </div>
     </div>
-    <p class="field-hint">Checks contrast &amp; text density</p>
+    <p class="field-hint">We provide alt text and a detailed image description.</p>
     <div class="img-attach" id="imgAttach">
       <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="imgSelected(event)">
       <div class="img-attach-empty" id="imgAttachEmpty" role="button" tabindex="0" aria-label="Add post image" ondragover="imgDragOver(event)" ondragleave="imgDragLeave(event)" ondrop="imgDrop(event)" onclick="document.getElementById('imgFileInput').click()" onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('imgFileInput').click()">
@@ -549,7 +552,6 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
         <img class="img-thumb" id="imgPreview" src="" alt="">
         <div class="img-attach-meta">
           <span class="img-attach-name" id="imgPreviewName"></span>
-          <button class="img-attach-remove" onclick="imgRemove(event)" aria-label="Remove image">Remove</button>
         </div>
       </div>
     </div>
@@ -574,7 +576,7 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
       </button>
 
       <details class="what-we-check" id="whatWeCheck">
-        <summary>What we check (14 rules)</summary>
+        <summary>What we check (12 rules)</summary>
         <div class="check-section">
           <div class="check-section-title">Visual accessibility</div>
           <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🔤</div><div class="check-item-text"><strong>Emoji used as bullet</strong><span>Emoji name read before content</span></div></div>
@@ -584,8 +586,6 @@ kbd{display:inline-block;padding:1px 5px;border:1.5px solid var(--border-sub);bo
           <div class="check-item"><div class="check-item-icon blue" aria-hidden="true">🔗</div><div class="check-item-text"><strong>Link with no context</strong><span>Reader can't tell where the link goes</span></div></div>
           <div class="check-item"><div class="check-item-icon grey" aria-hidden="true">→</div><div class="check-item-text"><strong>Decorative symbol</strong><span>May affect screen reader flow</span></div></div>
           <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">𝗕</div><div class="check-item-text"><strong>Unicode bold/italic</strong><span>Screen readers may skip or misread</span></div></div>
-          <div class="check-item"><div class="check-item-icon amber" aria-hidden="true">🖼</div><div class="check-item-text"><strong>Too much text in image</strong><span>Dense image text is inaccessible to screen readers</span></div></div>
-          <div class="check-item"><div class="check-item-icon red" aria-hidden="true">◐</div><div class="check-item-text"><strong>Low image contrast</strong><span>Hard to read for people with low vision</span></div></div>
         </div>
         <div class="check-section">
           <div class="check-section-title">Cognitive accessibility</div>
@@ -802,9 +802,7 @@ const COPY = {
     'jargon':'Business idioms that may confuse',
     'inclusive':'Words that may unintentionally exclude',
     'unicode-bold':'Bold or italic text made from Unicode symbols',
-    'grammar':'Spelling & grammar',
-    'img-text-heavy':'Too much text in image',
-    'img-contrast':'Low text contrast in image'
+    'grammar':'Spelling & grammar'
   },
   descs:{
     'deco-struct':'Screen readers announce the emoji name before the line content, turning your bullet into noise.',
@@ -818,9 +816,7 @@ const COPY = {
     'jargon':'These expressions have non-obvious meanings — someone reading in a second language may not understand them.',
     'inclusive':'Some terms may unintentionally exclude or offend.',
     'unicode-bold':'These are not real bold or italic. They are different Unicode characters. Some screen readers may handle them correctly; others skip them or spell out each symbol name individually.',
-    'grammar':'Possible spelling mistakes or grammar errors that could make your post harder to read.',
-    'img-text-heavy':'Images with dense text are hard to read on mobile and inaccessible to screen readers. Move key information into the post text instead.',
-    'img-contrast':'Text in the image may not have sufficient contrast against its background, making it hard to read for people with low vision.'
+    'grammar':'Possible spelling mistakes or grammar errors that could make your post harder to read.'
   },
   fixes:{
     'deco-struct':'Replace the leading emoji with a plain dash (–). Your post stays structured and reads cleanly out loud.',
@@ -834,9 +830,7 @@ const COPY = {
     'jargon':"Replace with plain language. 'Follow up' instead of 'circle back'. 'An easy win' instead of 'low-hanging fruit'. If the meaning isn't obvious from the words, your global audience will miss it.",
     'inclusive':"Small swaps keep the meaning exactly the same. Try 'incredible' instead of 'crazy,' 'everyone' instead of 'guys.' Your message reaches more people warmly.",
     'unicode-bold':'Retype the styled text using plain characters.',
-    'grammar':'Review each highlighted word or phrase — expand the card to see specific suggestions for each one.',
-    'img-text-heavy':'Reduce the amount of text in the image, or repeat the key points in your post caption.',
-    'img-contrast':'Increase the contrast between text and background in your image. Aim for a contrast ratio of at least 4.5:1.'
+    'grammar':'Review each highlighted word or phrase — expand the card to see specific suggestions for each one.'
   },
   srPreviews:{
     'deco-struct':'e.g. "black star Fast delivery", where the symbol name is read before the actual content.',
@@ -1404,7 +1398,7 @@ async function runCheck() {
 
 function buildResults(issues) {
   // Clear old (including any grammar card from previous run)
-  issuesBody.querySelectorAll('.issue-group-wrapper, .score-section, .score-divider, #grammarSection, #grammarLoadingCard, #imgAltCard, #imgIssuesSection, #imgErrorCard').forEach(el=>el.remove());
+  issuesBody.querySelectorAll('.issue-group-wrapper, .score-section, .score-divider, #grammarSection, #grammarLoadingCard, #imgAltCard, #imgErrorCard').forEach(el=>el.remove());
 
   issuesEmpty.style.display = 'none';
 
@@ -2298,6 +2292,8 @@ function imgLoad(file) {
   document.getElementById('imgPreviewName').textContent = file.name;
   document.getElementById('imgAttachEmpty').style.display = 'none';
   document.getElementById('imgAttachFilled').style.display = 'flex';
+  document.getElementById('imgOptionalLabel').style.display = 'none';
+  document.getElementById('imgRemoveBtn').classList.remove('hidden');
 }
 function imgRemove(e) {
   if (e) e.stopPropagation();
@@ -2306,6 +2302,8 @@ function imgRemove(e) {
   document.getElementById('imgAttachEmpty').style.display = '';
   document.getElementById('imgAttachFilled').style.display = 'none';
   document.getElementById('imgFileInput').value = '';
+  document.getElementById('imgOptionalLabel').style.display = '';
+  document.getElementById('imgRemoveBtn').classList.add('hidden');
 }
 async function startImageCheck() {
   if (!imgFile) return;
@@ -2341,25 +2339,6 @@ async function startImageCheck() {
       return;
     }
     imgAnalysisResult = data;
-
-    // Add image accessibility issues to checkResults and render their cards
-    const imgIssues = [];
-    if (data.tooMuchText?.found) {
-      const issue = { id: 'img-text-heavy', cat: 'vis', severity: 'warn', fixType: 'manual', excerpts: [], imgDetail: data.tooMuchText.detail };
-      checkResults.push(issue);
-      imgIssues.push(issue);
-    }
-    if (data.contrastIssue?.found) {
-      const issue = { id: 'img-contrast', cat: 'vis', severity: 'error', fixType: 'manual', excerpts: [], imgDetail: data.contrastIssue.detail };
-      checkResults.push(issue);
-      imgIssues.push(issue);
-    }
-    if (imgIssues.length) {
-      const sec = document.createElement('div');
-      sec.id = 'imgIssuesSection';
-      imgIssues.forEach((issue, i) => sec.insertAdjacentHTML('beforeend', renderIssueCard(issue, 90 + i)));
-      issuesBody.appendChild(sec);
-    }
 
     // Update issues badge
     const n = checkResults.length;
