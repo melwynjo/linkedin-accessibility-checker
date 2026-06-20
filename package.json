@@ -1,0 +1,15 @@
+{
+  "name": "linkedin-accessibility-checker",
+  "version": "1.0.0",
+  "description": "Free LinkedIn Post Accessibility Checker Tool",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static site - no build step required'"
+  },
+  "keywords": ["accessibility", "linkedin", "checker"],
+  "author": "linkedinaccessibilitychecker.com",
+  "license": "MIT",
+  "dependencies": {
+    "@vercel/analytics": "^1.4.1"
+  }
+}
